@@ -1,0 +1,579 @@
+<?xml version="1.0"?>
+
+<system name="instrument manager">
+
+    <!--
+	******************************************************
+	This system consists of various instrument management
+	functions. All channels are always active.
+	******************************************************
+    -->
+
+    <!--
+	This channel computes the elevation above ground which is used by many
+	computations elsewhere. It must run continually and often.
+    -->
+    <channel name="Altimeter" execrate="2">
+
+	<!--
+	    Autoland requires the use of a radar altimeter to determine the aircraft's height
+	    above the ground very precisely so as to initiate the landing flare at the correct
+	    height (usually about 50 feet (15 m)).
+	    In YASim, we can use "/position/gear-agl-ft" as the altitude source.
+	    For JSBsim, we should use  "/instrumentation/radar-altimeter/radar-altitude-ft"
+	    if a radar altimeter instrument is installed.
+	    Otherwise, we default to "/position/altitude-agl-ft".
+	    This filter selects between these options.
+	-->
+
+	<!--  need the FDM view of elevation in metres -->
+	<pure_gain name="position/h-agl-m">
+	    <description> Position AGL in metres </description>
+	    <input> position/h-agl-km </input>
+	    <gain> 1000 </gain>
+	</pure_gain>
+
+	<!-- Select radar altimeter output or FDM property -->
+	<switch name="position/indicated-agl-ft">
+	    <description> Calibrated AGL </description>
+	    <default value="position/h-agl-ft"/>
+	    <!-- use the radar altimter output when within range -->
+	    <test value="/instrumentation/radar-altimeter/radar-altitude-ft">
+		/instrumentation/radar-altimeter/serviceable EQ 1
+		position/h-agl-m LT /instrumentation/radar-altimeter/max-range-m
+	    </test>
+	</switch>
+
+	<!--
+	    With the gear fully extended, the wheels are about 6.45 ft below
+	    the centerline. The Victor was designed so that there was a large bulge towards
+	    the front that meant it ended up being only a couple of feet off the ground.
+	    On the ground, the RA gives a height of ~10.45 ft. We want the gear height above
+	    ground to vary from 0 ft when extended to 2 ft when retracted (with the plane on jacks).
+	    So we need to subtract 8 ~ 10 ft from the RA altitude to get the gear height above ground.
+	-->
+	<fcs_function name="/position/gear-agl-ft">
+	    <description> Gear height above ground </description>
+	    <function>
+		<difference>
+		    <property> position/indicated-agl-ft </property>
+		    <table>
+			<independentVar lookup="row"> gear/gear-pos-norm </independentVar>
+			<tableData>
+			    0.0		8
+			    1.0 	10
+			</tableData>
+		    </table>
+		</difference>
+	    </function>
+	    <clipto>
+		<min> 0 </min>
+		<max> 40000 </max>
+	    </clipto>
+	</fcs_function>
+
+    </channel>
+
+    <channel name="Radar Altimeter" execrate="8">
+
+	<!--
+	    The radar altimeter outputs a warning signal via "/sim/alarms/rad-alt-warning".
+	    The output is only reliable if the AGL is within the RA maximum range.
+	    So we define a property with the following states:
+	    { Off: -2, Red: -1, Amber: 0, Green: 1, Test: 2 }.
+	    These states will define the status of the lights.
+	-->
+
+	<switch name="/controls/radar/altimeter/caged-flag">
+	    <description>
+		Radar altimeter caged mode
+	    </description>
+	    <default value="0"/>
+	    <!-- Caged when there is no power, out of range or excessive pitch / bank angles -->
+	    <test logic="OR" value="1">
+		/instrumentation/radar-altimeter/power-btn EQ 0
+		/controls/radar/altimeter/limiter-active EQ 0
+		position/h-agl-ft GT /controls/radar/altimeter/limiter-height-ft
+		/orientation/roll-deg LT -40
+		/orientation/roll-deg GT  40
+		/orientation/pitch-deg LT -30
+		/orientation/pitch-deg GT  30
+	    </test>
+	</switch>
+
+	<switch name="/controls/radar/altimeter/limiter-light-mode">
+	    <description>
+		Radar altimeter warning light mode
+	    </description>
+	    <default value="/sim/alarms/rad-alt-warning"/>
+	    <!-- OFF if there is no power to the RA or leds -->
+	    <test logic="OR" value="-2">
+		/instrumentation/radar-altimeter/power-btn EQ 0
+		/systems/electrical/outputs/leds LT 10
+	    </test>
+	    <!-- RA test switch ON -->
+	    <test logic="OR" value="2">
+		/controls/radar/altimeter/limiter-light-test EQ 1
+	    </test>
+	    <!-- OFF if the RA is inactive or it is beyond range -->
+	    <test logic="OR" value="-2">
+		/controls/radar/altimeter/caged-flag EQ 1
+		position/h-agl-ft GT /controls/radar/altimeter/limiter-height-ft
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	</switch>
+
+	<switch name="/controls/radar/altimeter/limiter-light-red">
+	    <description>
+		Radar altimeter low altitude alert
+	    </description>
+	    <default value="0"/>
+	    <!-- OFF if there is no power to the leds or the RA is OFF -->
+	    <test logic="OR" value="0">
+		/controls/radar/altimeter/limiter-light-mode EQ -2
+	    </test>
+	    <!-- ON if the test switch is ON or the mode is red -->
+	    <test logic="OR" value="1">
+		/controls/radar/altimeter/limiter-light-mode EQ -1
+		/controls/radar/altimeter/limiter-light-mode EQ  2
+	    </test>
+	</switch>
+
+	<switch name="/controls/radar/altimeter/limiter-light-amber">
+	    <description>
+		Radar altimeter low altitude warning
+	    </description>
+	    <default value="0"/>
+	    <!-- OFF if there is no power to the leds or the RA is OFF -->
+	    <test logic="OR" value="0">
+		/controls/radar/altimeter/limiter-light-mode EQ -2
+	    </test>
+	    <!-- ON if the test switch is ON or the mode is amber-->
+	    <test logic="OR" value="1">
+		/controls/radar/altimeter/limiter-light-mode EQ  0
+		/controls/radar/altimeter/limiter-light-mode EQ  2
+	    </test>
+	</switch>
+
+	<switch name="/controls/radar/altimeter/limiter-light-green">
+	    <description>
+		Radar altimeter low altitude clear
+	    </description>
+	    <default value="0"/>
+	    <!-- OFF if there is no power to the leds or the RA is OFF -->
+	    <test logic="OR" value="0">
+		/controls/radar/altimeter/limiter-light-mode EQ -2
+	    </test>
+	    <!-- ON if the test switch is ON or the mode is green -->
+	    <test logic="OR" value="1">
+		/controls/radar/altimeter/limiter-light-mode GT 0
+	    </test>
+	</switch>
+
+	<!-- Set the limiter height in feet based on the control settings -->
+	<fcs_function name="/controls/radar/altimeter/limiter-height-ft">
+	    <function>
+		<product>
+		    <property>/controls/radar/altimeter/limiter-height-units</property>
+		    <table>
+			<independentVar lookup="row"> /controls/radar/altimeter/sensitivity-five-thousand </independentVar>
+			<tableData>
+			    0	1
+			    1	10
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    The warning height is a fraction of the sensitivity range. But it must be
+	    clipped to the -5 ft of the minimum sensitivity range (50 ft).
+	-->
+	<pure_gain name="/instrumentation/radar-altimeter/set-height-ft">
+	    <description>
+		RA warning height setting
+	    </description>
+	    <input> /controls/radar/altimeter/limiter-height-ft </input>
+	    <gain> /controls/radar/altimeter/warning-height-frac </gain>
+	    <clipto>
+		<min> 45 </min>
+		<max> /controls/radar/altimeter/limiter-height-ft </max>
+	    </clipto>
+	</pure_gain>
+
+	<!-- Convert limiter height to metres and set the RA maximum range -->
+	<pure_gain name="/instrumentation/radar-altimeter/max-range-m">
+	    <description> Set RA maximum range in metres </description>
+	    <input> /controls/radar/altimeter/limiter-height-ft </input>
+	    <gain> 0.3048 </gain>
+	</pure_gain>
+
+    </channel>
+
+
+    <channel name="Air Ground Radar" execrate="8">
+
+	<!-- Convert Terrain Warning distance settings from nautical miles to metres -->
+
+	<pure_gain name="/instrumentation/air-ground-radar/terrain-warning/min-range-m">
+	    <description> Set TW minimum range in metres </description>
+	    <input> /controls/radar/terrain-warning/min-range-nm</input>
+	    <gain> 1852 </gain>
+	</pure_gain>
+
+	<pure_gain name="/instrumentation/air-ground-radar/terrain-warning/max-range-m">
+	    <description> Set TW maximum range in metres </description>
+	    <input> /controls/radar/terrain-warning/max-range-nm</input>
+	    <gain> 1852 </gain>
+	</pure_gain>
+
+    </channel>
+
+    <channel name="Accelerometer" execrate="8">
+
+	<!--
+	    G-force calculation for an animation. We cannot use the raw value, because it is
+	    very unstable near ground level.
+	-->
+	<switch name="/instrumentation/accelerometer/g-load">
+	    <description> Absolute g-force value </description>
+	    <default value="1"/>
+	    <!-- use the computed value if no wheels are on the ground and above 10 knots -->
+	    <test value="accelerations/Nz">
+		velocities/vc-kts GT 10
+		gear/gear-no-wow EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- This channel manages the AP control panel switches -->
+    <channel name="AP Control" execrate="8">
+
+	<!-- The Heading and NAV switches together define the panel lateral mode -->
+	<switch name="/instrumentation/flightdirector/panel-lat-mode">
+	    <description> Lateral mode as defined by the panel switches </description>
+	    <default value="/instrumentation/flightdirector/panel-lat-mode"/>
+	    <!--
+		Ignore if autopilot is not enagaged and in mode OFF (0), LOC (4),
+		TACAN (5) and RWY (6)
+	    -->
+	    <test logic="OR" value="/instrumentation/flightdirector/lnav">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		/instrumentation/flightdirector/lnav EQ 0
+		/instrumentation/flightdirector/lnav GE 4
+	    </test>
+	    <!-- both switches off: 1=LEVEL -->
+	    <test value="1">
+		/controls/switches/heading-mode EQ 0
+		/controls/switches/nav-mode EQ 0
+	    </test>
+	    <!-- HDG on and NAV off: 2=HDG -->
+	    <test value="2">
+		/controls/switches/heading-mode EQ 1
+		/controls/switches/nav-mode EQ 0
+	    </test>
+	    <!-- NAV on overrides all HDG settings: 3=NAV -->
+	    <test value="3">
+		/controls/switches/nav-mode EQ 1
+	    </test>
+	</switch>
+
+	<!-- THE ALT/VS switch sets ALT-HOLD, CLIMB or DESCEND -->
+	<switch name="/instrumentation/flightdirector/panel-vert-mode">
+	    <description> Vertical mode as defined by the panel switches </description>
+	    <default value="/instrumentation/flightdirector/panel-vert-mode"/>
+	    <!--
+		Ignore if autopilot is not enagaged and in modes: OFF (0),
+		6=ALTCRZ(m), 7=CLB(m) 8=DES(m), 9=G/S(m), 10=AGL(m - landing), 11=LEVEL
+		or in full vertical managed mode
+	    -->
+	    <test logic="OR" value="/instrumentation/flightdirector/vnav">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		/instrumentation/flightdirector/vertical-managed-mode EQ -1
+		/instrumentation/flightdirector/vnav EQ 0
+		<test value="1">
+		    /instrumentation/flightdirector/vnav GE 6
+		    /instrumentation/flightdirector/vnav LE 11
+		</test>
+	    </test>
+
+	    <!-- Tests when the switch is ON - requires Altitude-Hold modes -->
+
+	    <!-- VNAV is ALT (1): ignore -->
+	    <test value="/instrumentation/flightdirector/vnav">
+		/controls/switches/altitude-mode EQ 1
+		/instrumentation/flightdirector/vnav EQ 1
+	    </test>
+	    <!--
+		VNAV is one of V/S (2), FPA (3), OP CLB (4), OP DES(5):
+		switch to ALT (1)
+	    -->
+	    <test value="1">
+		/controls/switches/altitude-mode EQ 1
+		<test logic="OR" value="1">
+		    /instrumentation/flightdirector/vnav EQ 2
+		    /instrumentation/flightdirector/vnav EQ 3
+		    /instrumentation/flightdirector/vnav EQ 4
+		    /instrumentation/flightdirector/vnav EQ 5
+		</test>
+	    </test>
+
+	    <!-- Tests when the switch is OFF - requires Climb/Descend modes -->
+
+	    <!-- switch to V/S (2) from ALT (1) when in altitude hold -->
+	    <test value="2">
+		/controls/switches/altitude-mode EQ 0
+		/instrumentation/flightdirector/vnav EQ 1
+		/autopilot/internal/elevation/des-hold-clb EQ 0
+	    </test>
+	    <!-- switch to OP CLB (4) from ALT (1) -->
+	    <test value="4">
+		/controls/switches/altitude-mode EQ 0
+		/instrumentation/flightdirector/vnav EQ 1
+		/autopilot/internal/elevation/des-hold-clb EQ 1
+	    </test>
+	    <!-- switch to OP DES (5) -->
+	    <test value="5">
+		/controls/switches/altitude-mode EQ 0
+		/instrumentation/flightdirector/vnav EQ 1
+		/autopilot/internal/elevation/des-hold-clb EQ -1
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!--
+	This channel computes the angle of attack indications and the index range.
+	The output of this computation is mainly used in animation of AoA instruments.
+    -->
+    <channel name="Angle of Attack" execrate="8">
+
+	<!--
+	    The AoA indicator reads 0° on the ground and reads the aircraft
+	    AoA at 100 KEAS or higher. The OFF flag is displayed if there is no power
+	    to the instrument.
+	-->
+
+	<switch name="/instrumentation/fmc/AoA/active">
+	    <description> Angle of attack measurement is active </description>
+	    <default value="0"/>
+	    <test value="1">
+		velocities/vc-kts GT 100
+		gear/gear-no-wow EQ 1
+		/systems/electrical/outputs/instruments GT 23
+	    </test>
+	</switch>
+
+	<!-- Set the alpha value -->
+	<switch name="/instrumentation/fmc/AoA/alpha-deg">
+	    <description> Angle of attack degrees </description>
+	    <default value="0"/>
+	    <test value="aero/alpha-deg">
+		/instrumentation/fmc/AoA/active EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Angle of attack indications ranges vary by flight phase:
+	    * takeoff: 	8° to 12° based on weight and procedure
+	    * climb :	3° to 5°
+	    * cruise:	4° to 7° (subsonic)
+	    * cruise:	5° to 6° (supersonic at all gross weights)
+	    * final approach:	under 10.5° (at recommended airspeeds)
+	    For constant lift, airspeed and AoA are negatively correlated. As speed increases,
+	    the necessary AoA decreases. Thus, "too slow" means that the AoA needs to decrease.
+	    and "too fast" means that the AoA needs to increase.
+
+	    We use these values to define the indexer targets. Add 1 to the higher target
+	    to get the slow target and subtract 2 from the lower target to get the fast target.
+	    Then add
+	    +/- 2 to these targets to get the very slow or very fast targets.
+	    For final approach, we use +1 to -5 due to it variability.
+	-->
+
+	<switch name="/instrumentation/fmc/AoA/indexer/slow-deg">
+	    <description>
+		Upper target of angle of attack
+	    </description>
+	    <default value="/instrumentation/fmc/AoA/alpha-deg"/>
+	    <test value="0">
+		/instrumentation/fmc/AoA/active EQ 0
+	    </test>
+	    <!-- takeoff phase (1): light weight -->
+	    <test value="13">
+		/instrumentation/flightdirector/fd-phase EQ 1
+		/instrumentation/fmc/landing/under-weight EQ 1
+	    </test>
+	    <!-- takeoff phase (1): heavy weight -->
+	    <test value="11">
+		/instrumentation/flightdirector/fd-phase EQ 1
+	    </test>
+	    <!-- climb phase (2) -->
+	    <test value="6">
+		/instrumentation/flightdirector/fd-phase EQ 2
+	    </test>
+	    <!-- cruise phase (3) -->
+	    <test value="8">
+		/instrumentation/flightdirector/fd-phase EQ 3
+	    </test>
+	    <!-- descent phases (4) through (7) -->
+	    <test value="8">
+		/instrumentation/flightdirector/fd-phase GE 4
+		/instrumentation/flightdirector/fd-phase LE 7
+	    </test>
+	    <!-- final appraoch phase (8) to land (9) -->
+	    <test value="10">
+		/instrumentation/flightdirector/fd-phase GE 8
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/fmc/AoA/indexer/fast-deg">
+	    <description>
+		Lower target of angle of attack
+	    </description>
+	    <default value="/instrumentation/fmc/AoA/alpha-deg"/>
+	    <test value="0">
+		/instrumentation/fmc/AoA/active EQ 0
+	    </test>
+	    <!-- takeoff phase (1): light weight -->
+	    <test value="7">
+		/instrumentation/flightdirector/fd-phase EQ 1
+		/instrumentation/fmc/landing/under-weight EQ 1
+	    </test>
+	    <!-- takeoff phase (1): heavy weight -->
+	    <test value="6">
+		/instrumentation/flightdirector/fd-phase EQ 1
+	    </test>
+	    <!-- climb phase (2) -->
+	    <test value="2">
+		/instrumentation/flightdirector/fd-phase EQ 2
+	    </test>
+	    <!-- cruise phase (3) -->
+	    <test value="3">
+		/instrumentation/flightdirector/fd-phase EQ 3
+	    </test>
+	    <!-- descent phases (4) through (7) -->
+	    <test value="3">
+		/instrumentation/flightdirector/fd-phase GE 4
+		/instrumentation/flightdirector/fd-phase LE 7
+	    </test>
+	    <!-- final appraoch phase (8) to land (9) -->
+	    <test value="5">
+		/instrumentation/flightdirector/fd-phase GE 8
+	    </test>
+	</switch>
+
+	<!--
+	    to get the "too-slow" and "two-fast" targets, simply add/subtract 1
+	    to the values obtained above
+	-->
+
+	<summer name="/instrumentation/fmc/AoA/indexer/too-slow-deg">
+	    <input> /instrumentation/fmc/AoA/indexer/slow-deg </input>
+	    <bias> 1.0 </bias>
+	</summer>
+
+	<summer name="/instrumentation/fmc/AoA/indexer/too-fast-deg">
+	    <input> /instrumentation/fmc/AoA/indexer/fast-deg </input>
+	    <bias> -1.0 </bias>
+	</summer>
+
+    </channel>
+
+
+    <!--
+	This channel computes the current course setting. The source can be manual or
+	automatic based on the lateral flight mode. The output of this computation is
+	mainly used in animation of heading instruments.
+    -->
+    <channel name="Course" execrate="8">
+
+	<!-- Display the set course -->
+	<switch name="/instrumentation/fmc/course-deg">
+	    <description> Set course in degrees </description>
+	    <!-- when no course is set, use the magnetic heading -->
+	    <default value="/instrumentation/magnetic-compass/indicated-heading-deg"/>
+	    <!-- Heading hold (2) -->
+	    <test value="/autopilot/settings/heading-bug-deg">
+		/instrumentation/flightdirector/lnav EQ 2
+	    </test>
+	    <!-- Nav hold (3) -->
+	    <test value="/autopilot/settings/true-heading-deg">
+		/instrumentation/flightdirector/lnav EQ 3
+	    </test>
+	    <!-- ILS (4) -->
+	    <test value="/instrumentation/nav[0]/radials/target-auto-hdg-deg">
+		/instrumentation/flightdirector/lnav EQ 4
+	    </test>
+	    <!-- Tacan (5) -->
+	    <test value="/instrumentation/tacan/indicated-bearing-true-deg">
+		/instrumentation/flightdirector/lnav EQ 5
+	    </test>
+	    <!-- Runway (6) -->
+	    <test value="/autopilot/internal/runway-heading-deg">
+		/instrumentation/flightdirector/lnav EQ 6
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel manages the warnings that trigger the master caution
+	annunicator. It runs continously.
+    -->
+    <channel name="Warnings" execrate="8">
+
+	<!--
+	    Send a warning signal to the master caution when an event 
+	    occurs. The signal has different levels:
+	    0 = clear; 1 = warn; 2 = critical
+	-->
+	<switch name="/instrumentation/annunciator/warning-signal">
+	    <description> Set warning level </description>
+	    <default value="0"/>
+	    <!-- Critical (2) -->
+	    <test logic="OR" value="2">
+		/instrumentation/annunciator/low-speed EQ 1
+		/instrumentation/annunciator/fuel-warning EQ 2
+		/damage/systems/electrical-condition LT 0.5
+		/damage/structural/wings-condition LT 0.5
+		/damage/controls/flight/aileron-condition LT 0.5
+		/damage/controls/flight/elevator-condition LT 0.5
+		/damage/controls/flight/rudder-condition LT 0.5
+		/damage/engines/engine[0]/engine-condition LT 0.5
+		/damage/engines/engine[1]/engine-condition LT 0.5
+		/damage/instrumentation/altimeter-condition LT 0.5
+	    </test>
+	    <!-- Warning (1) -->
+	    <test logic="OR" value="1">
+		/instrumentation/annunciator/cockpit-unsafe EQ 1
+		/instrumentation/annunciator/high-alpha EQ 1
+		/instrumentation/annunciator/pitch-warning EQ 1
+		/instrumentation/annunciator/fuel-warning EQ 1
+		/damage/systems/electrical-condition LT 1
+		/damage/structural/wings-condition LT 1
+		/damage/controls/flight/aileron-condition LT 1
+		/damage/controls/flight/elevator-condition LT 1
+		/damage/controls/flight/rudder-condition LT 1
+		/damage/engines/engine[0]/engine-condition LT 1
+		/damage/engines/engine[1]/engine-condition LT 1
+		/damage/instrumentation/altimeter-condition LT 1
+		/damage/instrumentation/ai-condition LT 0.5
+		/damage/instrumentation/asi-condition LT 0.5
+		/damage/instrumentation/hsi-condition LT 0.5
+		/damage/instrumentation/nav1/cdi-condition LT 0.5
+		/damage/instrumentation/nav2/cdi-condition LT 0.5
+		/damage/instrumentation/nav1/gs-condition LT 0.5
+		/damage/instrumentation/slip-condition LT 0.5
+		/damage/instrumentation/turn-condition LT 0.5
+		/damage/instrumentation/vsi-condition LT 0.5
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

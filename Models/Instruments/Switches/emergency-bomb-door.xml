@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <path>bar-switch-warning.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>Switch</object-name>
+	<property>/controls/doors/emergency-bb-door-pos</property>
+	<factor>-90</factor>
+	<center>
+	    <x-m> 0.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m> 0.0</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>Switch</object-name>
+	<visible>true</visible>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/doors/emergency-bb-door-pos</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Baydoors Emergency</label>
+		<tooltip-id>emergency_bb</tooltip-id>
+	    </binding>
+	</hovered>
+
+    </animation>
+
+    <!-- Panel Lighting -->
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>Switch</object-name>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.5</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.5</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.5</lightmap-factor>
+	    <reflection-enabled type="int">0</reflection-enabled>
+	    <ambient-correction type="float">0.05</ambient-correction>
+	</parameters>
+	<object-name>Switch</object-name>
+    </effect>
+
+</PropertyList>

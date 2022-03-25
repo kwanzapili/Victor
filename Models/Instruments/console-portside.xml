@@ -1,0 +1,420 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <path>console-portside.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <animation>
+	<name>radarswitches</name>
+	<object-name>LimitSwitch</object-name>
+	<object-name>LimitTestSwitch</object-name>
+	<object-name>RadarRange</object-name>
+    </animation>
+
+    <animation>
+	<name>radarmounts</name>
+	<object-name>LimitSwitchSurround</object-name>
+	<object-name>RadarInset</object-name>
+	<object-name>RadarRangeSurround</object-name>
+	<object-name>TestSwitchSurround</object-name>
+    </animation>
+
+    <!-- deselect some insets -->
+    <animation>
+	<type>select</type>
+	<object-name>Inset.001</object-name>
+	<object-name>Inset.002</object-name>
+	<object-name>Inset.003</object-name>
+    </animation>
+
+    <animation>
+	<name>engineswitches</name>
+	<object-name>EngineMaster</object-name>
+	<object-name>EngineStarter</object-name>
+    </animation>
+
+    <animation>
+	<name>enginemounts</name>
+	<object-name>MasterMount</object-name>
+	<object-name>StarterMount</object-name>
+	<object-name>Inset</object-name>
+    </animation>
+
+    <animation>
+	<name>engineset</name>
+	<object-name>EngineSelector</object-name>
+	<object-name>engineswitches</object-name>
+	<object-name>enginemounts</object-name>
+    </animation>
+
+    <animation>
+	<type>knob</type>
+	<object-name>EngineSelector</object-name>
+	<property>/controls/engines/starter-selected</property>
+	<factor>20</factor>
+	<!-- when the starter is engaged, we cannot change the selected engine -->
+	<condition>
+	    <not>
+		<property>/controls/engines/starter-engaged</property>
+	    </not>
+	</condition>
+	<center>
+	    <x-m> 0.511</x-m>
+	    <y-m> 0.00 </y-m>
+	    <z-m> 0.00 </z-m>
+	</center>
+	<axis>
+	    <x> 0</x>
+	    <y> 0</y>
+	    <z>-1</z>
+	</axis>
+	<action>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>/controls/engines/starter-selected</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>3</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<tooltip-id>starter_selected</tooltip-id>
+		<label>Select %s engine</label>
+		<property>/controls/engines/starter-selected</property>
+		<mapping>nasal</mapping>
+		<script>
+		    var modes = ['first', 'second', 'third', 'fourth'];
+		    return modes[arg[0]];
+		</script>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>EngineStarter</object-name>
+	<object-name>StarterMount</object-name>
+	<!-- when the starter is engaged, we cannot use the starter -->
+	<condition>
+	    <not>
+		<property>/controls/engines/starter-engaged</property>
+	    </not>
+	</condition>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>nasal</command>
+		<script>
+		    starter.startEngine();
+		</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Engine Start: %s</label>
+		<mapping>on-off</mapping>
+		<property>/controls/engines/starter-engaged</property>
+		<tooltip-id>starter_engaged</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>translate</type>
+	<object-name>EngineStarter</object-name>
+	<property>/controls/engines/starter-engaged</property>
+	<factor>-0.003</factor>
+	<axis>
+	    <x>0</x>
+	    <y>0</y>
+	    <z>1</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>EngineMaster</object-name>
+	<object-name>MasterMount</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>nasal</command>
+		<script>
+		    starter.toggleMaster()
+		</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Master Engine: %s</label>
+		<mapping>on-off</mapping>
+		<property>/controls/engines/master</property>
+		<tooltip-id>engine_master</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>EngineMaster</object-name>
+	<property>/controls/engines/master</property>
+	<factor>-40</factor>
+	<center>
+	    <x-m> 0.47 </x-m>
+	    <y-m> 0.00 </y-m>
+	    <z-m> 0.057</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>LimitSwitch</object-name>
+	<object-name>LimitSwitchSurround</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/radar/altimeter/limiter-active</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Radar Limiter: %s </label>
+		<mapping>on-off</mapping>
+		<property>/controls/radar/altimeter/limiter-active</property>
+		<tooltip-id>limiter_active</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>LimitSwitch</object-name>
+	<property>/controls/radar/altimeter/limiter-active</property>
+	<factor>-90</factor>
+	<center>
+	    <x-m> 0.130</x-m>
+	    <y-m> 0.0  </y-m>
+	    <z-m> 0.058</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>RadarRange</object-name>
+	<object-name>RadarRangeSurround</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/radar/altimeter/sensitivity-five-thousand</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Radar Sensitivity: %s</label>
+		<mapping>on-off</mapping>
+		<property>/controls/radar/altimeter/sensitivity-five-thousand</property>
+		<tooltip-id>sensitivity</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>RadarRange</object-name>
+	<property>/controls/radar/altimeter/sensitivity-five-thousand</property>
+	<factor>-90</factor>
+	<offset>-90</offset>
+	<center>
+	    <x-m> 0.130</x-m>
+	    <y-m> 0.0  </y-m>
+	    <z-m> 0.058</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>LimitTestSwitch</object-name>
+	<object-name>TestSwitchSurround</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/radar/altimeter/limiter-light-test</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Radar Test: %s </label>
+		<mapping>on-off</mapping>
+		<property>/controls/radar/altimeter/limiter-light-test</property>
+		<tooltip-id>light_test</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>LimitTestSwitch</object-name>
+	<property>/controls/radar/altimeter/limiter-light-test</property>
+	<factor>-90</factor>
+	<offset>-90</offset>
+	<center>
+	    <x-m> 0.130</x-m>
+	    <y-m> 0.0  </y-m>
+	    <z-m> 0.058</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- move the engine set forwards -->
+    <animation>
+	<type>translate</type>
+	<object-name>engineset</object-name>
+	<offset-m>0.15</offset-m>
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+    </animation>
+
+    <!-- Panel Lighting -->
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>radarswitches</object-name>
+	<object-name>engineswitches</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>DoorsInset</object-name>
+	<object-name>radarmounts</object-name>
+    </animation>
+
+    <!-- Radar Limiter Inset -->
+
+    <model>
+	<name>Limit</name>
+	<path>Aircraft/vulcanb2/Models/Instruments/radar-limiter.xml</path>
+	<offsets>
+	    <x-m> 0.130</x-m>
+	    <y-m>-0.015</y-m>
+	    <z-m> 0.058</z-m>
+	</offsets>
+    </model>
+
+    <!-- Doors and Bomb controls -->
+
+    <model>
+	<name>EmergencyJettison</name>
+	<path>Aircraft/vulcanb2/Models/Instruments/emergency-bomb-jettison.xml</path>
+	<offsets>
+	    <x-m>0.24</x-m>
+	    <y-m>0.03</y-m>
+	    <z-m>0.06</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>EmergencyBombBayDoors</name>
+	<path>Aircraft/vulcanb2/Models/Instruments/emergency-bomb-door.xml</path>
+	<offsets>
+	    <x-m>0.24</x-m>
+	    <y-m>0.01</y-m>
+	    <z-m>0.06</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>BombBayDoors</name>
+	<path>Aircraft/vulcanb2/Models/Instruments/bomb-door-switch.xml</path>
+	<offsets>
+	    <x-m> 0.24</x-m>
+	    <y-m>-0.01</y-m>
+	    <z-m> 0.06</z-m>
+	</offsets>
+    </model>
+
+    <!-- illuminate the engine selector -->
+    <animation> 
+	<type>material</type> 
+	<object-name>EngineSelector</object-name>
+	<diffuse>
+	    <red>  0.5</red>
+	    <green>0.5</green>
+	    <blue> 0.5</blue>
+	</diffuse>
+	<emission>
+	    <red>  0.5</red>
+	    <green>0.5</green>
+	    <blue> 0.5</blue>
+	    <factor-prop>controls/lighting/panel-norm</factor-prop>
+	</emission>
+	<shininess>100</shininess>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.4</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.4</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.4</lightmap-factor>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.05</ambient-correction>
+	</parameters>
+	<object-name>LimitSwitch</object-name>
+	<object-name>LimitSwitchSurround</object-name>
+	<object-name>LimitTestSwitch</object-name>
+	<object-name>TestSwitchSurround</object-name>
+	<object-name>RadarRange</object-name>
+	<object-name>EngineMaster</object-name>
+	<object-name>MasterMount</object-name>
+	<object-name>EngineStarter</object-name>
+	<object-name>StarterMount</object-name>
+	<object-name>RadarRange</object-name>
+	<object-name>RadarRangeSurround</object-name>
+    </effect>
+
+</PropertyList>

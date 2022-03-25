@@ -1,0 +1,1795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <name>autopilot</name>
+    <layout>vbox</layout>
+    <pref-width>380</pref-width>
+
+    <group>
+	<layout>hbox</layout>
+	<empty>
+	    <stretch type="bool">true</stretch>
+	</empty>
+	<text>
+	    <label>Autopilot Settings</label>
+	</text>
+	<empty>
+	    <stretch type="bool">true</stretch>
+	</empty>
+	<button>
+	    <halign>right</halign>
+	    <pref-width>20</pref-width>
+	    <pref-height>20</pref-height>
+	    <legend>X</legend>
+	    <key>Esc</key>
+	    <binding>
+		<command>dialog-close</command>
+	    </binding>
+	</button>
+    </group>
+
+    <hrule>
+	<color>
+	    <red>   1.0 </red>
+	    <green> 0.0 </green>
+	    <blue>  1.0 </blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <!-- Start of Flight Director -->
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+	<button>
+	    <row>0</row>
+	    <col>0</col>
+	    <legend>FD</legend>
+	    <pref-width>40</pref-width>
+	    <pref-height>30</pref-height>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_fd();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <legend>AP</legend>
+	    <pref-width>40</pref-width>
+	    <pref-height>30</pref-height>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/switches/autopilot</property>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <legend>A/T</legend>
+	    <pref-width>40</pref-width>
+	    <pref-height>30</pref-height>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/switches/autothrottle</property>
+	    </binding>
+	</button>
+
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>[ AUTO ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>autopilot/locks/passive-mode</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>[ ACTIVE ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/autopilot/locks/passive-mode</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>1</col>
+	    <label>[ ENGAGED ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/autopilot-engage</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<!-- Autothrottle modes -->
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <label>[ THRUST ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>/instrumentation/fmc/throttle-lock</property>
+			<value>1</value>
+		    </equals>
+		    <not-equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>5</value>    <!-- IDLE -->
+		    </not-equals>
+		</and>
+	    </visible>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <label>[ PITCH ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>/instrumentation/fmc/throttle-lock</property>
+			<value>0</value>
+		    </equals>
+		    <equals>
+			<property>/autopilot/internal/speed-pitch-mode</property>
+			<value>1</value>
+		    </equals>
+		    <equals>
+			<property>/instrumentation/flightdirector/autothrottle-engage</property>
+			<value>1</value>
+		    </equals>
+		</and>
+	    </visible>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <label>[ IDLE ]</label>
+	    <pref-height>30</pref-height>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>/instrumentation/fmc/throttle-lock</property>
+			<value>1</value>
+		    </equals>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>5</value>    <!-- IDLE -->
+		    </equals>
+		</and>
+	    </visible>
+	</text>
+    </group>
+    <!-- End of Flight Director -->
+
+    <!-- Start of Flight Modes -->
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Managed / Selected Modes</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<!-- Set MANAGED (-1) or SELECTED (0) modes -->
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+	<equal type="bool">true</equal>
+
+	<!-- Lateral mode -->
+	<button>
+	    <row>0</row>
+	    <col>0</col>
+	    <legend>Lateral</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_lat_mode();</script>
+	    </binding>
+	</button>
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lateral-mode</property>
+		    <value>-1</value>
+		</equals>
+	    </visible>
+	    <label>FMC</label>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lateral-mode</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	    <label>AP</label>
+	</text>
+
+            <!-- Altitude mode -->
+            <button>
+                <row>0</row>
+                <col>1</col>
+                <legend>Altitude</legend>
+                <binding>
+                    <command>nasal</command>
+                    <script>victor.toggle_vert_alt_mode();</script>
+                </binding>
+            </button>
+            <text>
+                <row>1</row>
+                <col>1</col>
+                <color>
+                    <red>   0.0 </red>
+                    <green> 1.0 </green>
+                    <blue>  1.0 </blue>
+                </color>
+                <pref-width>40</pref-width>
+                <visible>
+                    <equals>
+                        <property>/instrumentation/flightdirector/vertical-alt-mode</property>
+                        <value>-1</value>
+                    </equals>
+                </visible>
+                <label>FMC</label>
+            </text>
+            <text>
+                <row>1</row>
+                <col>1</col>
+                <color>
+                    <red>   0.0 </red>
+                    <green> 1.0 </green>
+                    <blue>  1.0 </blue>
+                </color>
+                <pref-width>40</pref-width>
+                <visible>
+                    <equals>
+                        <property>/instrumentation/flightdirector/vertical-alt-mode</property>
+                        <value>0</value>
+                    </equals>
+                </visible>
+                <label>AP</label>
+            </text>
+
+	<!-- Vertical speed mode -->
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <legend>VSpeed</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_vert_vs_mode();</script>
+	    </binding>
+	</button>
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vertical-vs-mode</property>
+		    <value>-1</value>
+		</equals>
+	    </visible>
+	    <label>FMC</label>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vertical-vs-mode</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	    <label>AP</label>
+	</text>
+
+           <!-- Speed mode -->
+            <button>
+                <row>0</row>
+                <col>3</col>
+                <legend>Speed</legend>
+                <binding>
+                    <command>nasal</command>
+                    <script>victor.toggle_speed_mode();</script>
+                </binding>
+            </button>
+            <text>
+                <row>1</row>
+                <col>3</col>
+                <color>
+                    <red>   0.0 </red>
+                    <green> 1.0 </green>
+                    <blue>  1.0 </blue>
+                </color>
+                <pref-width>40</pref-width>
+                <visible>
+                    <equals>
+                        <property>/instrumentation/flightdirector/speed-mode</property>
+                        <value>-1</value>
+                    </equals>
+                </visible>
+                <label>FMC</label>
+            </text>
+            <text>
+                <row>1</row>
+                <col>3</col>
+                <color>
+                    <red>   0.0 </red>
+                    <green> 1.0 </green>
+                    <blue>  1.0 </blue>
+                </color>
+                <pref-width>40</pref-width>
+                <visible>
+                    <equals>
+                        <property>/instrumentation/flightdirector/speed-mode</property>
+                        <value>0</value>
+                    </equals>
+                </visible>
+                <label>AP</label>
+            </text>
+
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Flight Modes</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<!-- Lateral Display -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label></label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>LEVEL</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>2</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>HEADING</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>3</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>NAV</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>4</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>LOC</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>3</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>NAV</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>5</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>TACAN</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/lnav</property>
+		    <value>6</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>RWY</label>
+	    <valign>center</valign>
+	</text>
+
+	<!-- LOCaliser armed -->
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>[ LOC ]</label>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>30</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/loc-arm</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<!-- Vertical displays -->
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label></label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>ALT</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>2</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>V/S</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>3</value>
+		</equals>
+	    </visible>
+	    <border>3</border>
+	    <label>PITCH</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>4</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>OP CLB</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>5</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>OP DES</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>6</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>ALT CRZ</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>7</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>CLB</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>8</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>DES</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>9</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>G/S</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>10</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>AGL</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>40</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/vnav</property>
+		    <value>11</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>LEVEL</label>
+	    <valign>center</valign>
+	</text>
+
+	<!-- APPRoach armed -->
+	<text>
+	    <row>0</row>
+	    <col>3</col>
+	    <label>[ APPR ]</label>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>35</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/appr-arm</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<!-- Speed displays -->
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label></label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>SPEED</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>2</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>MACH</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>3</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>THR CLB</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>4</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>THR DES</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>5</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>THR IDL</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>6</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>CRUISE</label>
+	    <valign>center</valign>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <pref-width>50</pref-width>
+	    <visible>
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>7</value>
+		</equals>
+	    </visible>
+	    <border>1</border>
+	    <label>SPD PTCH</label>
+	    <valign>center</valign>
+	</text>
+
+    </group>
+    <!-- End of Flight Modes -->
+
+    <!-- Start of Thrust Mode Buttons -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Thrust Mode Buttons</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+	<button>
+	    <enable>
+		<and>
+		    <property>/instrumentation/fmc/flight-control-flight-mode</property>
+		    <property>/instrumentation/flightdirector/autothrottle-engage</property>
+		</and>
+	    </enable>
+	    <legend>Throttle</legend>
+	    <pref-height>30</pref-height>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.set_spdthr();</script>
+	    </binding>
+	</button>
+	<button>
+	    <enable>
+		<and>
+		    <property>/instrumentation/fmc/flight-control-flight-mode</property>
+		    <property>/instrumentation/flightdirector/autothrottle-engage</property>
+		</and>
+	    </enable>
+	    <legend>Pitch</legend>
+	    <pref-height>30</pref-height>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.set_spdptch();</script>
+	    </binding>
+	</button>
+	<text>
+	    <halign>right</halign>
+	    <label>Mach Select</label>
+	</text>
+	<checkbox>
+	    <halign>left</halign>
+	    <pref-width>12</pref-width>
+	    <pref-height>12</pref-height>
+	    <property>/instrumentation/flightdirector/mach-mode</property>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <live type="bool">true</live>
+	</checkbox>
+    </group>
+
+    <!-- Knots values -->
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Knots:  </label>
+	    <pref-height>25</pref-height>
+	</text>
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<min>140</min>
+		<max>720</max>
+		<step>-10</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<min>140</min>
+		<max>720</max>
+		<step>-1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>0</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%5d</format>
+	    <property>/instrumentation/flightdirector/speed-select</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>0</row>
+	    <col>4</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<min>140</min>
+		<max>720</max>
+		<step>1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>5</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<min>140</min>
+		<max>720</max>
+		<step>10</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<!-- Mach values -->
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>Mach:</label>
+	    <pref-height>25</pref-height>
+	</text>
+
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/mach-select</property>
+		<min>0.50</min>
+		<max>1.25</max>
+		<step>-0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/mach-select</property>
+		<min>0.50</min>
+		<max>1.25</max>
+		<step>-0.01</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>1</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%.2f</format>
+	    <property>/instrumentation/flightdirector/mach-select</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>1</row>
+	    <col>4</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/mach-select</property>
+		<min>0.50</min>
+		<max>1.25</max>
+		<step>0.01</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>5</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/mach-select</property>
+		<min>0.50</min>
+		<max>1.25</max>
+		<step>0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+    </group>
+    <!-- End of Speed Modes -->
+
+    <!-- Start of Lateral Mode Buttons -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Lateral Mode Buttons</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+	<button>
+	    <pref-width>50</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>LEVEL</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_wing_level();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>50</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>HDG</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_bhdg();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>50</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>NAV</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_thdg();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>65</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>VOR/LOC</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_loc();</script>
+	    </binding>
+	</button>
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+	<default-padding>4</default-padding>
+	<!-- Heading Bug -->
+	<text>
+	    <label>HDG:</label>
+	    <pref-height>25</pref-height>
+	</text>
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
+		<min>0</min>
+		<max>360</max>
+		<step>-10</step>
+		<wrap>true</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
+		<min>0</min>
+		<max>360</max>
+		<step>-1</step>
+		<wrap>true</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <pref-width>50</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%3.0f</format>
+	    <property>/instrumentation/heading-indicator/heading-bug-deg</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
+		<min>0</min>
+		<max>360</max>
+		<step>1</step>
+		<wrap>true</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
+		<min>0</min>
+		<max>360</max>
+		<step>10</step>
+		<wrap>true</wrap>
+	    </binding>
+	</button>
+
+    </group>
+
+    <!-- TACAN Mode -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>TACAN Mode Buttons</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+	<default-padding>1</default-padding>
+
+	<!-- Setting the TACAN switch -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <pref-height>25</pref-height>
+	    <valign>bottom</valign>
+	    <label>OFF  REC  T/R  A/A  BCN</label>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	</text>
+
+	<slider>
+	    <row>1</row>
+	    <col>0</col>
+	    <pref-height>25</pref-height>
+	    <pref-width>150</pref-width>
+	    <valign>top</valign>
+	    <property>instrumentation/tacan/switch-position</property>
+	    <min>0</min>
+	    <max>4</max>
+	    <step>1</step>
+	    <live type="bool">true</live>
+	    <legend>Tacan Switch</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</slider>
+
+	<!-- Output messages from TACAN -->
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>[ ARMED ]</label>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <visible>
+		<property>instrumentation/flightdirector/tacan-arm</property>
+	    </visible>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>1</col>
+	    <label>TANKER NAME</label> <!-- placeholder for width -->
+	    <format>%12s</format>
+	    <property>/instrumentation/tacan/name</property>
+	    <live>true</live>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>tacan-hold</value>
+		</equals>
+	    </visible>
+	</text>
+
+    </group>
+    <!-- End of Lateral Modes -->
+
+    <!-- Start of Vertical Modes -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Vertical Mode</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+	<button>
+	    <pref-width>70</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>ALT HLD</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_alt();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>70</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>VFPM HLD</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_vfpm();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>75</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>PITCH HLD</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_ptch();</script>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>65</pref-width>
+	    <pref-height>30</pref-height>
+	    <legend>APPR</legend>
+	    <enable>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_appr();</script>
+	    </binding>
+	</button>
+    </group>
+
+    <!-- Data entry -->
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<!-- Target Altitude -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <pref-height>25</pref-height>
+	    <halign>right</halign>
+	    <label>ALT:</label>
+	</text>
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<min>0</min>
+		<max>50000</max>
+		<step>-1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<min>0</min>
+		<max>50000</max>
+		<step>-100</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>0</row>
+	    <col>3</col>
+	    <pref-width>60</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%5d</format>
+	    <property>/instrumentation/flightdirector/altitude-select</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>0</row>
+	    <col>4</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<min>0</min>
+		<max>50000</max>
+		<step>100</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>5</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<min>0</min>
+		<max>50000</max>
+		<step>1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<!-- Target Vertical Speed -->
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <pref-height>25</pref-height>
+	    <halign>right</halign>
+	    <label>V/S:</label>
+	</text>
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<min>-6000</min>
+		<max>12000</max>
+		<step>-1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<min>-6000</min>
+		<max>12000</max>
+		<step>-100</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>1</row>
+	    <col>3</col>
+	    <pref-width>60</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%5d</format>
+	    <property>/instrumentation/flightdirector/vertical-speed-select</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>1</row>
+	    <col>4</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<min>-6000</min>
+		<max>12000</max>
+		<step>100</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>5</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<min>-6000</min>
+		<max>12000</max>
+		<step>1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<!-- Target Pitch -->
+	<text>
+	    <halign>right</halign>
+	    <row>2</row>
+	    <col>0</col>
+	    <pref-height>25</pref-height>
+	    <label>Pitch:</label>
+	</text>
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <row>2</row>
+	    <col>1</col>
+	    <binding>
+		<command>property-adjust</command>
+		<property>instrumentation/flightdirector/pitch-deg</property>
+		<min>-10</min>
+		<max>20</max>
+		<step>-1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <row>2</row>
+	    <col>2</col>
+	    <binding>
+		<command>property-adjust</command>
+		<property>instrumentation/flightdirector/pitch-deg</property>
+		<min>-10</min>
+		<max>20</max>
+		<step>-0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>2</row>
+	    <col>3</col>
+	    <pref-width>60</pref-width>
+	    <pref-height>25</pref-height>
+	    <format>%2.2f</format>
+	    <property>instrumentation/flightdirector/pitch-deg</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>2</row>
+	    <col>4</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>instrumentation/flightdirector/pitch-deg</property>
+		<min>-10</min>
+		<max>20</max>
+		<step>0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>2</row>
+	    <col>5</col>
+	    <pref-width>35</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>instrumentation/flightdirector/pitch-deg</property>
+		<min>-10</min>
+		<max>20</max>
+		<step>1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+    </group>
+    <!-- End of Vertical Modes -->
+
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

@@ -1,0 +1,607 @@
+<?xml version="1.0"?>
+
+<!--
+
+  This is a panel configuration file for the open-source flight
+  simulator FlightGear (www.flightgear.org).  The file is an XML-encoded
+  FlightGear property list defining the panel's background texture and
+  the location (and optionally, size) of the instruments that will
+  appear on the panel.
+
+  Each instrument is, itself, defined in an XML-encoded property list
+  in a separate file.
+
+  Co-ordinates are relative to the *bottom* left corner of the screen
+  (as in OpenGL).  The total FlightGear window is always considered to
+  be 1024x768, whatever its actual display size on the screen.  All
+  paths are relative to $FG_ROOT.
+
+  Note that the name of the element defining each instrument must be
+  different, or else instrument definitions will be overwritten:
+  that's not particularly XML-ish, but that's how property lists
+  work in FlightGear right now.
+
+  Each instrument has its own preferred width and height, but you can
+  override those by providing <w>..</w> and <h>..</h> properties with the
+  <x>...</x> and <y>...</y> properties.
+
+-->
+
+<!DOCTYPE PropertyList SYSTEM "panel.dtd">
+
+  <PropertyList>
+
+      <name>Victor Instruments Panel</name>
+      <background>Panels/Textures/panel-bg.rgb</background>
+      <w>1024</w>			<!-- virtual width -->
+      <h>768</h>			<!-- virtual height -->
+      <!-- <y-offset>-305</y-offset>         hides the bottom part -->
+      <!-- amount of overlap between 2D panel and 3D viewport -->
+      <view-height>5</view-height>
+
+      <instruments>
+
+	  <!-- ~~~~~~~~~~ controls visual feedback cluster ~~~~~~~~~~ -->
+
+	  <instrument include="Aircraft/Instruments/gear-indicator.xml">
+	      <name>Gear Indicator Light</name>
+	      <x>80</x>
+	      <y>149</y>
+	      <w>48</w>
+	      <h>19</h>
+	  </instrument>
+
+	  <instrument include="Aircraft/Instruments/brakes.xml">
+	      <name>Brake Indicator Light</name>
+	      <x>80</x>
+	      <y>128</y>
+	      <w>48</w>
+	      <h>19</h>
+	  </instrument>
+
+	  <instrument include="Aircraft/Instruments/controls.xml">
+	      <name>Control Position Indicators</name>
+	      <x>80</x>
+	      <y>70</y>
+	      <w>90</w>
+	      <h>90</h>
+	  </instrument>
+
+	  <!-- ~~~~~~~~~~ end controls visual feedback cluster ~~~~~~~~~~ -->
+
+	  <!-- ~~~~~~~~~~ flight instruments ~~~~~~~~~~ -->
+
+	  <!-- Attitude Indicator -->
+	  <instrument include="Aircraft/Instruments/attitude-indicator.xml">
+	      <name>Artificial Horizon</name>
+	      <x>225</x>
+	      <y>80</y>
+	  </instrument>
+
+	<!-- Terrain Warning -->
+	  <instrument include="Instruments/terrain-warning.xml">
+	      <name>Terrain display</name>
+	      <x>225</x>
+	      <y>165</y>
+	  </instrument>
+
+	  <!-- Turn coordinator -->
+	  <instrument include="Aircraft/Instruments/turn-hi.xml">
+	      <name>Turn Coordinator</name>
+	      <x>365</x>
+	      <y>80</y>
+	  </instrument>
+
+	  <!-- Angle of Attack Indicator -->
+	  <instrument include="Aircraft/Instruments/aoa.xml">
+	      <name>Angle of Attack Gauge</name>
+	      <x>505</x>
+	      <y>80</y>
+	  </instrument>
+
+	  <!-- ~~~~~~~~~~ end flight instruments ~~~~~~~~~~ -->
+
+	  <!-- ~~~~~~~~~~ speed instruments ~~~~~~~~~~ -->
+
+	  <!-- Vertical Speed Indicator -->
+	  <instrument include="Aircraft/Instruments/vertical-speed-6kfpm.xml">
+	      <name>VSI Gauge</name>
+	      <x>645</x>
+	      <y>80</y>
+	  </instrument>
+
+	  <!-- Airspeed Indicator -->
+	  <instrument include="Aircraft/Instruments/asi-590-knot-a4c.xml">
+	      <name>Airspeed Indicator</name>
+	      <x>785</x>
+	      <y>80</y>
+	  </instrument>
+
+	  <!-- ~~~~~~~~~~ end speed instruments ~~~~~~~~~~ -->
+
+	  <!-- ~~~~~~~~~~ radio nav instruments ~~~~~~~~~~ -->
+
+	  <!-- DME Controls -->
+	  <instrument include="Aircraft/Instruments/dme.xml">
+	      <name>DME Controls</name>
+	      <x>80</x>
+	      <y>210</y>
+	  </instrument>
+
+	  <!-- Marker Beacon Lamps -->
+	  <instrument include="Aircraft/Instruments/markerbeacon.xml">
+	      <name>Marker Beacon Indicators</name>
+	      <x>80</x>
+	      <y>275</y>
+	  </instrument>
+
+	  <!-- Nav/Comm Radio -->
+	  <instrument include="Aircraft/Instruments/navcom-radio.xml">
+	      <name>NAV Radio</name>
+	      <x>300</x>
+	      <y>210</y>
+	  </instrument>
+
+	  <!-- ADF Radio -->
+	  <instrument include="Aircraft/Instruments/adf-radio.xml">
+	      <name>ADF Radio</name>
+	      <x>300</x>
+	      <y>280</y>
+	  </instrument>
+
+	  <!-- ADF Gauge -->
+	  <instrument include="Aircraft/Instruments/adf.xml">
+	      <name>ADF Gauge</name>
+	      <x>510</x>
+	      <y>245</y>
+	  </instrument>
+
+	  <!-- Nav 1 Gauge -->
+	  <instrument include="Aircraft/Instruments/nav1.xml">
+	      <name>VOR Gauge</name>
+	      <x>640</x>
+	      <y>245</y>
+	  </instrument>
+
+	  <!-- Horizontal Situation Indicator -->
+	  <instrument include="Aircraft/Instruments/hsi-hi.xml">
+	      <name>Horizontal Situation Indicator</name>
+	      <x>770</x>
+	      <y>245</y>
+	  </instrument>
+
+	  <!-- ~~~~~~~~~~ end radio nav instruments ~~~~~~~~~~ -->
+
+	  <!-- ~~~~~~~~~~ digital instruments ~~~~~~~~~~ -->
+
+	  <!-- Clock -->
+	  <instrument include="Aircraft/Instruments/clock.xml">
+	      <name>Chronometer</name>	<!-- currently optional but strongly recommended -->
+	      <x>80</x>					<!-- required horizontal placement -->
+	      <y>460</y>					<!-- required vertical placement -->
+	      <w>100</w>					<!-- optional width specification -->
+	      <h>100</h>					<!-- optional height specification -->
+	  </instrument>
+
+	  <!-- External Tempareture -->
+	  <instrument include="Aircraft/Instruments/oat.xml">
+	      <name>Temperature</name>
+	      <x>80</x>
+	      <y>320</y>
+	  </instrument>
+
+	  <!-- Wind Speed & Direction -->
+	  <instrument include="Instruments/digital-wind-speed-direction.xml">
+	      <name>Wind Speed and Direction display</name>
+	      <x>80</x>
+	      <y>370</y>
+	  </instrument>
+
+	  <!-- Drag/Lift Controls -->
+
+	  <instrument include="Instruments/digital-flap.xml">
+	      <name>Flap settings display</name>
+	      <x>235</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-brake.xml">
+	      <name>Speedbrake display</name>
+	      <x>235</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <!-- flight controls -->
+
+	  <instrument include="Instruments/digital-roll.xml">
+	      <name>Roll display</name>
+	      <x>365</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-pitch.xml">
+	      <name>Pitch display</name>
+	      <x>365</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <!-- acceleration -->
+
+	  <instrument include="Instruments/digital-accl.xml">
+	      <name>Accel display</name>
+	      <x>495</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-aoa.xml">
+	      <name>AoA display</name>
+	      <x>495</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <!-- altitude -->
+
+	  <instrument include="Instruments/digital-agl.xml">
+	      <name>Elevation AGL display</name>
+	      <x>625</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-alt.xml">
+	      <name>Altitude display</name>
+	      <x>625</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-vsi.xml">
+	      <name>Vsi display</name>
+	      <x>625</x>
+	      <y>430</y>
+	  </instrument>
+
+	  <!-- speeds -->
+
+	  <instrument include="Instruments/digital-kias.xml">
+	      <name>KIAS display</name>
+	      <x>755</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-mach.xml">
+	      <name>Mach display</name>
+	      <x>755</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <!-- weights -->
+
+	  <instrument include="Instruments/digital-wgt.xml">
+	      <name>Weight display</name>
+	      <x>930</x>
+	      <y>390</y>
+	  </instrument>
+
+	  <!-- Fuel monitors -->
+
+	  <instrument include="Instruments/digital-fuel-tot.xml">
+	      <name>Fuel tot display</name>
+	      <x>930</x>
+	      <y>350</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 1 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[0]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[0]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>30</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 2 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[1]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[1]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>60</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 3 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[2]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[2]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>90</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 4 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[3]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[3]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>120</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 5 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[4]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[4]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>150</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 6 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[5]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[5]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>180</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 7 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[6]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[6]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>210</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 8 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[7]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[7]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>240</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 9 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[8]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[8]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>270</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-fuel-tank.xml">
+	      <name>Tank 10 display</name>
+	      <params>
+		  <tank-num>/consumables/fuel/tank[9]/tank-num</tank-num>
+		  <level-select>/fdm/jsbsim/propulsion/tank[9]/pct-full</level-select>
+	      </params>
+	      <x>940</x>
+	      <y>300</y>
+	  </instrument>
+
+	  <!-- end fuel monitors -->
+
+	  <!-- Armament -->
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[0]/id</stn-id>
+		  <count-select>/controls/armament/station[0]/units</count-select>
+		  <armed-select>/controls/armament/station[0]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 1</name>
+	      <x>80</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[5]/id</stn-id>
+		  <count-select>/controls/armament/station[5]/units</count-select>
+		  <armed-select>/controls/armament/station[5]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 6</name>
+	      <x>165</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[6]/id</stn-id>
+		  <count-select>/controls/armament/station[6]/units</count-select>
+		  <armed-select>/controls/armament/station[6]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 7</name>
+	      <x>250</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[7]/id</stn-id>
+		  <count-select>/controls/armament/station[7]/units</count-select>
+		  <armed-select>/controls/armament/station[7]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 8</name>
+	      <x>335</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[8]/id</stn-id>
+		  <count-select>/controls/armament/station[8]/units</count-select>
+		  <armed-select>/controls/armament/station[8]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 9</name>
+	      <x>420</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[9]/id</stn-id>
+		  <count-select>/controls/armament/station[9]/units</count-select>
+		  <armed-select>/controls/armament/station[9]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 10</name>
+	      <x>505</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[10]/id</stn-id>
+		  <count-select>/controls/armament/station[10]/units</count-select>
+		  <armed-select>/controls/armament/station[10]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 11</name>
+	      <x>590</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[11]/id</stn-id>
+		  <count-select>/controls/armament/station[11]/units</count-select>
+		  <armed-select>/controls/armament/station[11]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 12</name>
+	      <x>675</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[12]/id</stn-id>
+		  <count-select>/controls/armament/station[12]/units</count-select>
+		  <armed-select>/controls/armament/station[12]/armed</armed-select>
+	      </params>
+	      <name>Ammo display 13</name>
+	      <x>760</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <!-- Shrikes -->
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[1]/id</stn-id>
+		  <count-select>/controls/armament/station[1]/units</count-select>
+		  <armed-select>/controls/armament/station[1]/armed</armed-select>
+	      </params>
+	      <name>Shrikes 1 display</name>
+	      <x>860</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[2]/id</stn-id>
+		  <count-select>/controls/armament/station[2]/units</count-select>
+		  <armed-select>/controls/armament/station[2]/armed</armed-select>
+	      </params>
+	      <name>Shrikes 2 display</name>
+	      <x>860</x>
+	      <y>510</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[3]/id</stn-id>
+		  <count-select>/controls/armament/station[3]/units</count-select>
+		  <armed-select>/controls/armament/station[3]/armed</armed-select>
+	      </params>
+	      <name>Shrikes 3 display</name>
+	      <x>945</x>
+	      <y>575</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-rnd.xml">
+	      <params>
+		  <stn-id>/controls/armament/station[4]/id</stn-id>
+		  <count-select>/controls/armament/station[4]/units</count-select>
+		  <armed-select>/controls/armament/station[4]/armed</armed-select>
+	      </params>
+	      <name>Shrikes 4 display</name>
+	      <x>945</x>
+	      <y>510</y>
+	  </instrument>
+
+	  <!-- Weapons control -->
+
+	  <instrument include="Instruments/weapons-control.xml">
+	      <name>Weapons control</name>
+	      <x>460</x>
+	      <y>520</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-master-arm.xml">
+	      <name>Master Arm</name>
+	      <x>760</x>
+	      <y>510</y>
+	  </instrument>
+
+	  <!-- end armament -->
+
+	  <!-- ~~~~~~~~~~~~ end digital instruments ~~~~~~~~~~~~ -->
+
+	  <!-- ~~~~~~~~~~~~ AP Instruments ~~~~~~~~~~~~ -->
+
+	  <instrument include="Instruments/autopilot-controls.xml">
+	      <name>AP controls</name>
+	      <x>235</x>
+	      <y>440</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-ap-hdg-pitch.xml">
+	      <name>AP Speed-Kt Instruiment</name>
+	      <params>
+		  <pitch-disp>/autopilot/settings/target-pitch-deg</pitch-disp>
+		  <pitch-ctrl>/instrumentation/flightdirector/pitch-deg</pitch-ctrl>
+		  <hdg-disp>/autopilot/settings/heading-bug-deg</hdg-disp>
+		  <hdg-ctrl>/instrumentation/heading-indicator/heading-bug-deg</hdg-ctrl>
+	      </params>
+	      <x>365</x>
+	      <y>440</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-ap-vert.xml">
+	      <name>AP Speed-Kt Instruiment</name>
+	      <params>
+		  <alt-disp>/autopilot/settings/target-altitude-ft</alt-disp>
+		  <alt-ctrl>/instrumentation/flightdirector/altitude-select</alt-ctrl>
+		  <vs-disp>/autopilot/settings/vertical-speed-fpm</vs-disp>
+		  <vs-ctrl>/instrumentation/flightdirector/vertical-speed-select</vs-ctrl>
+	      </params>
+	      <x>495</x>
+	      <y>440</y>
+	  </instrument>
+
+	  <instrument include="Instruments/digital-ap-speed.xml">
+	      <name>AP Speed-Kt Instruiment</name>
+	      <params>
+		  <kias-disp>/autopilot/settings/target-speed-kt</kias-disp>
+		  <kias-ctrl>/instrumentation/flightdirector/speed-select</kias-ctrl>
+		  <mach-disp>/autopilot/settings/target-speed-mach</mach-disp>
+		  <mach-ctrl>/instrumentation/flightdirector/mach-select</mach-ctrl>
+	      </params>
+	      <x>755</x>
+	      <y>440</y>
+	  </instrument>
+
+	  <!-- ~~~~~~~~~~~~ end AP Instruments ~~~~~~~~~~~~ -->
+
+      </instruments>
+
+  </PropertyList>

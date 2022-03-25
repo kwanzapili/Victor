@@ -1,0 +1,462 @@
+<?xml version="1.0"?>
+
+<system name="environmental control">
+
+    <!--
+	****************************************************************************
+	This is the Environmental Control System. It consists of various functions
+	that management cockpit pressurisation and air-conditioning.
+	****************************************************************************
+    -->
+
+    <!--
+	This channel manages the air-conditioning. It must run continually.
+    -->
+    <channel name="Air-conditioning" execrate="8">
+
+	<!--
+		    Borrowed from the SR-71.
+
+	    Air-conditioning includes two identical and parallel air-cycle compressor
+	    turbine refrigeration systems. Each is supplied by the bleed air from two
+	    engines. The maximum pressure of the bleed air is 26 psi. The temparature
+	    is maintained at 200 °F below 44,000 ft. The air supply is cut off if pressure
+	    cannot be maintained above 5 psi.
+
+	    The temperature of the conditioned air is controlled by the pilot by adjustments
+	    to the automatic controls or by manually selecting the proportion of regulated
+	    air that is mixed cockpit air supply. The cockpit temperature
+	    control switch regulates the cockpit air temperature between 40°F to 100°F
+	    (4°C to 38°C). The pilot can override this by selecting one of the manual modes.
+
+	    We only model the "AUTO TEMP" mode with a single temperature control switch,
+	    "/controls/switches/cabin-temperature-degc".
+	-->
+
+	<switch name="/controls/pressurization/pack[0]/pack-on">
+	    <description> Hot air pack one </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/controls/pneumatic/engine[0]/bleed EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/pressurization/pack[1]/pack-on">
+	    <description> Hot air pack two </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/controls/pneumatic/engine[1]/bleed EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/pressurization/pack[2]/pack-on">
+	    <description> Hot air pack three </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/controls/pneumatic/engine[2]/bleed EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/pressurization/pack[3]/pack-on">
+	    <description> Hot air pack four </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/controls/pneumatic/engine[3]/bleed EQ 0
+	    </test>
+	</switch>
+
+	<!-- define the target cockpit temperature -->
+	<switch name="/instrumentation/pressurisation/target-cabin-temperature-degc">
+	    <description> Set target cockpit temperature </description>
+	    <!-- if no engine is running, use ambient temperature -->
+	    <default value="/environment/temperature-degc"/>
+	    <!-- Use the pilot's setting when an engine is running -->
+	    <test value="/controls/switches/cabin-temperature-degc">
+		/controls/doors/cockpit-door/position-norm LE 0
+		systems/propulsion/active-engines GT 0
+		systems/electrical/dc-power EQ 1
+	    <!-- pack swicthes need to be ON -->
+		<test logic="OR" value="1">
+		    /controls/pressurization/pack[0]/pack-on EQ 1
+		    /controls/pressurization/pack[1]/pack-on EQ 1
+		    /controls/pressurization/pack[2]/pack-on EQ 1
+		    /controls/pressurization/pack[3]/pack-on EQ 1
+		</test>
+	    </test>
+	</switch>
+
+
+    </channel>
+
+    <!--
+	This channel manages the pressurisation. It must run continually.
+    -->
+    <channel name="Pressurisation" execrate="8">
+	<!--
+	    Borrowed from the SR-71 and modified slightly.
+
+	    The crew compartment can be pressurised to a 10,000 ft schedule.
+	    The maximum rate of pressure change is 5,000 fpm.
+
+	    With the 10,000 ft schedule, pressurisation starts at 10,000 ft and maintained
+	    at 10,000 ft until the aircraft altitude exceeds 28,000 ft, then at a pressure
+	    5 psi greater than the ambient at higher altitudes.
+	-->
+
+	<!--  Convert Inch Mercury to Psi (32°F) -->
+	<pure_gain name="/systems/static/pressure-psi">
+	    <description> Static pressure in psi </description>
+	    <input> /systems/static/pressure-inhg </input>
+	    <gain> 0.4911528943 </gain>
+	</pure_gain>
+
+	<summer name="systems/pressurisation/pressure-limit-psi">
+	    <input> /systems/static/pressure-psi </input>
+	    <bias> 5 </bias>
+	    <clipto>
+		<min>  0 </min>
+		<max> 15 </max>
+	    </clipto>
+	</summer>
+
+	<!--
+	    We use one switch with the following modes:
+	    "/controls/switches/cabin-pressure": DUMP (-1), OFF (0), 10K (1).
+	    Note that mode 0 is the default.
+
+	    This switch along with other conditions, defines the final pressurisation mode.
+	    The modes are:
+	    OFF (0):	No power or bleed air pressure to engage pressurisation
+	    DUMP (-1):	Switch at DUMP position and DC power is available
+	    10K (1):	Switch at 10K position and bleed air pressure is avilable
+	    Modes (0) and (-1) are similar in that they lead to ambient pressure. They
+	    differ in the rate of depressurisation: one leaks the other dumps.
+	-->
+
+	<!-- switch to define active pressure dumping -->
+	<switch name="/controls/pressurization/dump">
+	    <description> Engage pressure dumping</description>
+	    <default value="0"/>
+	    <test value="1">
+		/controls/switches/cabin-pressure EQ -1
+		systems/electrical/dc-power EQ 1
+	    </test>
+	    <!-- Also when the cockpit door is open -->
+	    <test value="1">
+		/controls/doors/cockpit-door/position-norm GT 0
+	    </test>
+	</switch>
+
+	<!-- switch to define the actual pressurisation mode -->
+	<switch name="/controls/pressurization/mode">
+	    <description> Pressurisation system mode </description>
+	    <default value="/controls/switches/cabin-pressure"/>
+	    <!-- cockpit pressure dump switch is ON (depressurisation) -->
+	    <test value="-1">
+		/controls/pressurization/dump EQ 1
+	    </test>
+	    <!-- we need enough bleed air supply pressure except when dumping -->
+	    <test value="0">
+		/controls/pneumatic/engine[0]/bleed EQ 0
+		/controls/pneumatic/engine[1]/bleed EQ 0
+		/controls/pneumatic/engine[2]/bleed EQ 0
+		/controls/pneumatic/engine[3]/bleed EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/pressurisation/schedule-psi">
+	    <description> Pressure target for 10K schedule </description>
+	    <default value="/systems/static/pressure-psi"/>
+	    <!-- Use the pressure at 10,000 ft until 28,000 ft -->
+	    <test value="10.108">
+		position/h-sl-ft GT 10000
+		position/h-sl-ft LE 28000
+	    </test>
+	    <!-- Use +5 psi at higher altitudes -->
+	    <test value="systems/pressurisation/pressure-limit-psi">
+		position/h-sl-ft GT 28000
+	    </test>
+	</switch>
+
+	<!-- Select the target pressure from the schedule pressure -->
+	<switch name="/instrumentation/pressurisation/target-cabin-pressure-psi">
+	    <description> Target cockpit pressure based on selected schedule </description>
+	    <!-- The 10K pressure schedule is preferred -->
+	    <default value="systems/pressurisation/schedule-psi"/>
+	    <!--
+		Use ambient if the the cockpit pressure dump switch is ON or
+		the pressurisation is not engaged
+	    -->
+	    <test logic="OR" value="/systems/static/pressure-psi">
+		/controls/pressurization/mode LE 0
+	    </test>
+	</switch>
+
+	<!-- pressure difference between cockpit and target -->
+	<summer name="systems/pressurisation/delta-pressure-psi">
+	    <input> /instrumentation/pressurisation/cabin-pressure-psi </input>
+	    <input> -/instrumentation/pressurisation/target-cabin-pressure-psi </input>
+	</summer>
+
+	<!-- pressure difference between cockpit and ambient -->
+	<summer name="/instrumentation/pressurisation/delta-pressure-psi">
+	    <input> /instrumentation/pressurisation/cabin-pressure-psi </input>
+	    <input> -/systems/static/pressure-psi </input>
+	</summer>
+
+	<!--
+	    Convert the desired cabin vertical speed in fpm to an equivalent
+	    cabin pressure rate in psi / sec. This varies by altitude, but below
+	    10,000 ft, 1,000 fpm is roughly 0.5 psi / min. At 50,000, 1,000 fpm is
+	    roughly 0.01 psi / min. The maximum rate is 5,000 fpm which at 5,000 ft
+	    is equivalent to (0.5 * 5) / 60 = 0.04167 psi/sec.
+
+	    With the switch "/controls/pressurization/dump" ON, the cockpit
+	    depressurisation or repressurisation occurs very rapidly.
+	-->
+	<fcs_function name="/controls/pressurization/cabin-pressure-rate-sec">
+	    <description> Cockpit pressure change rate </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> position/h-sl-ft </independentVar>
+		    <independentVar lookup="column"> /controls/pressurization/dump </independentVar>
+		    <tableData>
+				0		1
+			5000	0.04167		0.5
+			10000	0.03333		0.5
+			15000	0.03017		0.5
+			20000	0.02567		0.5
+			25000	0.02167		0.5
+			30000	0.01817		0.5
+			35000	0.01500		0.5
+			40000	0.01250		0.5
+			45000	0.01017		0.5
+			50000	0.00817		0.5
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    Set the pressure outflow when dumping pressure: this happens very rapidly.
+	-->
+	<fcs_function name="/controls/pressurization/outflow-valve">
+	    <description> Cabin depressurization rate </description>
+	    <function>
+		<product>
+		    <property> /controls/pressurization/dump </property>
+		    <min>
+			<property> systems/pressurisation/delta-pressure-psi </property>
+			<property> /controls/pressurization/cabin-pressure-rate-sec </property>
+		    </min>
+		</product>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+
+    <!--
+	This channel manages the windshield and window deicing. It must run continually.
+    -->
+    <channel name="Deicing" execrate="8">
+
+	<!--
+	    Assume that the two heat sources for the windshield and windows:
+	    1. the environment and
+	    2. regulated bleed air supplied for windshield deicing.
+	    At high speed and altitudes we limit the effect of the enviromental cooling
+	    because the air is heated by the aircraft body.
+	    Bleed air temperature is controlled by the pilot.
+	-->
+
+	<fcs_function name="systems/heat/body-heat-degc">
+	    <description> 
+		Heat produced by the aircaft body above ambient temperature
+	    </description>
+	    <function>
+		<!-- Assume body heating only starts at 10,000 ft and above Mach 0.5 -->
+		<table>
+		    <independentVar lookup="row"> position/h-sl-ft </independentVar>
+		    <independentVar lookup="column"> velocities/mach </independentVar>
+		    <tableData>
+				0.0	0.5	1.0
+			10000	0	0	0
+			20000 	0	6	9
+			35000 	0	4	7
+			45000 	0	2	4
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- total heat from external sources -->
+	<summer name="systems/heat/external-degc">
+	    <input> systems/heat/body-heat-degc </input>
+	    <input> /environment/temperature-degc </input>
+	    <clipto>
+		<min>-50.0</min>
+		<max> 60.0</max>
+	    </clipto>
+	</summer>
+
+	<!--
+	    If the cockpit hatch is open, most of the cooling air would exit through
+	    the cockpit openings.
+	-->
+	<switch name="systems/heat/airflow-valve">
+	    <description> Airflow Value Control </description>
+	    <default value="1"/>
+	    <test  logic="OR" value="0">
+		/controls/anti-ice/window-heat EQ 0
+		/controls/doors/cockpit-door/position-norm GT 0
+	    </test>
+	</switch>
+
+	<!--
+	    The proportion of heat for the winshield from internal sources depends on the
+	    hatch position. If completely sealed, we assume 90%; when fully open, then 0%.
+	-->
+	<scheduled_gain name="systems/heat/internal-norm">
+	    <input> systems/heat/airflow-valve </input>
+	    <table>
+		<independentVar> /controls/doors/cockpit-door/position-norm </independentVar>
+		<tableData>
+		    0.0		0.90
+		    1.0		0.00
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<!-- proportion of  heat from external sources -->
+	<summer name="systems/heat/external-norm">
+	    <input> -systems/heat/internal-norm </input>
+	    <bias> 1.0 </bias>
+	</summer>
+
+	<!-- add the two weighted heat sources to get the window heat -->
+	<fcs_function name="/controls/anti-ice/window-heat-degc">
+	    <description> 
+		Heat available to the windows and windsheield from all sources
+	    </description>
+	    <function>
+		<sum>
+		    <product>
+			<property> systems/heat/external-degc </property>
+			<property> systems/heat/external-norm </property>
+		    </product>
+		    <product>
+			<property> /instrumentation/pressurisation/cabin-temperature-degc </property>
+			<property> systems/heat/internal-norm </property>
+		    </product>
+		</sum>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+    <!--
+	This channel manages the window/windsheild fog and frost effects.
+	It must run continually.
+    -->
+    <channel name="Fog and Frost" execrate="8">
+
+	<!--
+	    The dew point is the temperature to which air must be cooled to become
+	    saturated with water vapor, assuming constant air pressure and water content.
+	    When cooled below the dew point, moisture capacity is reduced and airborne water
+	    vapor will condense to form dew. When this occurs via contact with a colder surface,
+	    dew will form on that surface.
+	    The dew point is affected by humidity. When there is more moisture in the air,
+	    the dew point is higher.
+	    When the temperature is below the freezing point of water, the dew point is called
+	    the frost point, as frost is formed via deposition rather than condensation.
+
+	    There is also a very simple approximation that allows conversion between the dew point,
+	    temperature, and relative humidity. This approach is accurate to within about ±1 °C as
+	    long as the relative humidity is above 50%:
+	    T_dp ≈ T − [ 100 − RH ] / 5;
+	    RH ≈ 100 − 5 * (T − T_dp)
+	    This can be expressed as a simple rule of thumb: 
+	    For every 1°C difference in the dew point and dry bulb temperatures, the relative humidity
+	    decreases by 5%, starting with RH = 100% when the dew point equals the dry bulb temperature.
+
+	    For temperatures in degrees Fahrenheit, these approximations work out to:
+	    T_dp ≈ T − 9/25 * (100 − RH);
+	    RH ≈ 100 − 25/9 * (T − T_dp)
+	    Thus, for every 10 percent lower RH, the dew point drops 3°F.
+
+	    A well-known approximation used to calculate the dew point, T_dp, given just the actual
+	    ("dry bulb") air temperature, T (in degrees Celsius) and relative humidity (in percent), RH,
+	    is the Magnus formula:
+	    γ (T, RH) = ln(RH /100) + b * T / [c + T];
+	    T_dp = c * γ(T, RH) / [ b − γ(T, RH),
+	    where a = 6.1121 mbar, b = 18.678, c = 257.14 °C, d = 234.5 °C.
+
+	    Reference: https://en.wikipedia.org/wiki/Dew_point
+	-->
+
+	<!-- temperature difference from dewpoint -->
+	<summer name="systems/heat/dewpoint-diff-degc">
+	    <input> /controls/anti-ice/window-temperature-degc </input>
+	    <input> -/environment/dewpoint-degc </input>
+	</summer>
+
+	<!-- normalise the difference -->
+	<fcs_function name="systems/heat/dewpoint-diff-norm">
+	    <description>
+		Difference between surface temperature and dew point normalised
+	    </description>
+	    <function>
+		<quotient>
+		    <property> systems/heat/dewpoint-diff-degc </property>
+		    <value> 10 </value>
+		</quotient>
+	    </function>
+	    <clipto>
+		<min>-1.0 </min>
+		<max> 1.0 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    Set fog and frost levels.
+	    Without hot-air deicing, forward visibility is unsatisfactory under all
+	    icing conditions. ice build up occurs very rapidly and disssipates very
+	    slowly, even after decent to lower warmer altitudes. Hot air deicing
+	    helps improve visibility in rain.
+	-->
+	<fcs_function name="systems/heat/moisture-level">
+	    <description> 
+		Level of moisture condensation (1 - 5)
+	    </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> systems/heat/dewpoint-diff-norm </independentVar>
+		    <tableData>
+			-1.00	5.0
+			-0.00	0.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<switch name="systems/heat/fog-level">
+	    <description> Fog Level (1 -5) </description>
+	    <default value="systems/heat/moisture-level"/>
+	    <test  logic="OR" value="0">
+		/environment/dewpoint-degc LT 0
+	    </test>
+	</switch>
+
+	<switch name="systems/heat/frost-level">
+	    <description> Frost Level (1 -5) </description>
+	    <default value="systems/heat/moisture-level"/>
+	    <test  logic="OR" value="0">
+		/environment/dewpoint-degc GE 0
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

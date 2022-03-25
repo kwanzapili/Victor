@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- copied from the WE177B model and rescaled  -->
+    <path>Tallboy.ac</path>
+
+    <animation>
+	<type>select</type>
+	<object-name>Tallboy</object-name>
+	<condition>
+	    <and>
+		<greater-than>
+		    <property>controls/doors/bomb-bay/position-norm</property>
+		    <value>0.05</value>
+		</greater-than>
+		<greater-than>
+		    <property>controls/armament/station[12]/units</property>
+		    <value>0</value>
+		</greater-than>
+	    </and>
+	</condition>
+    </animation>
+
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>10000</max-m>
+    </animation>
+
+</PropertyList>

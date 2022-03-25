@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!--
+    Bomb load 48 x 1,000lb bombs in 12 groups of 4
+
+	Relative to the (0,0,0) point at the nose, the bomb bay starts at point
+	(15,0,0.5) and is 7.8m long, 1.8m wide and 1.4m deep.
+
+	Each bomb is 2m long. They are mounted as a
+	layer of 3 with a layer of 4 above, 3 deep, i.e from the front:
+
+	For convenience sake, we assume each frame has 16 bombs so that we
+	model 3 frames where each unit represents 4 bombs:
+	x x x x
+	x x x x
+	x x x x
+    -->
+
+    <!-- First frame -->
+    <model>
+	<name>Bombs-F1</name>
+	<path>Aircraft/victor/Models/bombs-frame1.xml</path>
+ 	<offsets>
+	    <x-m>19.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m> 0.1</z-m>
+	</offsets>
+    </model>
+
+    <!-- Second frame -->
+    <model>
+	<name>Bombs-F2</name>
+	<path>Aircraft/victor/Models/bombs-frame2.xml</path>
+ 	<offsets>
+	    <x-m>19.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.3</z-m>
+	</offsets>
+    </model>
+
+    <!-- Third frame -->
+    <model>
+	<name>Bombs-F3</name>
+	<path>Aircraft/victor/Models/bombs-frame3.xml</path>
+ 	<offsets>
+	    <x-m>19.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.7</z-m>
+	</offsets>
+    </model>
+
+<!-- ================== Nuclear Bombs ================== -->
+
+    <!-- Blue Danube Nuclear bomb -->
+    <model>
+	<name>BlueDanube</name>
+	<path>Aircraft/victor/Models/BlueDanube.xml</path>
+	<offsets>
+	    <x-m>18.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.2</z-m>
+	</offsets>
+    </model>
+
+    <!-- Grand Slam Nuclear bomb -->
+    <model>
+	<name>GrandSlam</name>
+	<path>Aircraft/victor/Models/GrandSlam.xml</path>
+	<offsets>
+	    <x-m>19.8</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+
+    <!-- Red Beard Nuclear bomb -->
+    <model>
+	<name>RedBeard</name>
+	<path>Aircraft/victor/Models/RedBeard.xml</path>
+	<offsets>
+	    <x-m>18.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+
+    <!-- Tall Boy Nuclear bombs (x 2) -->
+    <model>
+	<name>Tallboy-1</name>
+	<path>Aircraft/victor/Models/Tallboy.xml</path>
+        <condition>
+                <greater-than>
+                    <property>controls/armament/station[12]/units</property>
+                    <value>0</value>
+                </greater-than>
+        </condition>
+	<offsets>
+	    <x-m>19.7</x-m>
+	    <y-m>-0.4</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+    <model>
+	<name>Tallboy-2</name>
+	<path>Aircraft/victor/Models/Tallboy.xml</path>
+        <condition>
+                <greater-than>
+                    <property>controls/armament/station[12]/units</property>
+                    <value>1</value>
+                </greater-than>
+        </condition>
+	<offsets>
+	    <x-m>19.7</x-m>
+	    <y-m> 0.4</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+
+    <!-- WE117A Nuclear bomb -->
+    <model>
+	<name>WE177A</name>
+	<path>Aircraft/victor/Models/WE177A.xml</path>
+	<offsets>
+	    <x-m>18.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+
+    <!-- WE117B Nuclear bomb -->
+    <model>
+	<name>WE177B</name>
+	<path>Aircraft/victor/Models/WE177B.xml</path>
+	<offsets>
+	    <x-m>18.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.5</z-m>
+	</offsets>
+    </model>
+
+    <!-- Yellow Sun Nuclear bomb -->
+    <model>
+	<name>YellowSun</name>
+	<path>Aircraft/victor/Models/YellowSun.xml</path>
+	<offsets>
+	    <x-m>18.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-0.3</z-m>
+	</offsets>
+    </model>
+
+</PropertyList>

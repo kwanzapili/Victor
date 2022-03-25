@@ -1,0 +1,1106 @@
+<?xml version="1.0"?>
+
+<system name="Electrical system">
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!--
+	Switches:
+	generator on/off
+	main power on/off
+	(external truck)
+	Instruments on/off
+	Lights:
+
+	Fuses:
+	Battery
+
+	Relays:
+
+	Most channels need to be active all the time
+    -->
+
+    <channel execrate="4" name="AC">
+
+	<!--
+	    Generate reserve power: Ram air turbine (RAT) driving a 17 kVA alternator
+	    at altitudes above 20,000 ft (6,100 m)
+	-->
+	<fcs_function name="systems/electrical/generator-reserve-cmd">
+	    <description>
+		Generator reserve (Ram Air turbine) running command
+	    </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> velocities/vc-kts </independentVar>
+		    <independentVar lookup="column"> position/h-agl-ft </independentVar>
+		    <tableData>
+				0	10000	20000	30000
+			0.0	0.0	0.0	0.0	0.0
+			145	0.0	0.0	0.0	0.5
+			160	0.0	0.0	0.5	1.0
+			180	0.0	0.5	1.0	1.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- this will be the rpm source for the standby generator -->
+	<fcs_function name="systems/electrical/generator-reserve-rpm">
+	    <description>
+		Generator reserve (Ram Air turbine) running speed
+	    </description>
+	    <function>
+		<product>
+		    <property>/controls/switches/RAT</property>
+		    <table>
+			<independentVar lookup="row">/velocities/airspeed-kt</independentVar>
+			<independentVar lookup="column">systems/electrical/generator-reserve-cmd</independentVar>
+			<tableData>
+				    0    1
+			    0.0	    0.0  0
+			    145.8   0.0  1000
+			    727.0   0.0  12000
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!-- the properties velocities/xxx and gear/unit[?]/WOW change too often at the start -->
+	<switch name="systems/electrical/ground-power">
+	    <description>
+		External AC power available
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+		/instrumentation/fmc/flight-mode LT 3
+		/controls/gear/brake-parking EQ 1
+	    </test>
+	    <output>/instrumentation/annunciator/ground-power</output>
+	</switch>
+
+	<switch name="/controls/electric/external-power">
+	    <description>
+		External AC power disconnect
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="/controls/electric/external-power">
+		systems/electrical/ground-power EQ 1
+	    </test>
+	</switch>
+
+	<!-- just an animation of the GPU wind down -->
+	<kinematic name="systems/electrical/gpu-generator">
+	    <description> GPU wind up/down </description>
+	    <input> /controls/electric/external-power </input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>4</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!--
+	    The AC buses are interconnected and thus we end up in a cycle of
+	    dependency whereby each assumes that it is getting power from
+	    another bus whereas there is in fact no power being generated.
+	    So we have to test if some generator is actually working.
+	    If no generator is working, all buses fall to 0.
+	-->
+	<summer name="systems/electrical/generators-total">
+	    <description> Number of generators working </description>
+	    <input> /controls/electric/external-power </input>
+	    <input> /controls/electric/engine[0]/generator </input>
+	    <input> /controls/electric/engine[1]/generator </input>
+	    <input> /controls/electric/engine[2]/generator </input>
+	    <input> /controls/electric/engine[3]/generator </input>
+	    <input> /controls/electric/APU-generator </input>
+	</summer>
+
+	<switch name="/systems/electrical/bus/ground-ac-bus">
+	    <description>
+		Ground AC bus reset
+	    </description>
+	    <default value="/systems/electrical/bus/ground-ac-bus"/>
+	    <test logic="AND" value="0">
+		/controls/electric/external-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/ac-bus[0]">
+	    <description> Engine 1 generator </description>
+	    <default value="/systems/electrical/bus/ac-bus[0]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/engine[0]/generator EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/ac-bus[1]">
+	    <description> Engine 2 generator </description>
+	    <default value="/systems/electrical/bus/ac-bus[1]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/engine[1]/generator EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/ac-bus[2]">
+	    <description> Engine 3 generator </description>
+	    <default value="/systems/electrical/bus/ac-bus[2]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/engine[2]/generator EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/ac-bus[3]">
+	    <description> Engine 4 generator </description>
+	    <default value="/systems/electrical/bus/ac-bus[3]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/engine[3]/generator EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<!--
+	    Airborne auxiliary power plant (AAPP) is a Rover gas turbine driving a
+	    40kVA alternator, which could be started once the aircraft was below an
+	    altitude of 30,000 ft (9,100 m)
+	-->
+	<switch name="/systems/electrical/bus/apu-ac-bus">
+	    <description> APU generator </description>
+	    <default value="/systems/electrical/bus/apu-ac-bus"/>
+	    <test logic="OR" value="0">
+		/controls/electric/APU-generator EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<!-- switch on emergency power -->
+	<switch name="systems/electrical/standby-power">
+	    <description>
+		Deploy reserve power when others fail
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/electrical/generators-total EQ 0
+		systems/electrical/generator-reserve-rpm GT 500
+	    </test>
+	</switch>
+
+	<!-- turn off standby bus when not in use -->
+	<switch name="/systems/electrical/bus/standby">
+	    <description> Standby Bus </description>
+	    <default value="/systems/electrical/bus/standby"/>
+	    <test logic="AND" value="0">
+		systems/electrical/standby-power EQ 0
+	    </test>
+	</switch>
+
+	<!--
+	    AC power is still available even when the electrical system fails,
+	    providing that the standby generator is on. We will lneed to reset the
+	    electrical system in some nasal module.
+	-->
+	<switch name="systems/electrical/ac-power">
+	    <description> AC power available </description>
+	    <default value="0"/>
+	    <test logic="OR" value="0">
+		<!-- no power available -->
+		systems/electrical/generators-total EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	    <test logic="OR" value="1">
+		/systems/electrical/bus/ground-ac-bus GT 100
+		/systems/electrical/bus/ac-bus[0] GT 100
+		/systems/electrical/bus/ac-bus[1] GT 100
+		/systems/electrical/bus/ac-bus[2] GT 100
+		/systems/electrical/bus/ac-bus[3] GT 100
+		/systems/electrical/bus/apu-ac-bus GT 100
+		/systems/electrical/bus/standby GT 100
+	    </test>
+	</switch>
+
+	<!-- turn consumer buses on/off depending on AC power availability -->
+
+	<switch name="/systems/electrical/bus/external-lights">
+	    <description>
+		External Lights AC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/external-lights"/>
+	    <test logic="OR" value="0">
+		systems/electrical/ac-power EQ 0
+		/controls/electric/master-switch EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/internal-lights">
+	    <description>
+		Internal Lights AC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/internal-lights"/>
+	    <test logic="OR" value="0">
+		systems/electrical/ac-power EQ 0
+		/controls/electric/master-switch EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/main-ac-bus">
+	    <description>
+		Distribution AC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/main-ac-bus"/>
+	    <test logic="AND" value="0">
+		systems/electrical/ac-power EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <channel execrate="4" name="DC">
+
+	<!-- If the electrical system fails, all DC power is lost -->
+
+	<switch name="/systems/electrical/bus/battery[0]">
+	    <description>
+		Battery No 1 is available
+	    </description>
+	    <default value="/systems/electrical/bus/battery[0]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/battery-switch EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/battery[1]">
+	    <description>
+		Battery No 2 is available
+	    </description>
+	    <default value="/systems/electrical/bus/battery[1]"/>
+	    <test logic="OR" value="0">
+		/controls/electric/battery-switch EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/apu-dc-bus">
+	    <description>
+		APU DC power available
+	    </description>
+	    <default value="/systems/electrical/bus/apu-dc-bus"/>
+	    <test logic="AND" value="0">
+		/systems/electrical/bus/apu-ac-bus LT 100
+	    </test>
+	</switch>
+
+	<!-- Function that computes if the left/right engines TRUs are generating DC power -->
+	<fcs_function name="systems/electrical/trus-left">
+	    <description>
+		DC power from the left engines transformer-rectifier units (TRUs)
+	    </description>
+	    <function>
+		<sum>
+		    <product>
+			<property> /controls/electric/engine[0]/bus-tie </property>
+			<property> /controls/electric/engine[0]/generator </property>
+		    </product>
+		    <product>
+			<property> /controls/electric/engine[1]/bus-tie </property>
+			<property> /controls/electric/engine[1]/generator </property>
+		    </product>
+		</sum>
+	    </function>
+	    <clipto>
+		<min> 0 </min>
+		<max> 2 </max>
+	    </clipto>
+	</fcs_function>
+
+	<fcs_function name="systems/electrical/trus-right">
+	    <description>
+		DC power from the right engines transformer-rectifier units (TRUs)
+	    </description>
+	    <function>
+		<sum>
+		    <product>
+			<property> /controls/electric/engine[2]/bus-tie </property>
+			<property> /controls/electric/engine[2]/generator </property>
+		    </product>
+		    <product>
+			<property> /controls/electric/engine[3]/bus-tie </property>
+			<property> /controls/electric/engine[3]/generator </property>
+		    </product>
+		</sum>
+	    </function>
+	    <clipto>
+		<min> 0 </min>
+		<max> 2 </max>
+	    </clipto>
+	</fcs_function>
+
+	<switch name="/systems/electrical/bus/dc-bus[0]">
+	    <description>
+		Left DC bus powered
+	    </description>
+	    <default value="/systems/electrical/bus/dc-bus[0]"/>
+	    <test logic="OR" value="0">
+		systems/electrical/trus-left EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/dc-bus[1]">
+	    <description>
+		Right DC bus powered
+	    </description>
+	    <default value="/systems/electrical/bus/dc-bus[1]"/>
+	    <test logic="OR" value="0">
+		systems/electrical/trus-right EQ 0
+		/damage/systems/electrical-condition LT 0.5
+	    </test>
+	</switch>
+
+	<switch name="systems/electrical/dc-power">
+	    <description>
+		DC power available
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		/systems/electrical/bus/battery[0] GT 14
+		/systems/electrical/bus/battery[1] GT 14
+		/systems/electrical/bus/apu-dc-bus GT 14
+		/systems/electrical/bus/dc-bus[0] GT 14
+		/systems/electrical/bus/dc-bus[1] GT 14
+	    </test>
+	</switch>
+
+	<!-- turn consumer buses on/off depending on DC power availability -->
+
+	<switch name="/systems/electrical/bus/avionics">
+	    <description>
+		Avionics DC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/avionics"/>
+	    <test logic="OR" value="0">
+		systems/electrical/dc-power EQ 0
+		/controls/switches/master-avionics EQ 0
+		/controls/electric/master-switch EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/dc-lights">
+	    <description>
+		Lights DC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/dc-lights"/>
+	    <test logic="OR" value="0">
+		systems/electrical/dc-power EQ 0
+		/controls/electric/master-switch EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/bus/main-dc-bus">
+	    <description>
+		Master DC Bus
+	    </description>
+	    <default value="/systems/electrical/bus/main-dc-bus"/>
+	    <test logic="OR" value="0">
+		systems/electrical/dc-power EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <channel execrate="4" name="Instruments">
+
+	<!-- Reset values to defaults whenever the relevant switch is off -->
+
+	<switch name="systems/electrical/avionics-power">
+	    <description>
+		Power switch for dependencies of the avionics bus
+	    </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		systems/electrical/dc-power EQ 0
+		/systems/electrical/bus/avionics EQ 0
+	    </test>
+	</switch>
+
+	<!-- the ADF has a function knob to turn it off -->
+	<switch name="/instrumentation/adf/power-btn">
+	    <description>
+		Power Button for ADF
+	    </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+		/instrumentation/adf/func-knob EQ 0
+	    </test>
+	</switch>
+
+	<!-- Define whether the A/G radar is powered (by A/C power) -->
+	<switch name="/instrumentation/air-ground-radar/power-btn">
+	    <description>
+		Power Button for Air Ground Radar
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/electrical/ac-power EQ 1
+		/controls/electric/master-switch EQ 1
+	    </test>
+	</switch>
+
+	<!-- use a power switch for comm radios seperate from the power button -->
+
+	<switch name="/instrumentation/comm[0]/power-btn">
+	    <description>
+		Power Button for Comm 1
+	    </description>
+	    <default value="/instrumentation/comm[0]/power-switch"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/comm[1]/power-btn">
+	    <description>
+		Power Button for Comm 2
+	    </description>
+	    <default value="/instrumentation/comm[1]/power-switch"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<!-- the KDI-572 has a switch to turn it off -->
+	<switch name="/instrumentation/dme/power-btn">
+	    <description>
+		Power Button for DME
+	    </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+		/instrumentation/dme/switch-position EQ 0
+	    </test>
+	</switch>
+
+	<!--
+	    The marker beacons feed off nav[0] power, so we set the power button
+	    according to the power on Nav1.
+	-->
+	<switch name="/instrumentation/marker-beacon/power-btn">
+	    <description>
+		Power Button for Marker Beacons
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		/systems/electrical/outputs/nav[0] GT 1
+	    </test>
+	</switch>
+
+	<!-- use a power switch for nav radios seperate from the power button -->
+
+	<switch name="/instrumentation/nav[0]/power-btn">
+	    <description>
+		Power Button for Nav 1
+	    </description>
+	    <default value="/instrumentation/nav[0]/power-switch"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/nav[1]/power-btn">
+	    <description>
+		Power Button for Nav 2
+	    </description>
+	    <default value="/instrumentation/nav[1]/power-switch"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<!-- Define whether the radar altimeter is powered (by A/C power) -->
+	<switch name="/instrumentation/radar-altimeter/power-btn">
+	    <description>
+		Power Button for Radar Altimeter
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/electrical/ac-power EQ 1
+		/controls/electric/master-switch EQ 1
+		/instrumentation/radar-altimeter/serviceable EQ 1
+	    </test>
+	</switch>
+
+	<!-- Set TACAN power on/off -->
+	<switch name="/instrumentation/tacan/power-on">
+	    <description> TACAN power switch </description>
+	    <default value="0"/>
+	    <test value="1">
+		<!-- Tacan switch is not in the off position -->
+		/instrumentation/tacan/switch-position GT 0
+		/controls/switches/master-avionics EQ 1
+		<!-- there must be enough power -->
+		/systems/electrical/bus/avionics GT 10
+	    </test>
+	</switch>
+
+	<!-- the transponder has a knob-mode button to turn it off -->
+	<switch name="/instrumentation/transponder/power-btn">
+	    <description>
+		Power Button for Transponder
+	    </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+		/instrumentation/transponder/inputs/knob-mode EQ 0
+	    </test>
+	</switch>
+
+
+	<!--
+	    ~~~~~~~~
+	    DC Power
+	    ~~~~~~~~
+	-->
+
+	<switch name="/systems/electrical/outputs/adf">
+	    <description>
+		Power for ADF
+	    </description>
+	    <default value="/systems/electrical/outputs/adf"/>
+	    <test logic="OR" value="0">
+		/instrumentation/adf/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/avionics-fan">
+	    <description>
+		Power for Avionics Fan
+	    </description>
+	    <default value="/systems/electrical/outputs/avionics-fan"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/comm[0]">
+	    <description>
+		Power for Comm 0
+	    </description>
+	    <default value="/systems/electrical/outputs/comm[0]"/>
+	    <test logic="OR" value="0">
+		/instrumentation/comm[0]/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/comm[1]">
+	    <description>
+		Power for Comm 1
+	    </description>
+	    <default value="/systems/electrical/outputs/comm[1]"/>
+	    <test logic="OR" value="0">
+		/instrumentation/comm[1]/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/dme">
+	    <description>
+		Power for DME
+	    </description>
+	    <default value="/systems/electrical/outputs/dme"/>
+	    <test logic="OR" value="0">
+		/instrumentation/dme/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/gps">
+	    <description>
+		Power for GPS
+	    </description>
+	    <default value="/systems/electrical/outputs/gps"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/hydraulic-pump[0]">
+	    <description>
+		Power for Hydraulic System 1
+	    </description>
+	    <default value="/systems/electrical/outputs/hydraulic-pump[0]"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-dc-bus EQ 0
+		/controls/hydraulic/system[0]/electric-pump EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/hydraulic-pump[1]">
+	    <description>
+		Power for Hydraulic System 2
+	    </description>
+	    <default value="/systems/electrical/outputs/hydraulic-pump[1]"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-dc-bus EQ 0
+		/controls/hydraulic/system[1]/electric-pump EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/hydraulic-pump[2]">
+	    <description>
+		Power for Hydraulic System 3
+	    </description>
+	    <default value="/systems/electrical/outputs/hydraulic-pump[2]"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-dc-bus EQ 0
+		/controls/hydraulic/system[2]/electric-pump EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/hydraulic-pump[3]">
+	    <description>
+		Power for Hydraulic System 4
+	    </description>
+	    <default value="/systems/electrical/outputs/hydraulic-pump[3]"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-dc-bus EQ 0
+		/controls/hydraulic/system[3]/electric-pump EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/instruments">
+	    <description>
+		Instrument Power
+	    </description>
+	    <default value="/systems/electrical/outputs/instruments"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/leds">
+	    <description>
+		Power for LED lights
+	    </description>
+	    <default value="/systems/electrical/outputs/leds"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/dc-lights EQ 0
+		/controls/electric/master-switch EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/mk-viii">
+	    <description>
+		Power for Ground proximity warning system
+	    </description>
+	    <default value="/systems/electrical/outputs/mk-viii"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/nav[0]">
+	    <description>
+		Power for Nav 1
+	    </description>
+	    <default value="/systems/electrical/outputs/nav[0]"/>
+	    <test logic="OR" value="0">
+		/instrumentation/nav[0]/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/nav[1]">
+	    <description>
+		Power for Nav 2
+	    </description>
+	    <default value="/systems/electrical/outputs/nav[1]"/>
+	    <test logic="OR" value="0">
+		/instrumentation/nav[1]/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/tacan">
+	    <description>
+		Power for Tacan
+	    </description>
+	    <default value="/systems/electrical/outputs/tacan"/>
+	    <test logic="OR" value="0">
+		/instrumentation/tacan/power-on EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/transponder">
+	    <description>
+		Power for Transponder
+	    </description>
+	    <default value="/systems/electrical/outputs/transponder"/>
+	    <test logic="OR" value="0">
+		/instrumentation/transponder/power-btn EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/turn-coordinator">
+	    <description>
+		Power for Turn Coordinator
+	    </description>
+	    <default value="/systems/electrical/outputs/turn-coordinator"/>
+	    <test logic="OR" value="0">
+		systems/electrical/avionics-power EQ 0
+	    </test>
+	</switch>
+
+	<!-- Fuel Pumps -->
+
+	<switch name="/systems/electrical/outputs/fuel-pump[0]">
+	    <description>
+		Power for left fuel pump generator bus
+	    </description>
+	    <default value="/systems/electrical/outputs/fuel-pump[0]"/>
+	    <!-- either switch will power the bus -->
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /controls/engines/engine[0]/fuel-pump EQ 0
+		    /controls/engines/engine[1]/fuel-pump EQ 0
+		</test>
+		/systems/electrical/bus/main-dc-bus EQ 0
+	    </test>
+	    <output>/systems/electrical/outputs/fuel-pump[1]</output>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/fuel-pump[2]">
+	    <description>
+		Power for right fuel pump generator bus
+	    </description>
+	    <default value="/systems/electrical/bus/main-dc-bus"/>
+	    <!-- either switch will power the bus -->
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /controls/engines/engine[2]/fuel-pump EQ 0
+		    /controls/engines/engine[3]/fuel-pump EQ 0
+		</test>
+		/systems/electrical/bus/main-dc-bus EQ 0
+	    </test>
+	    <output>/systems/electrical/outputs/fuel-pump[3]</output>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/refuel-pump">
+	    <description>
+		Power for refuelling pump
+	    </description>
+	    <default value="/systems/electrical/outputs/refuel-pump"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-dc-bus EQ 0	    
+		/controls/switches/refuel-pump EQ 0
+	    </test>
+	</switch>
+
+	<!--
+	    ===========
+	    A/C Power
+	    ===========
+	-->
+
+	<!-- Starters -->
+	<switch name="/systems/electrical/outputs/apu-starter">
+	    <description>
+		Power for APU Starter
+	    </description>
+	    <default value="/systems/electrical/outputs/apu-starter"/>
+	    <test logic="OR" value="0">
+		/controls/engines/engine[4]/starter EQ 0
+		<!-- The APU can be started by using both AC/DC sources -->
+		<test logic="AND" value="1">
+		    /systems/electrical/bus/main-ac-bus EQ 0
+		    /systems/electrical/bus/main-dc-bus EQ 0
+		</test>
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/starter[0]">
+	    <description>
+		Power for Engine 1 Starter
+	    </description>
+	    <default value="/systems/electrical/outputs/starter[0]"/>
+	    <test logic="OR" value="0">
+		/controls/engines/engine[0]/starter EQ 0
+		/systems/electrical/bus/apu-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/starter[1]">
+	    <description>
+		Power for Engine 1 Starter
+	    </description>
+	    <default value="/systems/electrical/outputs/starter[1]"/>
+	    <test logic="OR" value="0">
+		/controls/engines/engine[1]/starter EQ 0
+		/systems/electrical/bus/apu-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/starter[2]">
+	    <description>
+		Power for Engine 3 Starter
+	    </description>
+	    <default value="/systems/electrical/outputs/starter[2]"/>
+	    <test logic="OR" value="0">
+		/controls/engines/engine[2]/starter EQ 0
+		/systems/electrical/bus/apu-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/starter[3]">
+	    <description>
+		Power for Engine 4 Starter
+	    </description>
+	    <default value="/systems/electrical/outputs/starter[3]"/>
+	    <test logic="OR" value="0">
+		/controls/engines/engine[3]/starter EQ 0
+		/systems/electrical/bus/apu-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<!-- External Lights -->
+
+	<switch name="/systems/electrical/outputs/beacon">
+	    <description>
+		Power for beacon
+	    </description>
+	    <default value="/systems/electrical/outputs/beacon"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/beacon EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/landing-lights">
+	    <description>
+		Power for landing lights
+	    </description>
+	    <default value="/systems/electrical/outputs/landing-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/landing-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/logo-lights">
+	    <description>
+		Power for logo lights
+	    </description>
+	    <default value="/systems/electrical/outputs/logo-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/logo-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/nav-lights">
+	    <description>
+		Power for navigation lights
+	    </description>
+	    <default value="/systems/electrical/outputs/nav-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/nav-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/strobe-lights">
+	    <description>
+		Power for strobe lights
+	    </description>
+	    <default value="/systems/electrical/outputs/strobe-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/strobe EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/taxi-lights">
+	    <description>
+		Power for taxi lights
+	    </description>
+	    <default value="/systems/electrical/outputs/taxi-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/taxi-light EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/wing-lights">
+	    <description>
+		Power for turn-off lights
+	    </description>
+	    <default value="/systems/electrical/outputs/wing-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/turn-off-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/external-lights EQ 0
+	    </test>
+	</switch>
+
+	<!-- Internal Lights -->
+
+	<switch name="/systems/electrical/outputs/cabin-lights">
+	    <description>
+		Power for cabin dome lights
+	    </description>
+	    <default value="/systems/electrical/outputs/cabin-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/cabin-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/internal-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/instrument-lights">
+	    <description>
+		Power for instrument lights
+	    </description>
+	    <default value="/systems/electrical/outputs/instrument-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/instrument-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/internal-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/map-lights">
+	    <description>
+		Power for map lights
+	    </description>
+	    <default value="/systems/electrical/outputs/map-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/map-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/internal-lights EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/panel-lights">
+	    <description>
+		Power for panel lights
+	    </description>
+	    <default value="/systems/electrical/outputs/panel-lights"/>
+	    <test logic="OR" value="0">
+		/controls/lighting/panel-lights EQ 0
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/internal-lights EQ 0
+	    </test>
+	</switch>
+
+	<!-- Other consumers -->
+
+	<switch name="/systems/electrical/outputs/DG">
+	    <description>
+		Power for Directional Gyro (DG)
+	    </description>
+	    <default value="/systems/electrical/outputs/DG"/>
+	    <test logic="OR" value="0">
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/main-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/flaps">
+	    <description>
+		Power for Flaps
+	    </description>
+	    <default value="/systems/electrical/outputs/flaps"/>
+	    <test logic="OR" value="0">
+		systems/electrical/ac-power EQ 0
+		/systems/electrical/bus/main-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/MRG">
+	    <description>
+		Power for master reference gyro
+	    </description>
+	    <default value="/systems/electrical/outputs/MRG"/>
+	    <test logic="OR" value="0">
+		/controls/electric/master-switch EQ 0
+		/systems/electrical/bus/main-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/pitot-heat">
+	    <description>
+		Power for Pitot Heat
+	    </description>
+	    <default value="/systems/electrical/outputs/pitot-heat"/>
+	    <test logic="OR" value="0">
+		/controls/switches/pitot-heat EQ 0
+		/systems/electrical/bus/main-ac-bus EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/systems/electrical/outputs/radar">
+	    <description>
+		Power for Radar
+	    </description>
+	    <default value="/systems/electrical/outputs/radar"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/bus/main-ac-bus EQ 0
+		/instrumentation/air-ground-radar/power-btn EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!-- Utility channel that provides some additonal features -->
+    <channel execrate="8" name="General">
+
+	<!--
+	    Define the available power sources:
+	    0 = no power
+	    1 = DC power only
+	    2 = AC power only
+	    3 = Both AC and DC power
+	-->
+	<switch name="systems/electrical/power-available">
+	    <description> Type of power available </description>
+	    <default value="0"/>
+	    <!-- master switch must be ON -->
+	    <test value="0">
+		/controls/electric/master-switch EQ 0
+	    </test>
+	    <test logic="AND" value="1">
+		systems/electrical/ac-power EQ 0
+		systems/electrical/dc-power EQ 1
+	    </test>
+	    <test logic="AND" value="2">
+		systems/electrical/ac-power EQ 1
+		systems/electrical/dc-power EQ 0
+	    </test>
+	    <test logic="AND" value="3">
+		systems/electrical/ac-power EQ 1
+		systems/electrical/dc-power EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

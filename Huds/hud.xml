@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Default Aircraft Hud</name>
+    <enable3d>true</enable3d>
+
+    <import>
+	<path>Huds/Instruments/turn-bank-indicator.xml</path>
+	<y-offset>-125</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Sets/coordinates.xml</path>
+	<y-offset>180</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Instruments/compass.xml</path>
+	<y-offset>170</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Instruments/gload.xml</path>
+	<x-offset>-280</x-offset>
+	<y-offset>-130</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Sets/controls.xml</path>
+    </import>
+
+    <import>
+	<path>Huds/Sets/parameters.xml</path>
+    </import>
+
+    <import>
+	<path>Huds/Sets/autopilot.xml</path>
+	<x-offset>-100</x-offset>
+	<y-offset>150</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Sets/gps.xml</path>
+	<x-offset>-300</x-offset>
+	<y-offset>160</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Instruments/ladder.xml</path>
+    </import>
+
+    <import>
+	<path>Huds/Sets/autoland.xml</path>
+	<y-offset>150</y-offset>
+    </import>
+
+    <import>
+	<path>Huds/Instruments/dials.xml</path>
+    </import>
+
+    <import>
+	<path>Huds/Sets/indicators.xml</path>
+    </import>
+
+</PropertyList>

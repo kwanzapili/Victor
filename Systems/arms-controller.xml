@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <!--
+	===============================================================
+	Armament controllers
+	===============================================================
+    -->
+
+    <logic>
+	<name>Armament release lock</name>
+	<input>
+	    <and>
+		<property>/controls/armament/master-arm</property>
+		<equals>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>8</value>	<!-- NORMAL -->
+		</equals>
+		<greater-than>
+		    <property>/position/altitude-agl-ft</property>
+		    <property>/controls/armament/release-agl-ft</property>
+		</greater-than>
+		<less-than>
+		    <property>/orientation/roll-deg</property>
+		    <value>10</value>
+		</less-than>
+		<greater-than>
+		    <property>/orientation/roll-deg</property>
+		    <value>-10</value>
+		</greater-than>
+		<less-than>
+		    <property>/orientation/pitch-deg</property>
+		    <value>5</value>
+		</less-than>
+		<greater-than>
+		    <property>/orientation/pitch-deg</property>
+		    <value>-5</value>
+		</greater-than>
+		<not>
+		    <property>/instrumentation/fmc/wp-turn-on</property>
+		</not>
+	    </and>
+	</input>
+	<output>/controls/armament/safe-to-release</output>
+    </logic>
+
+    <!--
+	This is a convenience calculator of the proportion of bombs loaded
+	in Station 1. We just need it to be 1 above 4 bombs for an animation.
+    -->
+    <filter>
+	<name>Convential bomb load normalised</name>
+	<type>gain</type>
+	<gain>0.25</gain>   <!-- 1/4 -->
+	<input>controls/armament/station[0]/units</input>
+	<output>controls/armament/station[0]/load-norm</output>
+	<max>1</max>
+    </filter>
+
+	<!--
+	This filter models the unloading or loading of bombs by limiting the rate
+	at which the weight changes. This particularly import for the conventional
+	bombs because they cannot be all (un)loaded at once leading to a change in
+	weight of 48,000 lbs. If this happened on the ground, the plane might become
+	unstable and pitch over.
+	-->
+<filter>
+	<name>Bomb load weight</name>
+  <type>noise-spike</type>
+  <!-- change at 10,000 lb/sec -->
+  <max-rate-of-change>10000</max-rate-of-change>
+  <input>/controls/armament/bombs-weight-lbs</input>
+  <output>/fdm/jsbsim/inertia/pointmass-weight-lbs[2]</output>
+</filter>
+
+    <!--
+	===============================================================
+	Calculators
+	===============================================================
+    -->
+
+    <!-- Time lapse since impact -->
+    <filter>
+	<name>Time lapse</name>
+	<debug>false</debug>
+	<enable>
+	    <condition>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>1</gain>
+	<input>
+	    <expression>
+		<difference>
+		    <property>sim/time/elapsed-sec</property>
+		    <property>sim/armament/weapons/impact-time</property>
+		</difference>
+	    </expression>
+	    <abs type="bool">true</abs>
+	</input>
+	<output>sim/armament/weapons/time-lapse</output>
+    </filter>
+
+    <!--
+	Calculate effect from a combination of time and yield:
+	it peaks at 20 sec then holds for 1 minute before decaying down to 50% at 6 mins
+    -->
+    <filter>
+	<name>Time lapse</name>
+	<debug>false</debug>
+	<enable>
+	    <condition>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+		<less-than>
+		    <property>sim/armament/weapons/time-lapse</property>
+		    <value>400</value>
+		</less-than>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>3.0</gain>
+	<input>
+	    <expression>
+		<product>
+		    <property>sim/armament/weapons/yield-ktn</property>
+		    <table>
+			<property>sim/armament/weapons/time-lapse</property>
+			<entry><ind>0</ind><dep>0.0</dep></entry>
+			<entry><ind>2</ind><dep>0.5</dep></entry>
+			<entry><ind>10</ind><dep>0.9</dep></entry>
+			<entry><ind>20</ind><dep>1.0</dep></entry>
+			<entry><ind>80</ind><dep>1.0</dep></entry>
+			<entry><ind>360</ind><dep>0.5</dep></entry>
+		    </table>
+		</product>
+	    </expression>
+	</input>
+	<output>
+	    <property>sim/armament/weapons/effect</property>
+	</output>
+	<min> 0.3</min>
+	<max>20.0</max>
+    </filter>
+
+</PropertyList>

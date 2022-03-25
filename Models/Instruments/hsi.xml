@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <path>Aircraft/Instruments-3d/hi/hi.ac</path>
+
+    <animation include="Lighting/gauge-face.xml">
+	<object-name>Face</object-name>
+	<object-name>Front</object-name>
+    </animation>
+
+    <animation include="Lighting/switch-shiny.xml">
+	<object-name>OBS-Knob</object-name>
+	<object-name>Hdg-Knob</object-name>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>Face</object-name>
+	<object-name>HdgBug</object-name>
+	<property>/instrumentation/heading-indicator-dg/indicated-heading-deg</property>
+	<factor>-1</factor>
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>HdgBug</object-name>
+	<property>instrumentation/heading-indicator/heading-bug-deg</property>
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+    </animation>
+
+    <!--     Heading Bug control    -->
+
+    <animation>
+	<type>knob</type>
+	<object-name>Hdg-Knob</object-name>
+	<property>instrumentation/heading-indicator/heading-bug-deg</property>
+	<factor>1</factor>
+	<center>
+	    <x-m> 0.0050000</x-m>
+	    <y-m> 0.0298089</y-m>
+	    <z-m>-0.0300775</z-m>
+	</center>
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>360</max>
+		<wrap>true</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<factor>10</factor>
+		<min>0</min>
+		<max>360</max>
+		<wrap>true</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Heading Bug: %3d</label>
+		<mapping>heading</mapping>
+		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<tooltip-id>heading_bug</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!--             Heading Alignment with Compass             -->
+
+    <animation>
+	<type>knob</type>
+	<object-name>OBS-Knob</object-name>
+	<property>instrumentation/heading-indicator-dg/align-deg</property>
+	<factor>1</factor>
+	<center>
+	    <x-m> 0.0050000</x-m>
+	    <y-m>-0.0293165</y-m>
+	    <z-m>-0.0297401</z-m>
+	</center>
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<factor>0.1</factor>
+		<min>0</min>
+		<max>360</max>
+		<wrap>true</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>360</max>
+		<wrap>true</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Heading Offset: %3.2f</label>
+		<mapping>heading</mapping>
+		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<tooltip-id>heading_offset</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

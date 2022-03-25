@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+
+<!-- G-force meter -->
+
+<PropertyList>
+
+    <path>gmeter.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>g-Needle1</object-name>
+	<object-name>g-Needle2</object-name>
+	<object-name>g-Needle3</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>Face</object-name>
+	<object-name>bezeloutside</object-name>
+	<object-name>bezelinside</object-name>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>g-Needle1</object-name>
+	<property>instrumentation/accelerometer/g-load</property>
+	<interpolation>
+	    <entry><ind>-4</ind><dep>-200</dep></entry>
+	    <entry><ind>-2</ind><dep>-156</dep></entry>
+	    <entry><ind>-1</ind><dep>-134</dep></entry>
+	    <entry><ind>0</ind><dep>-112</dep></entry>
+	    <entry><ind>1</ind><dep>-90</dep></entry>
+	    <entry><ind>2</ind><dep>-68</dep></entry>
+	    <entry><ind>3</ind><dep>-46</dep></entry>
+	    <entry><ind>4</ind><dep>-24</dep></entry>
+	    <entry><ind>5</ind><dep>-2</dep></entry>
+	    <entry><ind>6</ind><dep>20</dep></entry>
+	    <entry><ind>8</ind><dep>64</dep></entry>
+	    <entry><ind>9</ind><dep>86</dep></entry>
+	    <entry><ind>10</ind><dep>107.5</dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center> 
+	<axis>
+	    <x>-1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>g-Needle2</object-name>
+	<property>instrumentation/accelerometer/pilot-gmin</property>
+	<interpolation>
+	    <entry><ind>-4</ind><dep>-200</dep></entry>
+	    <entry><ind>-2</ind><dep>-156</dep></entry>
+	    <entry><ind>-1</ind><dep>-134</dep></entry>
+	    <entry><ind>0</ind><dep>-112</dep></entry>
+	    <entry><ind>1</ind><dep>-90</dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center> 
+	<axis>
+	    <x>-1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>g-Needle3</object-name>
+	<property>instrumentation/accelerometer/pilot-gmax</property>
+	<interpolation>
+	    <entry><ind>1</ind><dep>-90</dep></entry>
+	    <entry><ind>2</ind><dep>-68</dep></entry>
+	    <entry><ind>3</ind><dep>-46</dep></entry>
+	    <entry><ind>4</ind><dep>-24</dep></entry>
+	    <entry><ind>5</ind><dep>-2</dep></entry>
+	    <entry><ind>6</ind><dep>20</dep></entry>
+	    <entry><ind>8</ind><dep>64</dep></entry>
+	    <entry><ind>9</ind><dep>86</dep></entry>
+	    <entry><ind>10</ind><dep>107.5</dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center> 
+	<axis>
+	    <x>-1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- Resize -->
+    <animation>
+	<type>scale</type>
+	<object-name>Collection1</object-name>
+	<object-name>Collection2</object-name>
+	<x-offset>1.4</x-offset>
+	<y-offset>1.4</y-offset>
+	<z-offset>1.4</z-offset>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>Face</object-name>
+    </animation>
+
+</PropertyList>

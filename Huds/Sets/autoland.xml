@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ Autoland -->
+
+    <label>
+	<x>140</x>
+	<y>0</y>
+	<width>60</width>
+	<height>10</height>
+	<box>true</box>
+	<format>LOC Armed</format>
+	<halign>center</halign>
+	<condition>
+	    <property>/instrumentation/flightdirector/loc-arm</property>
+	    <not>
+		<property>/instrumentation/flightdirector/loc-enable</property>
+	    </not>
+	</condition>
+    </label>
+
+    <label>
+	<x>140</x>
+	<y>0</y>
+	<width>60</width>
+	<height>10</height>
+	<box>true</box>
+	<format>LOC Enabled</format>
+	<halign>center</halign>
+	<condition>
+	    <property>/instrumentation/flightdirector/loc-enable</property>
+	</condition>
+    </label>
+
+    <label>
+	<x>205</x>
+	<y>0</y>
+	<width>70</width>
+	<height>10</height>
+	<box>true</box>
+	<format>APPR Armed</format>
+	<halign>center</halign>
+	<condition>
+	    <property>/instrumentation/flightdirector/appr-arm</property>
+	    <not>
+		<property>/instrumentation/flightdirector/appr-enable</property>
+	    </not>
+	</condition>
+    </label>
+
+    <label>
+	<x>205</x>
+	<y>0</y>
+	<width>70</width>
+	<height>10</height>
+	<box>true</box>
+	<format>APPR Enabled</format>
+	<halign>center</halign>
+	<condition>
+	    <property>/instrumentation/flightdirector/appr-enable</property>
+	</condition>
+    </label>
+
+    <label>
+	<x>140</x>
+	<y>10</y>
+	<width>60</width>
+	<height>10</height>
+	<box>true</box>
+	<format>Land</format>
+	<halign>center</halign>
+	<blinking>
+	    <interval>1.0</interval>
+	</blinking>
+	<condition>
+	    <and>
+		<property>/instrumentation/fmc/landing/commit</property>
+		<or>
+		    <not>
+			<property>/instrumentation/flightdirector/loc-enable</property>
+		    </not>
+		    <not>
+			<property>/instrumentation/flightdirector/appr-enable</property>
+		    </not>
+		</or>
+	    </and>
+	</condition>
+    </label>
+
+    <label>
+	<x>205</x>
+	<y>10</y>
+	<width>70</width>
+	<height>10</height>
+	<box>true</box>
+	<format>Climb</format>
+	<halign>center</halign>
+	<blinking>
+	    <interval>2.0</interval>
+	</blinking>
+	<condition>
+	    <property>/instrumentation/fmc/landing/go-around</property>
+	</condition>
+    </label>
+
+</PropertyList>

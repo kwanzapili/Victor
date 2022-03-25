@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+
+<!-- Attitude Indicator based on the master reference gyro -->
+
+<PropertyList>
+
+    <path>standby_AI.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>wingline</object-name>
+	<object-name>bankline</object-name>
+	<object-name>horizonline</object-name>
+	<object-name>flag</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>face</object-name>
+	<object-name>bezeloutside</object-name>
+	<object-name>bezelinside</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection3</name>
+	<object-name>attitude</object-name>
+	<object-name>screw</object-name>
+    </animation>
+
+    <animation> 
+	<type>rotate</type>
+	<object-name>bankline</object-name>
+	<object-name>horizonline</object-name>
+	<property>instrumentation/master-reference-gyro/indicated-roll-deg</property>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation> 
+	<type>translate</type>
+	<object-name>horizonline</object-name>
+	<property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+	<interpolation> 
+	    <entry>
+		<ind>-180</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-90</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-40</ind>
+		<dep>0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>-20</ind>
+		<dep>0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>0</ind>
+		<dep>0</dep>
+	    </entry>
+	    <entry>
+		<ind>20</ind>
+		<dep>-0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>40</ind>
+		<dep>-0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>90</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>180</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	</interpolation>
+	<axis> 
+	    <x>0</x>
+	    <y>0</y>
+	    <z>1</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>horizonline</object-name>
+	<condition>
+	    <and>
+		<greater-than>
+		    <property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+		    <value type="int">-40</value>
+		</greater-than>
+		<less-than>
+		    <property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+		    <value type="int">40</value>
+		</less-than>
+	    </and>
+	</condition>
+    </animation> 
+
+    <animation>
+	<type>select</type>
+	<object-name>flag</object-name>
+	<condition>
+	    <property>instrumentation/master-reference-gyro/off-flag</property>
+	</condition>
+    </animation>
+
+    <!-- Lighting -->
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection1</object-name>
+    </animation> 
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>face</object-name>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

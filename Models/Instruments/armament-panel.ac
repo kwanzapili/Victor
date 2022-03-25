@@ -1,0 +1,92 @@
+AC3Db
+MATERIAL "ac3dmat1" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 1 1 1  shi 20  trans 0
+MATERIAL "ac3dmat1" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 0 0 0  shi 20  trans 0
+MATERIAL "ac3dmat13" rgb 0.533333 0.533333 0.533333  amb 0.533333 0.533333 0.533333  emis 0 0 0  spec 0 0 0  shi 10  trans 0
+MATERIAL "ac3dmat1" rgb 0 0 0  amb 0 0 0  emis 0 0 0  spec 0 0 0  shi 10  trans 0
+MATERIAL "ac3dmat1" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 0.302 0.302 0.302  shi 92  trans 0
+MATERIAL "ac3dmat1" rgb 1 1 1  amb 1 1 1  emis 1 1 1  spec 0.098 0.157 0.086  shi 100  trans 0
+MATERIAL "ac3dmat13" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 1 1 1  shi 37  trans 0
+MATERIAL "ac3dmat13" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 0.298 0.298 0.298  shi 37  trans 0
+MATERIAL "ac3dmat1" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 0 0 0  shi 10  trans 0
+OBJECT world
+kids 1
+OBJECT group
+name "rip-qty"
+loc 0 0 0
+kids 4
+OBJECT poly
+name "rip-qty-x10"
+loc 0 0 -0.01
+texture "counter-drums.png"
+crease 45.000000
+numvert 4
+0 -0.00424365 -0.0026648
+0 -0.00424365 0.0026648
+0 0.00424366 0.0026648
+0 0.00424366 -0.0026648
+numsurf 1
+SURF 0x0
+mat 8
+refs 4
+3 0.500 1.00282
+2 0.002 1.00282
+1 0.002 0.903008
+0 0.500 0.903008
+kids 0
+OBJECT poly
+name "rip-qty-x1"
+loc 0 0 -0.0177
+texture "counter-drums.png"
+crease 45.000000
+numvert 4
+0 0.00424366 -0.0026648
+0 0.00424366 0.0026648
+0 -0.00424365 0.0026648
+0 -0.00424365 -0.0026648
+numsurf 1
+SURF 0x0
+mat 8
+refs 4
+0 0.500 1.00282
+1 0.002 1.00282
+2 0.002 0.903008
+3 0.500 0.903008
+kids 0
+OBJECT poly
+name "rip-intvl-x10"
+loc 0 0 0.0177
+texture "counter-drums.png"
+crease 45.000000
+numvert 4
+0 -0.00424365 -0.0026648
+0 -0.00424365 0.0026648
+0 0.00424366 0.0026648
+0 0.00424366 -0.0026648
+numsurf 1
+SURF 0x0
+mat 8
+refs 4
+3 1.00417 1.00282
+2 0.509073 1.00282
+1 0.509073 0.903008
+0 1.00417 0.903008
+kids 0
+OBJECT poly
+name "rip-intvl-x1"
+loc 0 0 0.01
+texture "counter-drums.png"
+crease 45.000000
+numvert 4
+0 0.00424366 -0.0026648
+0 0.00424366 0.0026648
+0 -0.00424365 0.0026648
+0 -0.00424365 -0.0026648
+numsurf 1
+SURF 0x0
+mat 8
+refs 4
+0 1.00417 1.00282
+1 0.509073 1.00282
+2 0.509073 0.903008
+3 1.00417 0.903008
+kids 0

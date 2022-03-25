@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+    <path>flaps.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <effect>
+	<inherits-from>Effects/model-transparent</inherits-from>
+	<object-name>vitre</object-name>
+    </effect>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>needle</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-surround.xml">
+	<object-name>fond</object-name>
+	<object-name>visses</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>face</object-name>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>needle</object-name>
+	<property>surface-positions/flap-pos-norm</property>
+	<offset-deg>180</offset-deg>
+	<factor>180</factor>
+	<axis>
+	    <x>  1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+</PropertyList>

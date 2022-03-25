@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <acquire-cruise type="bool">false</acquire-cruise>
+    <alt-acquire-mode type="bool">false</alt-acquire-mode>
+    <altitude-select type="int">0</altitude-select>
+    <appr-arm type="bool">false</appr-arm>
+    <appr-enable type="bool">false</appr-enable>
+    <appr-on type="bool">false</appr-on>
+    <autopilot-engage type="bool">false</autopilot-engage>
+    <autothrottle-engage type="bool">false</autothrottle-engage>
+    <decel-step type="int">-1</decel-step>
+    <descend-arm type="bool">false</descend-arm>
+    <fd-on type="bool">false</fd-on>
+    <fd-phase type="int">0</fd-phase>
+    <fd-signal type="int">0</fd-signal>
+    <in-approach type="bool">false</in-approach>
+    <heading-bug-deg alias="/instrumentation/heading-indicator/heading-bug-deg"/>
+    <lateral-managed-mode type="int">0</lateral-managed-mode>
+    <lateral-mode type="int">0</lateral-mode>
+    <lnav-arm type="int">0</lnav-arm>
+    <lnav type="int">0</lnav>
+    <loc-arm type="bool">false</loc-arm>
+    <loc-enable type="bool">false</loc-enable>
+    <loc-on type="bool">false</loc-on>
+    <loc-nearby type="bool">false</loc-nearby>
+    <mach-mode type="bool">false</mach-mode>
+    <mach-select type="float">0</mach-select>
+    <pitch-deg type="float">0</pitch-deg>
+    <panel-lat-mode type="int">0</panel-lat-mode>
+    <panel-vert-mode type="int">0</panel-vert-mode>
+    <past-tc type="bool">false</past-tc>
+    <past-td type="bool">false</past-td>
+    <spd-arm type="int">0</spd-arm>
+    <spd type="int">0</spd>
+    <speed-managed-mode type="int">0</speed-managed-mode>
+    <speed-mode type="int">0</speed-mode>
+    <speed-select type="int">0</speed-select>
+    <start-approach type="bool">false</start-approach>
+    <tacan-arm type="bool">false</tacan-arm>
+    <tacan-enable type="bool">false</tacan-enable>
+    <vertical-alt-mode type="int">0</vertical-alt-mode>
+    <vertical-managed-mode type="int">0</vertical-managed-mode>
+    <vertical-speed-abs type="int">0</vertical-speed-abs>
+    <vertical-speed-select type="int">0</vertical-speed-select>
+    <vertical-vs-mode type="int">0</vertical-vs-mode>
+    <vnav-arm type="int">0</vnav-arm>
+    <vnav-mode-mismatch type="bool">false</vnav-mode-mismatch>
+    <vnav-spd-mismatch type="bool">false</vnav-spd-mismatch>
+    <vnav type="int">0</vnav>
+
+</PropertyList>

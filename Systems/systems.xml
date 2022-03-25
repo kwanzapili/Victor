@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <electrical>
+	<name type="string">Victor custom electrical</name>
+	<number type="int">0</number>
+	<path>Aircraft/victor/Systems/Electrical/victor-electrical.xml</path>
+    </electrical>
+
+    <pitot>
+	<name type="string">pitot</name>
+	<number type="int">0</number>
+	<stall-deg>60</stall-deg>
+    </pitot>
+
+    <pitot>
+	<name type="string">pitot</name>
+	<number type="int">1</number>
+	<stall-deg>60</stall-deg>
+    </pitot>
+
+    <!-- 
+	Static system types:
+	Type 0 (default): the perfect sensor. No measurement failures.
+	Type 1: Dual static ports on the fuselage sides. Side-slip angle influence only.
+	Type 2: Static port on the pitot tube. Both angle of attack and side-slip influence.
+    -->
+
+    <static>
+	<name type="string">static</name>
+	<number type="int">0</number>
+	<tau>0.1</tau>
+	<type type="int">2</type>
+	<error-factor>0.5</error-factor>
+    </static>
+
+    <static>
+	<name type="string">static</name>
+	<number type="int">1</number>
+	<tau>0.1</tau>
+	<type type="int">2</type>
+	<error-factor>0.5</error-factor>
+    </static>
+
+    <!-- 
+	The hard-coded vacuum has one output property: suction-inhg. 
+	This property is used to drive gyros needed in the standard instrument implementation. 
+	The generic implementation is based on a piston-engine and the vacuum depends on the 
+	engine's rpm. For a turbine engine, the rpm is not defined. So we need to use
+	another property as source for the vacuum. If rpm times factor is greater than 
+	approx. 500 we get fully functional gyros at all (reasonable) altitudes. 
+	We use an electric output to drive the gyro vacuum. The voltage is ~ 200, but we need
+	the vacuum suction to approx. 5 for the gyro to spin fast, which implies a scale > 10.
+    -->
+
+    <vacuum>
+	<name type="string">vacuum</name>
+	<number type="int">0</number>
+	<rpm>systems/electrical/bus/ac-bus[0]</rpm>
+	<scale>20.0</scale>
+    </vacuum>
+
+    <vacuum>
+	<name type="string">vacuum</name>
+	<number type="int">1</number>
+	<rpm>systems/electrical/bus/ac-bus[1]</rpm>
+	<scale>20.0</scale>
+    </vacuum>
+
+    <vacuum>
+	<name type="string">vacuum</name>
+	<number type="int">2</number>
+	<rpm>systems/electrical/bus/ac-bus[2]</rpm>
+	<scale>20.0</scale>
+    </vacuum>
+
+    <vacuum>
+	<name type="string">vacuum</name>
+	<number type="int">3</number>
+	<rpm>systems/electrical/bus/ac-bus[3]</rpm>
+	<scale>20.0</scale>
+    </vacuum>
+
+</PropertyList>

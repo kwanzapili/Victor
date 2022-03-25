@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+
+<!-- Attitude Indicator -->
+
+<PropertyList> 
+    <path>ai.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>flag</object-name>
+	<object-name>flag_housing</object-name>
+	<object-name>pitch_ladder</object-name>
+	<object-name>horizon_line</object-name>
+	<object-name>wingline</object-name>
+	<object-name>bank_circle</object-name>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>flag</object-name>
+	<condition>
+	    <or>
+		<property>instrumentation/attitude-indicator/caged-flag</property>
+		<less-than>
+		    <property>instrumentation/attitude-indicator/spin</property>
+		    <value>0.8</value>
+		</less-than>
+	    </or>
+	</condition>
+	<value>90</value>
+	<center>
+	    <x-m> 0.000943692</x-m>
+	    <y-m>-0.0293421  </y-m>
+	    <z-m> 0.0310995  </z-m>
+	</center>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation> 
+	<type>rotate</type>
+	<object-name>wingline</object-name>
+	<property>instrumentation/attitude-indicator/indicated-roll-deg</property>
+	<factor>-1</factor>
+	<min-deg>-30</min-deg>
+	<max-deg>30</max-deg>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation> 
+	<type>rotate</type>
+	<object-name>horizon_line</object-name>
+	<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+	<factor>-1</factor>
+	<min-deg>-10</min-deg>
+	<max-deg>10</max-deg>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation> 
+	<type>knob</type>
+	<object-name>ai_offset_knob</object-name>
+	<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+	<factor>-10</factor>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+	<center> 
+	    <x-m> 0.00890263</x-m>
+	    <y-m> 0.0374334 </y-m>
+	    <z-m>-0.0416821 </z-m>
+	</center>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+		<factor>1</factor>
+		<min>-10</min>
+		<max>10</max>                
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Horizon offset: %3d</label>
+		<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+		<tooltip-id>horizon</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation> 
+	<type>rotate</type>
+	<object-name>bank_circle</object-name>
+	<property>instrumentation/attitude-indicator/indicated-roll-deg</property>
+	<interpolation>
+	    <entry>
+		<ind>-90</ind>
+		<dep>90</dep>
+	    </entry>
+	    <entry>
+		<ind>90</ind>
+		<dep>-90</dep>
+	    </entry>
+	</interpolation>
+	<axis> 
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+    </animation>
+
+    <animation> 
+	<type>translate</type>
+	<object-name>pitch_ladder</object-name>
+	<property>instrumentation/attitude-indicator/indicated-pitch-deg</property>
+	<interpolation> 
+	    <entry>
+		<ind>-180</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-90</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-40</ind>
+		<dep>0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>-20</ind>
+		<dep>0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>0</ind>
+		<dep>0</dep>
+	    </entry>
+	    <entry>
+		<ind>20</ind>
+		<dep>-0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>40</ind>
+		<dep>-0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>90</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>180</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	</interpolation>
+	<axis> 
+	    <x>0</x>
+	    <y>0</y>
+	    <z>1</z>
+	</axis>
+    </animation>
+
+    <animation> 
+	<type>translate</type>
+	<object-name>wingline</object-name>
+	<property>instrumentation/attitude-indicator/indicated-pitch-deg</property>
+	<interpolation> 
+	    <entry>
+		<ind>-180</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-90</ind>
+		<dep>0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>-40</ind>
+		<dep>0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>-20</ind>
+		<dep>0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>0</ind>
+		<dep>0</dep>
+	    </entry>
+	    <entry>
+		<ind>20</ind>
+		<dep>-0.010</dep>
+	    </entry>
+	    <entry>
+		<ind>40</ind>
+		<dep>-0.020</dep>
+	    </entry>
+	    <entry>
+		<ind>90</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	    <entry>
+		<ind>180</ind>
+		<dep>-0.03</dep>
+	    </entry>
+	</interpolation>
+	<axis> 
+	    <x>0</x>
+	    <y>0</y>
+	    <z>1</z>
+	</axis>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>face</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>ai_offset_knob</object-name>
+    </animation>
+
+    <!-- Resize -->
+    <animation>
+	<type>scale</type>
+	<object-name>Collection1</object-name>
+	<x-offset>1.05</x-offset>
+	<y-offset>1.05</y-offset>
+	<z-offset>1.05</z-offset>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.6</lightmap-factor>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.05</ambient-correction>
+	</parameters>
+	<object-name>ai_offset_knob</object-name>
+    </effect>
+
+</PropertyList>

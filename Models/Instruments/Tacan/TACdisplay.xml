@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+    <path>TACdisplay.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>base</object-name>
+	<object-name>dots</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>inrange</object-name>
+	<object-name>NMdecimals</object-name>
+	<object-name>NMunits</object-name>
+	<object-name>NMdeca</object-name>
+	<object-name>NMhdrs</object-name>
+	<object-name>MINunits</object-name>
+	<object-name>MINdeca</object-name>
+	<object-name>MINhdrs</object-name>
+	<object-name>KNdeca</object-name>
+	<object-name>KNhdrs</object-name>
+	<object-name>KNunits</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection2</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>Collection2</object-name>
+	<visible>true</visible>
+	<condition>
+	    <property>instrumentation/tacan/power-on</property>
+	</condition>
+    </animation>
+
+    <!-- DISTANCE INDICATOR --> 
+    <!-- Nm Distance - decimals -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>NMdecimals</object-name>
+	<property>/instrumentation/tacan/indicated-distance-nm</property>
+	<factor> 1 </factor>
+	<step> 0.1 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>  
+
+    <!-- Nm Distance - UNITS -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>NMunits</object-name>
+	<property>/instrumentation/tacan/indicated-distance-nm</property>
+	<factor>0.1</factor>
+	<step>1</step> 
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Nm Distance - Deca's -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>NMdeca</object-name>
+	<property>/instrumentation/tacan/indicated-distance-nm</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Nm Distance - Hundred's -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>NMhdrs</object-name>
+	<property>/instrumentation/tacan/indicated-distance-nm</property>
+	<factor>0.001</factor>
+	<step>100</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x> 0 </x>
+	    <y> 1 </y>
+	    <z> 0 </z>
+	</axis>
+    </animation>
+
+    <!-- 
+	KNOTS INDICATOR
+	Note: "instrumentation/tacan/indicated-ground-speed-kt" is junk, so we use
+	"instrumentation/airspeed-indicator/indicated-speed-kt"
+	-->  
+    <!-- Knots - UNITS -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>KNunits</object-name>
+	<property>/instrumentation/airspeed-indicator/indicated-speed-kt</property>
+	<factor>0.1</factor>
+	<step>1</step> 
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Knots - Deca's -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>KNdeca</object-name>
+	<property>/instrumentation/airspeed-indicator/indicated-speed-kt</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Knots - Hundred's -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>KNhdrs</object-name>
+	<property>/instrumentation/airspeed-indicator/indicated-speed-kt</property>
+	<factor>0.001</factor>
+	<step>100</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- TIME TO INDICATOR -->  
+    <!-- Time - Seconds UNITS -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>MINunits</object-name>
+	<property>/instrumentation/fmc/tacan-secs</property>
+	<factor>0.1</factor>
+	<step>1</step> 
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- TIME - Seconds Deca's -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>MINdeca</object-name>
+	<property>/instrumentation/fmc/tacan-secs</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- TIME - minutes units  -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>MINhdrs</object-name>
+	<property>/instrumentation/fmc/tacan-mins</property>
+	<factor>0.1</factor>
+	<step>1</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Check if Tacan is in range -->
+    <animation>
+	<type>select</type>
+	<object-name>inrange</object-name>
+	<visible>true</visible>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </animation>
+
+</PropertyList>

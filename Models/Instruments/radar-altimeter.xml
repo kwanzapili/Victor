@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+
+<!--Radar Altimeter -->
+
+<PropertyList>
+
+    <path>radar-altimeter.ac</path>
+    <texture-path>Textures</texture-path>
+
+    <animation>
+	<type>select</type>
+	<object-name>needle</object-name>
+	<condition>
+	    <not>
+		<property>/controls/radar/altimeter/caged-flag</property>
+	    </not>
+	</condition>
+    </animation>
+
+    <animation>
+	<name>needle</name>
+	<type>rotate</type>
+	<object-name>needle</object-name>
+	<property>instrumentation/radar-altimeter/radar-altitude-ft</property>
+	<min>0</min>
+	<max>6000</max>
+	<offset>-5</offset>
+	<interpolation>
+	    <entry><ind>0</ind><dep>180</dep></entry>
+	    <entry><ind>10</ind><dep>171</dep></entry>
+	    <entry><ind>50</ind><dep>138</dep></entry>
+	    <entry><ind>100</ind><dep>100</dep></entry>
+	    <entry><ind>150</ind><dep>78</dep></entry>
+	    <entry><ind>250</ind><dep>55</dep></entry>
+	    <entry><ind>400</ind><dep>24</dep></entry>
+	    <entry><ind>500</ind><dep>3</dep></entry>
+	    <entry><ind>600</ind><dep>-11</dep></entry>
+	    <entry><ind>1000</ind><dep>-40</dep></entry>
+	    <entry><ind>2000</ind><dep>-81</dep></entry>
+	    <entry><ind>3000</ind><dep>-101</dep></entry>
+	    <entry><ind>5000</ind><dep>-138</dep></entry>
+	    <entry><ind>6000</ind><dep>-150</dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- radar altitude out of range off-flag and stowed-needle -->
+    <animation>
+	<type>select</type>
+	<condition>
+	    <property>/controls/radar/altimeter/caged-flag</property>
+	</condition>
+	<object-name>off-flag</object-name>
+	<object-name>stowed-needle</object-name>
+    </animation>
+
+    <!-- low-altitude limit bug -->
+    <animation>
+	<name>bug</name>
+	<type>rotate</type>
+	<object-name>bug</object-name>
+	<property>instrumentation/radar-altimeter/set-height-ft</property>
+	<min>0</min>
+	<max>6000</max>
+	<offset>-5</offset>
+	<interpolation>
+	    <entry><ind>0</ind><dep>180</dep></entry>
+	    <entry><ind>10</ind><dep>170</dep></entry>
+	    <entry><ind>50</ind><dep>136</dep></entry>
+	    <entry><ind>100</ind><dep>98</dep></entry>
+	    <entry><ind>150</ind><dep>76</dep></entry>
+	    <entry><ind>250</ind><dep>55</dep></entry>
+	    <entry><ind>400</ind><dep>24</dep></entry>
+	    <entry><ind>500</ind><dep>3</dep></entry>
+	    <entry><ind>600</ind><dep>-11</dep></entry>
+	    <entry><ind>1000</ind><dep>-40</dep></entry>
+	    <entry><ind>2000</ind><dep>-81</dep></entry>
+	    <entry><ind>3000</ind><dep>-101</dep></entry>
+	    <entry><ind>5000</ind><dep>-138</dep></entry>
+	    <entry><ind>6000</ind><dep>-150</dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- Warning Altitude Limit Bug Setting Knob -->
+    <animation>
+	<type>knob</type>
+	<object-name>knob</object-name>
+	<property>/controls/radar/altimeter/warning-height-frac</property>
+	<!-- Rotates 360 degrees from 0.0 to 1.0 -->
+	<factor>-360</factor>
+	<center>
+	    <x-m> 0.02065707</x-m>
+	    <y-m>-0.03587015</y-m>
+	    <z-m>-0.03547600</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/controls/radar/altimeter/warning-height-frac</property>
+		<factor>0.01</factor>
+		<min>0.05</min>
+		<max>0.95</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/controls/radar/altimeter/warning-height-frac</property>
+		<factor>0.05</factor>
+		<min>0.05</min>
+		<max>0.95</max>
+		<wrap>false</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Warning Altitude: %d ft</label>
+		<property>instrumentation/radar-altimeter/set-height-ft</property>
+		<tooltip-id>rad_alt_warn</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- low-altitude warning-light -->
+    <animation>
+	<type>select</type>
+	<object-name>low-lamp</object-name>
+	<condition>
+	    <not>
+		<property>/controls/radar/altimeter/caged-flag</property>
+	    </not>
+	    <equals>
+		<property>/controls/radar/altimeter/limiter-light-mode</property>
+		<value>-1</value>
+	    </equals>
+	</condition>
+    </animation>
+
+    <!-- lighting -->
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>stowed-needle</object-name>
+	<object-name>bug</object-name>
+	<object-name>off-flag</object-name>
+	<object-name>needle</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>face</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-shiny.xml">
+	<object-name>knob</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-surround.xml">
+	<object-name>mount</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/bright-lamp.xml">
+	<object-name>low-lamp</object-name>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

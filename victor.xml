@@ -1,0 +1,1955 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+
+<fdm_config name="Victor" version="2.0" release="ALPHA"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+<fileheader>
+    <author> Aeromatic v 3.3.15 </author>
+    <filecreationdate> 31 Jul 2021 </filecreationdate>
+    <version>$Revision: 1.80 $</version>
+    <description> Handley Page Victor bomber + tanker </description>
+    <documentation>
+	Manufacturer:   Handley Page
+	Model:          Victor B.2
+	Variant:        Victor B.Mk 2R (Retrofit)
+
+
+	General Characteristics
+	~~~~~~~~~~~~~~~~~~~~~~~
+
+	Crew:                   5 (pilot, co-pilot, AEO, Navigator Radar, Navigator Plotter)
+	Length (overall):       114 ft 11 in (35.03 m)
+	Length (fuselage):      102 ft 5 in
+	Wingspan (b):           119.7 ft (36.48 m)
+	Height:                 28 ft 1.5 in (8.57 m)
+	Empty weight:           90,996 lb (41,275 kg)
+	Max takeoff weight:     216,009 lb (97,980 kg)
+	223,000 lb (101,153 kg) with two de Havilland Spectre RATO units
+	each rated at 8,000 lb st (35.59 kN)
+	Landing weight:         135,000 lb - 185,000 lb (emergency)
+	Diameter (bomb bay):    10 ft
+	Track:                  30 ft 2 in
+	Powerplant:             4 x Conway RCo.17
+
+	Airfoil:                16% Modified RAE Airfoil; Tip: 6% Modified RAE Airfoil
+	~~~~~~~
+
+	Wing area (S):                          2,597 sq ft (241.3 sq m)
+	Standard mean chord (SMC), feet:        21.65 ft
+	Aerodynamic mean chord, feet:           34.888
+	Wing root chord, feet (Cr):             40.83
+	Tip chord, feet (Ct):                   9.89
+	Aspect ratio (AR):                      5.545
+	Taper ratio (lambda):                   0.2422
+	Thickness chord ratio (root):           14.40
+	Thickness chord ratio (tip):            8.00
+	Sweepback angles 50% chord, degrees:    33.0° Section A
+	41.4° Section B
+	35.8° Section C
+	28.2° Section D
+	Sweepback of the leading edge, degrees (Omega_LE):
+	Sweepback of the quarter chord, degrees (Omega_1_4):
+	Wing dihedral angle, degrees:           4.6° at Section A
+						1.6° at Section C
+						0.9° at Section D
+	Wing incidence angle, degrees:          4.275° at Section A
+						2.017° at Section C
+						-1.229° at Section D
+	Tail Span: (Mark 1)                     32 ft 8 in
+	Tail Area: (Mark 1)                     263.6 sq ft
+	Airbrakes: (Mark 1)                     29.5 sq ft
+	Tail Sweep: (Mark 1)                    56.73°
+
+	Performance
+	~~~~~~~~~~~
+
+	Maximum Speed:          645 mph / 555 kt (1,038 km/h) at 40,000-50,000 ft. (Mach 0.98)
+	Cruise speed:           560-620 m.p.h. at 35,000-45,000 ft.
+	Range:                  4,600 miles (7,400 km)
+	Service ceiling:        55,000 ft (16,764 m)
+	Range:                  4,000 nm (4,606 miles; 7,412 km) with inflight refuelling
+	2,000 km (2,303 miles; 3,706 km) on a hi-hi-hi mission
+	1,500 nm (1,727 miles; 2,780 km) on a hi-lo-hi mission
+
+	Speeds
+	~~~~~~
+	* Stall, VS1:                   120 knots
+	* Rotation speed, VR:           150 knots
+	* Undercarriage lowering:       235 knots
+	* Approach speed:               160 knots
+	* Landing speed:                135 knots
+
+
+	ENGINES: Rolls-Royce Conway RB.80 RCo.17 Mk.201
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	General characteristics
+	Type:       Turbofan
+	Length:     136.0 in
+	Diameter:   42 in (1,100 mm)
+	Dry weight: 4,544 lb (2,061 kg)
+
+	Components
+	Compressor: dual axial flow; 7-stage LP, 9-stage HP
+	Combustors: cannular steel with 10 Nimonic flames tubes
+	Turbine:    axial flow; 1-stage HP (Nimonic air-cooled blades), 2-stage LP
+	Oil system: Wet sump type
+
+	Performance
+	Maximum thrust:             20,600 (91.633 KN) @ 9980 rpm (100%)
+	Overall pressure ratio:     14.1:1
+	Bypass ratio:               0.30:1
+	Air mass flow:              280 lb (127 kg) per sec
+	Specific fuel consumption:  0.725 @ sea level rating; typical cruise sfc=0.874
+	Thrust-to-weight ratio:     3.85
+
+
+	Electrical and Hydraulic Systems
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Main system:    4 x 208 V AC alternators generating 73 KVA
+
+	Engine start:   Air-starters supplied from a Palouste compressor on the ground
+	Standby:        Ram air turbine (RAT) driving a 17 kVA alternator at altitudes above
+			20,000 ft (6,100 m)
+	Airborne auxiliary power plant (AAPP), a Turbomeca Artouste auxiliary power
+	Secondary:      Transformer-rectifier units (TRUs) for 24 V DC and rotary frequency
+			converters producing 112 V DC single phase supplies
+
+
+	Fuel
+	~~~~
+	Type:           JP-1, also known as AVTUR, or AVTAG or AVCAT
+	Capacity:       84,456 lbs in total in 22 tanks:
+			Fuselage - 34,026 lbs in 8 tanks
+			Wings - 17,316 lbs in 6 tanks for each wing
+			Bombbay - 15,800 in two tanks
+    </documentation>
+    <note>
+        References:
+        1. https://cmchant.com/bae-handley-page-victor-classic-british-bomber/
+        2. https://www.militaryfactory.com/aircraft/detail.php?aircraft_id=241
+        3. Aeronautical Research Council Current Papers No. 1283, 1974
+        4. Aeronautical Research Council Reports and Memoranda No. 3455, 1967
+    </note>
+    <note>
+	==========================
+	Aircraft Stability Notes
+	==========================
+
+        All aerodynamic forces and moments in JSBSim are calculated relative to the
+        Aerodynamic Reference Point (AeroRP). The location of this point generally
+        depends on how the coefficients were derived and is most often the quarter
+        chord of the wing. If this location is not exactly equal to the center of
+        gravity (CoG) then moments, or twisting forces, will be created.
+        Conventional aircraft need AeroRP to be aft of the CoG for stability.
+
+        Static margin the distance between the aerodynamic center of the aircraft
+        and its center of gravity. Static margin determines the degree of static
+        stability of the aircraft. Decreasing static margin results in a decrease
+        in the stability of the aircraft.
+
+        If the center of gravity is forward of the the aerodynamic center, then the
+        plane has static stability. Static instability results if the center of gravity
+        is aft of the aerodynamic center. As the center of gravity moves aft (and static
+        margin decreases), less elevator deflection is required to maneuver. If the
+        static is large (the CoG is too far forward), then pitch control will be very
+        weak and excessive elevator deflections will be needed to maneuver the plane.
+
+	All aerodynamic forces and moments in JSBSim are calculated relative to the
+	Aerodynamic Reference Point (AeroRP). The location of this point generally
+	depends on how the coefficients were derived and is most often the quarter
+	chord of the wing. If this location is not exactly equal to the center of
+	gravity (CoG) then moments, or twisting forces, will be created.
+	Conventional aircraft need AeroRP to be aft of the CoG for stability.
+    </note>
+</fileheader>
+
+<!--
+    File:	    victor.xml
+    Inputs:
+	name:		Victor
+	type:		four-engine transonic bomber/tanker
+	stall speed:	120 kts
+	max weight:	216,009 lb
+	length:		114.92 ft
+	wing:
+	    span:	119.70 ft
+	    area:	2597 sq-ft
+	    mean chord:	28.51 ft
+	    aspect ratio: 5.55:1
+	    taper ratio:  0.24:1
+	    incidence:    1.69 degrees
+	    dihedral:     2.37 degrees
+	    sweep:        34.60 degrees
+
+	no. engines:	4
+	engine type:	Turbine Engine
+	engine layout:	wings
+
+	control type:	Conventional with Yaw Damper
+
+	gear type:	tricycle
+	steering type:	steering
+	retractable?:	yes
+
+    Outputs:
+	wing loading:	83.18 lb/sq-ft
+	thickness ratio: 24.71%
+	payload:	51,000 lbs
+	CL-alpha:	4.4 per radian
+	CL-0:		0.24
+	CL-max:		1.40
+	CD-0:		0.02
+	K:			0.042
+	Mcrit:		0.79
+
+	min. turn radius    703.86 ft
+	max. turn rate:     0.32 deg/s
+-->
+
+<metrics>
+    <wingarea  unit="FT2">  2597.00 </wingarea>
+    <wingspan  unit="FT" >   119.70 </wingspan>
+    <wing_incidence unit="DEG"> 1.69 </wing_incidence>
+    <chord     unit="FT" >    28.51 </chord>
+    <htailarea unit="FT2">   263.60 </htailarea>
+    <htailarm  unit="FT" >    48.64 </htailarm>
+    <vtailarea  unit="FT2">  519.40 </vtailarea>
+    <vtailarm  unit="FT" >    48.64 </vtailarm>
+    <location name="AERORP" unit="IN">
+	<x>   631.38 </x>	<!-- 621.38 -->
+	<y>     0.00 </y>
+	<z>     0.00 </z>
+    </location>
+    <location name="EYEPOINT" unit="IN">
+	<x>    96.53 </x>
+	<y>   -32.00 </y>
+	<z>    80.00 </z>
+    </location>
+    <location name="VRP" unit="IN">
+	<x>     0.0 </x>
+	<y>     0.0 </y>
+	<z>     0.0 </z>
+    </location>
+</metrics>
+
+<mass_balance>
+
+    <ixx unit="SLUG*FT2">  1036560.38 </ixx>
+    <iyy unit="SLUG*FT2">  1078525.12 </iyy>
+    <izz unit="SLUG*FT2">  2147632.00 </izz>
+    <emptywt unit="LBS" >    90996.00 </emptywt>
+    <location name="CG" unit="IN">
+	<!-- massive estimate - at some point between gears to keep the plane in balance -->
+	<x> 628.00 </x>
+	<y>   0.00 </y>
+	<z> -34.47 </z>
+    </location>
+
+    <!-- five-man crew -->
+    <pointmass name="Crew" >
+	<weight unit="LBS">1000</weight>
+	<location name="crew" unit = "M">
+	    <x> 5.00 </x>
+	    <y> 0.00 </y>
+	    <z> 1.00 </z>
+	</location>
+	<form shape="cylinder">
+	    <radius unit="M"> 1.0 </radius> <!-- wild guess -->
+	    <length unit="M"> 1.0 </length> <!-- wild guess -->
+	</form>
+    </pointmass>
+
+    <!-- Equipment (or fuel) based on variant; permissible range of 400 - 49,600 lbs -->
+    <pointmass name="Equipment">
+	<description>
+	    Default weight of equipment
+	</description>
+	<weight unit="LBS"> 1000 </weight>
+	<!-- Place it close to the centre of gravity. -->
+	<location name="POINTMASS" unit="IN">
+	    <x> 620.00 </x>
+	    <y>  0.00 </y>
+	    <z>  0.00 </z>
+	</location>
+	<form shape="cylinder">
+	    <radius unit="M"> 2.0 </radius>
+	    <length unit="M"> 6.0 </length>
+	</form>
+    </pointmass>
+
+    <!-- Armament weight: variable to a maximum of 50,000 lbs -->
+    <pointmass name="Armament">
+	<description>
+	    Payload of bombs and nuclear missiles
+	</description>
+	<weight unit="LBS"> 0 </weight>
+	<location name="POINTMASS" unit="M">
+	    <x> 16.00 </x> <!-- the door is at 20m, so centre the cylinder there -->
+	    <y>  0.00 </y>
+	    <z> -1.00 </z>
+	</location>
+	<form shape="cylinder">
+	    <radius unit="M"> 1.0 </radius> <!-- 1.8m wide and 1.4m deep -->
+	    <length unit="M"> 8.0 </length> <!-- 7.8m long -->
+	</form>
+    </pointmass>
+
+    <!--
+	AGM-45 Shrike air-to-surface anti-radiation missiles:
+	Mass: 390 pounds (177.06 kg)
+	Length: 10 feet (3.05 m)
+	Diameter: 8 inches (203 mm)
+	Stations: x 4 (we group then into two groups: portside and starboard)
+    -->
+
+    <pointmass name="Portside Shrikes">
+	<description>
+	    Payload of up to 2 portside shrike missiles
+	</description>
+	<weight unit="LBS"> 0 </weight>
+	<location name="POINTMASS" unit="M">
+	    <x> 19.00 </x>	<!-- mount point -->
+	    <y>-11.00 </y>
+	    <z> -0.30 </z>
+	</location>
+	<form shape="cylinder">
+	    <radius unit="IN"> 8.0 </radius>	<!-- assume two together -->
+	    <length unit="FT"> 10.0 </length>
+	</form>
+    </pointmass>
+
+    <pointmass name="Starboard Shrikes">
+	<description>
+	    Payload of up to 2 starboard shrike missiles
+	</description>
+	<weight unit="LBS"> 0 </weight>
+	<location name="POINTMASS" unit="M">
+	    <x> 19.00 </x>	<!-- mount point -->
+	    <y> 11.00 </y>
+	    <z> -0.30 </z>
+	</location>
+	<form shape="cylinder">
+	    <radius unit="IN"> 8.0 </radius>	<!-- assume two together -->
+	    <length unit="FT"> 10.0 </length>
+	</form>
+    </pointmass>
+
+    <!--
+	Note that with a full bomb load, we can only takeoff with ~70,000 lbs of fuel,
+	i.e. around 90% of total fuel capacity.
+    -->
+
+</mass_balance>
+
+<ground_reactions>
+
+    <contact type="BOGEY" name="Nose Gear">
+	<location unit="IN">
+	    <x> 345.94 </x>
+	    <y>   0.00 </y>
+	    <z>-102.38 </z>
+	</location>
+	<static_friction>  0.80 </static_friction>
+	<dynamic_friction> 0.50 </dynamic_friction>
+	<rolling_friction> 0.02 </rolling_friction>
+	<spring_coeff unit="LBS/FT"> 108000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 36000 </damping_coeff>
+	<max_steer unit="DEG"> 45 </max_steer>
+	<brake_group> NONE </brake_group>
+	<retractable> 1 </retractable>
+    </contact>
+
+    <contact type="BOGEY" name="Left Fore Main Gear">
+	<location unit="IN">
+	    <x> 629.72 </x>
+	    <y>-190.20 </y>
+	    <z>-102.38 </z>
+	</location>
+	<static_friction>  0.80 </static_friction>
+	<dynamic_friction> 0.50 </dynamic_friction>
+	<rolling_friction> 0.02 </rolling_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+	<max_steer unit="DEG"> 0 </max_steer>
+	<brake_group> LEFT </brake_group>
+	<retractable> 1 </retractable>
+    </contact>
+
+    <contact type="BOGEY" name="Left Aft Main Gear">
+	<location unit="IN">
+	    <x> 658.13 </x>
+	    <y>-190.20 </y>
+	    <z>-102.38 </z>
+	</location>
+	<static_friction>  0.80 </static_friction>
+	<dynamic_friction> 0.50 </dynamic_friction>
+	<rolling_friction> 0.02 </rolling_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+	<max_steer unit="DEG"> 0 </max_steer>
+	<brake_group> LEFT </brake_group>
+	<retractable> 1 </retractable>
+    </contact>
+
+    <contact type="BOGEY" name="Right Fore Main Gear">
+	<location unit="IN">
+	    <x> 629.72 </x>
+	    <y> 190.20 </y>
+	    <z>-102.38 </z>
+	</location>
+	<static_friction>  0.80 </static_friction>
+	<dynamic_friction> 0.50 </dynamic_friction>
+	<rolling_friction> 0.02 </rolling_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+	<max_steer unit="DEG"> 0 </max_steer>
+	<brake_group> RIGHT </brake_group>
+	<retractable> 1 </retractable>
+    </contact>
+
+    <contact type="BOGEY" name="Right Aft Main Gear">
+	<location unit="IN">
+	    <x> 658.13 </x>
+	    <y> 190.20 </y>
+	    <z>-102.38 </z>
+	</location>
+	<static_friction>  0.80 </static_friction>
+	<dynamic_friction> 0.50 </dynamic_friction>
+	<rolling_friction> 0.02 </rolling_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+	<max_steer unit="DEG"> 0 </max_steer>
+	<brake_group> RIGHT </brake_group>
+	<retractable> 1 </retractable>
+    </contact>
+
+    <contact type="STRUCTURE" name="Left Wing Tip">
+	<location unit="IN">
+	    <x>  945.0 </x>
+	    <y> -658.0 </y>
+	    <z>  -10.0 </z>
+	</location>
+	<static_friction>  0.8 </static_friction>
+	<dynamic_friction> 0.5 </dynamic_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+    </contact>
+
+    <contact type="STRUCTURE" name="Right Wing Tip">
+	<location unit="IN">
+	    <x>  945.0 </x>
+	    <y>  658.0 </y>
+	    <z>  -10.0 </z>
+	</location>
+	<static_friction>  0.8 </static_friction>
+	<dynamic_friction> 0.5 </dynamic_friction>
+	<spring_coeff unit="LBS/FT"> 216000 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 108000 </damping_coeff>
+    </contact>
+
+    <contact type="STRUCTURE" name="TAIL">
+	<location unit="IN">
+	    <x> 1200 </x>
+	    <y>    0 </y>
+	    <z>    0 </z>
+	</location>
+	<static_friction>  0.8 </static_friction>
+	<dynamic_friction> 0.5 </dynamic_friction>
+	<spring_coeff unit="LBS/FT"> 216009 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 43201.8 </damping_coeff>
+    </contact>
+
+    <contact type="STRUCTURE" name="RUDDER">
+	<location unit="IN">
+	    <x> 1300 </x>
+	    <y>    0 </y>
+	    <z>  150 </z>
+	</location>
+	<static_friction>  0.8 </static_friction>
+	<dynamic_friction> 0.5 </dynamic_friction>
+	<spring_coeff unit="LBS/FT"> 216009 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 43201.8 </damping_coeff>
+    </contact>
+
+    <contact type="STRUCTURE" name="NOSE">
+	<location unit="IN">
+	    <x> 0 </x>
+	    <y> 0 </y>
+	    <z> 0 </z>
+	</location>
+	<static_friction> 0.8  </static_friction>
+	<dynamic_friction> 0.5 </dynamic_friction>
+	<spring_coeff unit="LBS/FT"> 216009 </spring_coeff>
+	<damping_coeff unit="LBS/FT/SEC"> 43201.8 </damping_coeff>
+    </contact>
+
+</ground_reactions>
+
+<propulsion>
+    <!--
+	Each engine is fed by its dedicated group of tanks as well as the
+	fuselage and bomb bay tanks.
+    -->
+
+    <!-- Engine 1: Inner portside -->
+    <engine file="Conway-RCo-17">
+	<location unit="IN">
+	    <x> 500 </x>
+	    <y> -92 </y>
+	    <z>  54 </z>
+	</location>
+	<orient unit="DEG">
+	    <pitch> 0.00 </pitch>
+	    <roll>  0.00 </roll>
+	    <yaw>   0.00 </yaw>
+	</orient>
+	<feed>0</feed>
+	<feed>2</feed>
+	<feed>4</feed>
+	<feed>15</feed>
+	<feed>14</feed>
+	<feed>10</feed>
+	<feed>13</feed>
+	<feed>12</feed>
+	<thruster file="direct">
+	    <location unit="IN">
+		<x> 500 </x>
+		<y> -92 </y>
+		<z>  54 </z>
+	    </location>
+	    <orient unit="DEG">
+		<pitch> 0.00 </pitch>
+		<roll>  0.00 </roll>
+		<yaw>   0.00 </yaw>
+	    </orient>
+	</thruster>
+    </engine>
+
+    <!-- Engine 2: Outer portside -->
+    <engine file="Conway-RCo-17">
+	<location unit="IN">
+	    <x> 550 </x>
+	    <y>-137 </y>
+	    <z>  54 </z>
+	</location>
+	<orient unit="DEG">
+	    <pitch> 0.00 </pitch>
+	    <roll>  0.00 </roll>
+	    <yaw>   0.00 </yaw>
+	</orient>
+	<feed>1</feed>
+	<feed>3</feed>
+	<feed>4</feed>
+	<feed>15</feed>
+	<feed>14</feed>
+	<feed>11</feed>
+	<feed>13</feed>
+	<feed>12</feed>
+	<thruster file="direct">
+	    <location unit="IN">
+		<x> 550 </x>
+		<y>-137 </y>
+		<z>  54 </z>
+	    </location>
+	    <orient unit="DEG">
+		<pitch> 0.00 </pitch>
+		<roll>  0.00 </roll>
+		<yaw>   0.00 </yaw>
+	    </orient>
+	</thruster>
+    </engine>
+
+    <!-- Engine 3: Inner starboard -->
+    <engine file="Conway-RCo-17">
+	<location unit="IN">
+	    <x> 500 </x>
+	    <y>  92 </y>
+	    <z>  54 </z>
+	</location>
+	<orient unit="DEG">
+	    <pitch> 0.00 </pitch>
+	    <roll>  0.00 </roll>
+	    <yaw>   0.00 </yaw>
+	</orient>
+	<feed>5</feed>
+	<feed>7</feed>
+	<feed>9</feed>
+	<feed>15</feed>
+	<feed>14</feed>
+	<feed>10</feed>
+	<feed>13</feed>
+	<feed>12</feed>
+	<thruster file="direct">
+	    <location unit="IN">
+		<x> 500 </x>
+		<y>  92 </y>
+		<z>  54 </z>
+	    </location>
+	    <orient unit="DEG">
+		<pitch> 0.00 </pitch>
+		<roll>  0.00 </roll>
+		<yaw>   0.00 </yaw>
+	    </orient>
+	</thruster>
+    </engine>
+
+    <!-- Engine 4: Outer starboard -->
+    <engine file="Conway-RCo-17">
+	<location unit="IN">
+	    <x> 550 </x>
+	    <y> 137 </y>
+	    <z>  54 </z>
+	</location>
+	<orient unit="DEG">
+	    <pitch> 0.00 </pitch>
+	    <roll>  0.00 </roll>
+	    <yaw>   0.00 </yaw>
+	</orient>
+	<feed>6</feed>
+	<feed>8</feed>
+	<feed>9</feed>
+	<feed>15</feed>
+	<feed>14</feed>
+	<feed>11</feed>
+	<feed>13</feed>
+	<feed>12</feed>
+	<thruster file="direct">
+	    <location unit="IN">
+		<x> 550 </x>
+		<y> 137 </y>
+		<z>  54 </z>
+	    </location>
+	    <orient unit="DEG">
+		<pitch> 0.00 </pitch>
+		<roll>  0.00 </roll>
+		<yaw>   0.00 </yaw>
+	    </orient>
+	</thruster>
+    </engine>
+
+    <!--
+	APU: a Blackburn Artouste airborne auxiliary power unit (AAPU)
+	incorporated into the right wing root.
+    -->
+    <engine file="APU">
+	<location unit="IN">
+	    <x> 500 </x>
+	    <y>  30 </y>
+	    <z>  30 </z>
+	</location>
+	<orient unit="DEG">
+	    <pitch> 0.00 </pitch>
+	    <roll>  0.00 </roll>
+	    <yaw>   0.00 </yaw>
+	</orient>
+	<!--
+	<feed>15</feed>
+	<feed>14</feed>
+	<feed>11</feed>
+	<feed>10</feed>
+	<feed>13</feed>
+	<feed>12</feed>
+	-->
+	<feed>16</feed>
+	<thruster file="direct">
+	    <location unit="IN">
+		<x> 500 </x>
+		<y>  30 </y>
+		<z>  30 </z>
+	    </location>
+	    <orient unit="DEG">
+		<pitch> 0.00 </pitch>
+		<roll>  0.00 </roll>
+		<yaw>   0.00 </yaw>
+	    </orient>
+	</thruster>
+    </engine>
+
+    <!--
+    Fuel System
+    ===========
+
+      Wing Tanks (should be 6 on each wing but we only model 5):
+      Capacity = 2 x 17,316 lbs
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Tank  Name          Engine  Capacity (lbs)    Priority
+      0     Portside 1      1         7,320           1
+      1     Portside 3+4    2         7,320           1
+      2     Portside 5      1         4,880           2
+      3     Portside 6      2         4,880           2
+      4     Portside UW     1+2       5,116           3
+      5     Starboard 1     3         7,320           1
+      6     Starboard 3+4   4         7,320           1
+      7     Starboard 5     3         4,880           2
+      8     Starboard 6     4         4,880           2
+      9     Starboard UW    3+4       5,116           3
+
+      Fuselage Tanks (should be 8) - capacity = 34,026 lbs
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Tank  Name            Engine        Capacity (lbs)      Priority
+      10    Fuselage 7      1, 3, APU         8,000             6
+      11    Fuselage 8+9    2, 4, APU         8,026             6
+      12    Fuselage 10+11  all + APU         9,000             8
+      13    Fuselage 12     all + APU         9,000             7
+
+      Bomb bay Tanks (x 2) - capacity = 15,800 lba
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Tank  Name            Engine      Capacity (lbs)      Priority
+      14    Bomb Bay Fore     All            7,900               5
+      15    Bomb Bay Aft      All            7,900               4
+
+	We model a "fake" collector tank for the APU that will be empty
+	whenever the APU is not in use.
+      Tank  Name            Engine      Capacity (lbs)      Priority
+      16    APU Collector    APU            2               	1
+    -->
+
+	<!-- ~~~~~~~ Wing Tanks ~~~~~~~ -->
+
+	<!-- Portside 1 (centre) -->
+    <tank type="FUEL" number="0">
+	<location unit="IN">
+	    <x> 346 </x>
+	    <y>-115 </y>
+	    <z>  20 </z>
+	</location>
+	<capacity unit="LBS">7320</capacity>
+	<contents unit="LBS">5195</contents>
+	<priority>1</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Portside 3+4 (inner) -->
+    <tank type="FUEL" number="1">
+	<location unit="IN">
+	    <x> 476 </x>
+	    <y>-290 </y>
+	    <z>   0 </z>
+	</location>
+	<capacity unit="LBS">7320</capacity>
+	<contents unit="LBS">5195</contents>
+	<priority>1</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Portside 5 (inner) -->
+    <tank type="FUEL" number="2">
+	<location unit="IN">
+	    <x> 606 </x>
+	    <y>-362 </y>
+	    <z> -20 </z>
+	</location>
+	<capacity unit="LBS">4880</capacity>
+	<contents unit="LBS">2928</contents>
+	<priority>2</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Portside 6 (outer) -->
+    <tank type="FUEL" number="3">
+	<location unit="IN">
+	    <x> 736 </x>
+	    <y>-433 </y>
+	    <z> -40 </z>
+	</location>
+	<capacity unit="LBS">4880</capacity>
+	<contents unit="LBS">2928</contents>
+	<priority>2</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Portside 2 (under wing) -->
+    <tank type="FUEL" number="4">
+	<location unit="IN">
+	    <x> 577 </x>
+	    <y>-290 </y>
+	    <z> -62 </z>
+	</location>
+	<capacity unit="LBS">5116</capacity>
+	<contents unit="LBS">0</contents>
+	<priority>3</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Starboard 1 (centre) -->
+    <tank type="FUEL" number="5">
+	<location unit="IN">
+	    <x> 346 </x>
+	    <y> 115 </y>
+	    <z>  20 </z>
+	</location>
+	<capacity unit="LBS">7320</capacity>
+	<contents unit="LBS">5195</contents>
+	<priority>1</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Starboard 3+4 (inner) -->
+    <tank type="FUEL" number="6">
+	<location unit="IN">
+	    <x> 476 </x>
+	    <y> 290 </y>
+	    <z>   0 </z>
+	</location>
+	<capacity unit="LBS">7320</capacity>
+	<contents unit="LBS">5195</contents>
+	<priority>1</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Starboard 5 (inner) -->
+    <tank type="FUEL" number="7">
+	<location unit="IN">
+	    <x> 606 </x>
+	    <y> 362 </y>
+	    <z> -20 </z>
+	</location>
+	<capacity unit="LBS">4880</capacity>
+	<contents unit="LBS">2928</contents>
+	<priority>2</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Starboard 6 (outer) -->
+    <tank type="FUEL" number="8">
+	<location unit="IN">
+	    <x> 736 </x>
+	    <y> 433 </y>
+	    <z> -40 </z>
+	</location>
+	<capacity unit="LBS">4880</capacity>
+	<contents unit="LBS">2928</contents>
+	<priority>2</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Starboard 2 (under wing) -->
+    <tank type="FUEL" number="9">
+	<location unit="IN">
+	    <x> 577 </x>
+	    <y> 290 </y>
+	    <z> -62 </z>
+	</location>
+	<capacity unit="LBS">5116</capacity>
+	<contents unit="LBS">0</contents>
+	<priority>3</priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- ~~~~~~~ Fuselage Tanks ~~~~~~~ -->
+
+	<!-- Fuselage 7 -->
+    <tank type="FUEL" number="10">
+	<location unit="IN">
+	    <x> 346 </x>
+	    <y>   0 </y>
+	    <z>  20 </z>
+	</location>
+	<capacity unit="LBS"> 8000 </capacity>
+	<contents unit="LBS"> 4800 </contents>
+	<priority> 6 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Fuselage 8 + 9 -->
+    <tank type="FUEL" number="11">
+	<location unit="IN">
+	    <x> 476 </x>
+	    <y>   0 </y>
+	    <z>  20 </z>
+	</location>
+	<capacity unit="LBS"> 8026 </capacity>
+	<contents unit="LBS"> 4800 </contents>
+	<priority> 7 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Fuselage 10 + 11 -->
+    <tank type="FUEL" number="12">
+	<location unit="IN">
+	    <x> 926 </x>
+	    <y>   0 </y>
+	    <z>  20 </z>
+	</location>
+	<capacity unit="LBS"> 9000 </capacity>
+	<contents unit="LBS"> 5400 </contents>
+	<priority> 8 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Fuselage 12 -->
+    <tank type="FUEL" number="13">
+	<location unit="IN">
+	    <x> 1056 </x>
+	    <y>    0 </y>
+	    <z>   20 </z>
+	</location>
+	<capacity unit="LBS"> 9000 </capacity>
+	<contents unit="LBS"> 3612 </contents>
+	<priority> 6 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- ~~~~~~~ Bomb Bay Tanks ~~~~~~~ -->
+
+	<!-- Bomb Bay Fore -->
+    <tank type="FUEL" number="14">
+	<location unit="IN">
+	    <x> 629 </x>
+	    <y>   0 </y>
+	    <z> -30 </z>
+	</location>
+	<capacity unit="LBS"> 7900 </capacity>
+	<contents unit="LBS">    0 </contents>
+	<priority> 5 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- Bomb Bay Aft-->
+    <tank type="FUEL" number="15">
+	<location unit="IN">
+	    <x> 858 </x>
+	    <y>   0 </y>
+	    <z> -30 </z>
+	</location>
+	<capacity unit="LBS"> 7900 </capacity>
+	<contents unit="LBS">    0 </contents>
+	<priority> 4 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+	<!-- ~~~~~~~ APU collector tank ~~~~~~~ -->
+    <tank type="FUEL" number="16">
+	<location unit="IN">
+	    <x> 500 </x>
+	    <y> -30 </y>
+	    <z>  30 </z>
+	</location>
+	<!-- just enough capacity to run for 10 seconds -->
+	<capacity unit="LBS"> 3 </capacity>
+	<contents unit="LBS"> 2 </contents>
+	<priority> 8 </priority>
+	<type> JP-1 </type>
+    </tank>
+
+</propulsion>
+
+<system file="Electrical/electrical"/>
+<system file="control"/>
+<system file="cockpit-door"/>
+<system file="drag-chute"/>
+<system file="environment"/>
+<system file="flaps"/>
+<system file="fms"/>
+<system file="fuel"/>
+<system file="hydraulics"/>
+<system file="instrument-mgr"/>
+<system file="landing-gear"/>
+<system file="lights"/>
+<system file="propulsion"/>
+<system file="speedbrake"/>
+<system file="vacuum"/>
+
+<flight_control file="Systems/fcs"/>
+
+<aerodynamics>
+
+    <alphalimits unit="DEG">
+	<min> -25 </min>
+	<max>  55 </max>
+    </alphalimits>
+
+    <hysteresis_limits unit="DEG">
+	<min>  5 </min>
+	<max> 20 </max>
+    </hysteresis_limits>
+
+    <!-- FACTORS and CONSTANTS for re-use in multiple functions -->
+
+    <function name="aero/function/Klgear">
+	<description>
+	    Effectiveness factor for landing gear
+	</description>
+	<product>
+	    <property>gear/gear-pos-norm</property>
+	    <value> 1.0 </value>
+	</product>
+    </function>
+
+    <!--
+	For fixed-wing aircraft, ground effect is the reduced aerodynamic drag that an
+	aircraft's wings generate when they are close to a fixed surface. Reduced drag
+	when in ground effect during takeoff can cause the aircraft to "float" whilst
+	below the recommended climb speed. When an aircraft flies at or below approximately
+	half the length of the aircraft's wingspan above the ground or water there occurs
+	an often-noticeable ground effect. The result is lower induced drag on the aircraft.
+    -->
+    <function name="aero/function/Kge">
+	<description>
+	    Ground effect height factor
+	</description>
+	<table>
+	    <independentVar>aero/h_b-mac-ft</independentVar>
+	    <tableData>
+		0.0000  1.00
+		0.1277  0.80
+		0.2270  0.40
+		0.2837  0.20
+		0.3901  0.00
+	    </tableData>
+	</table>
+    </function>
+
+    <!-- +++++++ Lift Coefficients +++++++ -->
+
+    <function name="aero/coefficient/CLflap">
+	<description>
+	    Coefficient of Lift due to flaps
+	</description>
+	<!--
+	    Aero-Matic versions 0.83 and 3.3.15 give valus of 0.050 or 0.0409
+	    I adapt the approach of the A380 in varying the coefficient by flap degrees
+	-->
+	<table>
+	    <independentVar lookup="row">fcs/flap-pos-deg</independentVar>
+	    <tableData>
+		0	0.0000
+		15	0.0409
+		30	0.0550
+	    </tableData>
+	</table>
+    </function>
+
+    <!-- From 747-400 -->
+    <function name="aero/coefficient/CLae">
+	<description>
+	    Change in basic lift coefficient due to aeroelasticity at low speed
+	</description>
+	<sum>
+	    <product>
+		<table>
+		    <independentVar>fcs/flap-pos-deg</independentVar>
+		    <tableData>
+			0       0
+			1       1
+			30      1
+		    </tableData>
+		</table>
+		<table>
+		    <independentVar lookup="row">velocities/ve-kts</independentVar>
+		    <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+		    <tableData>
+				5.0	10.0	20.0	25.0	30.0
+			0.0	0.000	0.000	0.000	0.000	0.000
+			50.0    0.000  -0.002	-0.004	-0.006	-0.008
+			100.0  -0.006  -0.012	-0.026	-0.040	-0.044
+			250.0  -0.028  -0.058	-0.120	-0.204	-0.228
+		    </tableData>
+		</table>
+	    </product>
+	    <product>
+		<table>
+		    <independentVar>fcs/flap-pos-deg</independentVar>
+		    <tableData>
+			0       1
+			1       0
+			30      0
+		    </tableData>
+		</table>
+		<table>
+		    <independentVar lookup="row">velocities/mach</independentVar>
+		    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+		    <tableData>
+				0.000	    10000      40000
+			0.0      0.000      0.000      0.000
+			0.2     -0.004     -0.002     -0.001
+			0.5     -0.023     -0.019     -0.006
+			0.8     -0.049     -0.043     -0.022
+			0.85    -0.050     -0.050     -0.026
+			0.90    -0.050     -0.055     -0.030
+			0.92    -0.050     -0.050     -0.027
+			0.97    -0.050      0.002      0.002
+		    </tableData>
+		</table>
+	    </product>
+	</sum>
+    </function>
+
+    <!-- From 747-400 -->
+    <function name="aero/coefficient/CLnz">
+	<description>
+	    Change in basic lift coefficient due to aeroelastic
+	    inertia relief caused by normal load factor
+	</description>
+	<product>
+	    <sum>
+		<product>
+		    <table>
+			<independentVar>fcs/flap-pos-deg</independentVar>
+			<tableData>
+			    0   0
+			    1   1
+			    30  1
+			</tableData>
+		    </table>
+		    <table>
+			<independentVar lookup="row">velocities/ve-kts</independentVar>
+			<independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+			<tableData>
+				    1.0000  5.0000 20.0000 25.0000 30.0000
+			    0.0	    0.0328  0.0346  0.0346  0.0374  0.0351
+			    100.0   0.0312  0.0330  0.0330  0.0352  0.0335
+			    250.0   0.0258  0.0269  0.0269  0.0295  0.0278
+			</tableData>
+		    </table>
+		</product>
+		<product>
+		    <table>
+			<independentVar>fcs/flap-pos-deg</independentVar>
+			<tableData>
+			    0   1
+			    1   0
+			    30  0
+			</tableData>
+		    </table>
+		    <table>
+			<independentVar lookup="row">velocities/mach</independentVar>
+			<independentVar lookup="column">atmosphere/density-altitude</independentVar>
+			<!-- data beyond m0.82 at sea level extrapolated -->
+			<tableData>
+				    0.0000	10000	   20000      30000	 40000
+			    0.00     0.0258     0.0258     0.0258     0.0258     0.0258
+			    0.10     0.0250     0.0254     0.0256     0.0256     0.0258
+			    0.20     0.0242     0.0248     0.0253     0.0256     0.0258
+			    0.30     0.0230     0.0237     0.0248     0.0256     0.0258
+			    0.40     0.0218     0.0230     0.0242     0.0250     0.0258
+			    0.50     0.0205     0.0220     0.0235     0.0248     0.0259
+			    0.60     0.0189     0.0210     0.0228     0.0244     0.0259
+			    0.70     0.0172     0.0198     0.0222     0.0243     0.0262
+			    0.80     0.0160     0.0192     0.0223     0.0251     0.0277
+			    0.82     0.0158     0.0192     0.0224     0.0256     0.0284
+			    0.90     0.0155     0.0174     0.0210     0.0241     0.0273
+			    0.95     0.0140     0.0150     0.0182     0.0215     0.0248
+			    0.97     0.0110     0.0144     0.0176     0.0213     0.0250
+			</tableData>
+		    </table>
+		</product>
+	    </sum>
+	    <property>forces/load-factor</property>
+	</product>
+    </function>
+
+    <!--
+	Some theories say the ground effect is noticable approximately up to the height AGL
+	equal to the wingspan. "aero/h_b-mac-ft" is the ratio of the altitude of MAC
+	(Mean aerodynamic chord) divided by wing span. The ground effect function is usually
+	1.2 for h_b_mac_ft = 0 (which would mean 1.2 gain of lift on the ground); it
+	reaches 1 for h_b_mac_ft = 1.1; above 1.1 it remains constant at 1 which would mean
+	there is no gain in lift for h_b_mac_ft >= 1.1.
+    -->
+    <function name="aero/function/dCLground-effect">
+	<description>
+	    Change in Coefficient of Lift due to ground effect
+	</description>
+	<table>
+	    <independentVar>aero/h_b-mac-ft</independentVar>
+	    <tableData>
+		0.00	1.20
+		1.00	1.10
+		1.10	1.00
+	    </tableData>
+	</table>
+    </function>
+
+    <!-- From 747-400 -->
+    <function name="aero/coefficient/CLlgear">
+	<description>
+	    Coefficient of lift due to landing gear
+	</description>
+	<product>
+	    <property>aero/function/Klgear</property>
+	    <table>
+		<independentVar lookup="row">aero/alpha-deg</independentVar>
+		<independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+		<tableData>
+			    0.000  1.000  5.000 10.000 20.000 25.000 30.000
+		    -5.00   0.046  0.046  0.046  0.037  0.042 -0.005 -0.005
+		    0.00    0.042  0.042  0.039  0.029  0.029 -0.025 -0.025
+		    5.00    0.036  0.036  0.032  0.021  0.018 -0.030 -0.030
+		    18.00   0.017  0.017  0.010  0.002 -0.003 -0.024 -0.024
+		    25.00   0.002  0.002 -0.005 -0.006 -0.011 -0.028 -0.028
+		</tableData>
+	    </table>
+	    <table>
+		<independentVar>velocities/mach</independentVar>
+		<tableData>
+		    0.0   1.0
+		    0.3   1.0
+		    0.6   1.9
+		    0.7   2.4
+		    0.8   3.5
+		</tableData>
+	    </table>
+	</product>
+    </function>
+
+    <!-- From 747-400 -->
+    <function name="aero/coefficient/CLalphadot">
+	<description>
+	    Change in basic lift coefficient due to
+	    rate of change angle of attack
+	</description>
+	<product>
+	    <table>
+		<independentVar>velocities/mach</independentVar>
+		<tableData>
+		    0.00  -6.7
+		    0.30  -6.7
+		    0.70  -6.4
+		    0.90  -5.5
+		    0.95  -6.0
+		    0.97  -6.2
+		</tableData>
+	    </table>
+	    <property>aero/ci2vel</property>
+	    <property>aero/alphadot-rad_sec</property>
+	</product>
+    </function>
+
+    <!--
+	The elevators work by changing the effective shape of the airfoil of the
+	horizontal stabilizer. Changing the angle of deflection at the rear of an
+	airfoil changes the amount of lift generated by the foil. With greater
+	downward deflection of the trailing edge, lift increases. With greater
+	upward deflection of the trailing edge, lift decreases and can even become
+	negative. The lift force (F) is applied at center of pressure of the horizontal
+	stablizer which is some distance (L) from the aircraft center of gravity.
+	This creates a torque, T = F * L, on the aircraft and the aircraft rotates
+	about its center of gravity.
+
+	Elevator deflection positive setting = trailing edge down =
+	generates a positive increment in force.
+
+	Coefficient of lift force due to elevator deflection  (CLde)
+	CLde x lh-ft = Cmde x cbarw-ft
+
+	Note that the force applies to the horizontal stablizer not the wing. Yet our
+	formula uses the wing area, so we have to reduce the lift coefficient to
+	compensate for this. The wing ares in 2,597 sqft and the the tail area is
+	263.6 sqft. Thus the adjustment factor is 1 / 263.6.
+
+	Since "Cmde" varies with Mach between -1.30 and -0.325, we can estimate
+	"CLde" between 0.2633 and 0.0658.
+	Aeromatic yields a value of 0.2.
+    -->
+
+    <function name="aero/coefficient/CLdElevator">
+	<description>
+	    Coefficient of lift due to elevator deflection
+	</description>
+	<table>
+	    <independentVar lookup="row"> velocities/mach </independentVar>
+	    <tableData>
+		0.0     0.2633
+		2.0     0.0658
+	    </tableData>
+	</table>
+    </function>
+
+
+    <!-- +++++++ Drag Coefficients +++++++ -->
+
+    <function name="aero/coefficient/CDground-effect">
+	<description>
+	    Coefficient of reduced drag due to ground effect
+	</description>
+	<product>
+	    <property>aero/function/Kge</property>
+	    <table>
+		<independentVar lookup="row">aero/alpha-deg</independentVar>
+		<independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+		<tableData>
+			0.000   1.000  25.000  30.000
+		    0  -0.021  -0.017  -0.030  -0.033
+		    5  -0.026  -0.019  -0.046  -0.050
+		    10  -0.034  -0.024  -0.072  -0.078
+		    15  -0.043  -0.041  -0.084  -0.091
+		</tableData>
+	    </table>
+	</product>
+    </function>
+
+
+    <!-- +++++++ Side Coefficients +++++++ -->
+
+    <!--
+	Coefficient of side force due to rudder (CYdr)
+	CYdr x lv-ft = Cndr x bw-ft
+    -->
+    <property value="0.2813">aero/coefficient/CyRudder</property>
+
+    <function name="aero/coefficient/CyRaeroelastic">
+	<description>
+	    Coefficient of side force due to rudder aeroelastic
+	</description>
+	<table>
+	    <!-- major simplification -->
+	    <independentVar lookup="row">velocities/mach</independentVar>
+	    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+	    <tableData>
+			0       10000  20000  30000  40000
+		0.0     1.0     1.0    1.0    1.0    1.0
+		0.1     0.99    1.0    1.0    1.0    1.0
+		0.2     0.95    0.97   0.98   0.99   1.0
+		0.3     0.89    0.92   0.94   0.96   0.98
+		0.4     0.79    0.83   0.87   0.91   0.94
+		0.5     0.67    0.75   0.80   0.84   0.87
+		0.6     0.55    0.64   0.71   0.76   0.80
+		0.7     0.40    0.50   0.58   0.65   0.72
+		0.8     0.21    0.35   0.43   0.53   0.59
+		0.9     0.21    0.13   0.18   0.24   0.30
+		0.95    0.21    0.04   0.06   0.08   0.10
+	    </tableData>
+	</table>
+    </function>
+
+
+    <!-- +++++++ Pitch Coefficients +++++++ -->
+
+    <!--
+	Coefficient of pitching moment due to elevator deflection  (Cmde)
+	CLde x lh-ft = Cmde x cbarw-ft
+    -->
+    <function name="aero/coefficient/CmdElevator">
+	<description>
+	    Coefficient of pitching moment due to elevator deflection
+	</description>
+	<table>
+	    <independentVar lookup="row"> velocities/mach </independentVar>
+	    <tableData>
+		0.0     -1.300
+		2.0     -0.325
+	    </tableData>
+	</table>
+    </function>
+
+
+    <!-- +++++++ Yaw Coefficients +++++++ -->
+
+    <!--
+	Coefficient of yawing moment due to rudder (Cndr)
+	CYdr x lv-ft = Cndr x bw-ft
+    -->
+    <property value="-0.1143">aero/coefficient/CnRudder</property>
+
+
+    <!-- ================================ LIFT ================================ -->
+
+    <axis name="LIFT">
+
+	<!--
+	    Lift is a function of QBar * Wing Area * Cllift. Cllift is generally
+	    derived from a 2D table as a function of AoA. In the real world it is
+	    also a function of the Reynolds and Mach Numbers.
+	    At least for unswept wings, using QBarUW is more appropriate for CL
+	    than the generic QBar.Otherwise, your aircraft will likely be prone to
+	    the issue Pitch oscillations at rest, Brakes ON, with pure crosswind.
+	    However this has only been tested for the particular case of the c172,
+	    these are not universal laws but rather guidance or at the very least
+	    trouble shooting. Use QBarUW for formula involving Alpha. It is the
+	    value of QBar restricted to  the vertical plane airspeed components
+	    contribution.
+	-->
+
+	<function name="aero/force/Lift_alpha">
+	    <description>Lift due to alpha</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/function/dCLground-effect</property>
+		<property>/damage/structural/wings-condition</property>
+		<table>
+		    <independentVar lookup="row">aero/alpha-rad</independentVar>
+		    <tableData>
+			-3.14	0.0000
+			-2.79	0.1000
+			-2.09	0.0600
+			-1.75	0.0300
+			-1.57	0.0000
+			-1.22	-0.4840
+			-1.05	-0.6520
+			-0.70	-0.7529
+			-0.30	-0.6800
+			-0.16	-0.4403
+			0.00	0.2421
+			0.10	0.6824
+			0.16	1.0000
+			0.25	1.2471
+			0.50	1.4000
+			0.75	1.0000
+			0.88	0.6800
+			1.05	0.4000
+			1.22	0.2000
+			1.57	0.0000
+			1.75	0.0200
+			2.09	0.0700
+			2.62	0.1000
+			2.79	0.0800
+			3.14	0.0000
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_flap">
+	    <description>Delta Lift due to flaps</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CLflap</property>
+		<property>aero/function/dCLground-effect</property>
+		<property>/damage/controls/flight/flaps-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_speedbrake">
+	    <description>Delta Lift due to speedbrake</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>fcs/speedbrake-pos-norm</property>
+		<value> -0.08 </value>
+		<property>/damage/controls/flight/speedbrake-condition</property>
+	    </product>
+	</function>
+
+	<!-- NB: CLde x lh-ft = Cmde x cbarw-ft -->
+	<function name="aero/force/Lift_elevator">
+	    <description>
+		Lift due to Elevator Deflection
+	    </description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>fcs/elevator-pos-rad</property>
+		<property>aero/coefficient/CLdElevator</property>
+		<property>/damage/controls/flight/elevator-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_aeroelasticity">
+	    <description>
+		Lift due to aeroelasticity at low speed
+	    </description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CLae</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_load_factor">
+	    <description>
+		Lift due to aeroelastic inertia relief caused by normal load factor
+	    </description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CLnz</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_landing_gear">
+	    <description>
+		Lift due to landing gear position
+	    </description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CLlgear</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Lift_alpha_rate">
+	    <description>
+		Lift due to alpha rate
+	    </description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CLalphadot</property>
+	    </product>
+	</function>
+
+    </axis>
+
+    <!-- ================================ DRAG ================================ -->
+
+    <axis name="DRAG">
+
+	<!--
+	    CD0 is based on fuselage, wing, horizontal and vertical tail; antennas,
+	    struts and wires are not taken into account. Actual data from experiments
+	    gives values of [ 0.01025, 0.00921, 0.00894, 0.00759]. We use the average
+	    which is 0.090
+	    CD for gear (fixed and retractable) is defined below.
+	-->
+	<function name="aero/force/Drag_minimum">
+	    <description>Minimum drag</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<value> 0.0090  </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_alpha">
+	    <description>Drag due to alpha</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<table>
+		    <independentVar lookup="row">aero/alpha-rad</independentVar>
+		    <tableData>
+			-3.14	0.0000
+			-2.88	0.0407
+			-1.57	1.4081
+			-0.16	0.0407
+			0.00    0.0000
+			0.16    0.0407
+			1.57    1.4081
+			2.98	0.0407
+			3.14	0.0000
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_induced">
+	    <description>Induced drag</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/cl-squared</property>
+		<value> 0.0574 </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_mach">
+	    <description>Drag due to mach</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<table>
+		    <independentVar lookup="row">velocities/mach</independentVar>
+		    <tableData>
+			0.00      0.000
+			0.79      0.000
+			1.10      0.023
+			1.80      0.015
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_beta">
+	    <description>Drag due to sideslip</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<table>
+		    <independentVar lookup="row">aero/beta-rad</independentVar>
+		    <tableData>
+			-1.57    1.230
+			-0.26    0.050
+			0.00    0.000
+			0.26    0.050
+			1.57    1.230
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_elevator">
+	    <description>Drag due to Elevator Deflection</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<abs><property>fcs/elevator-pos-norm</property></abs>
+		<value> 0.0400 </value>
+		<property>/damage/controls/flight/elevator-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_gear">
+	    <description>Drag due to gear</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>gear/gear-pos-norm</property>
+		<value> 0.0110 </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_flap">
+	    <description>Drag due to flaps</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>fcs/flap-pos-deg</property>
+		<value> 0.0015 </value>
+		<property>/damage/controls/flight/flaps-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_speedbrake">
+	    <description>Drag due to speedbrakes</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>fcs/speedbrake-pos-norm</property>
+		<value> 0.1200 </value>
+		<property>/damage/controls/flight/speedbrake-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_chute">
+	    <description>Drag due to braking chute</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>/controls/flight/chute-pos-norm</property>
+		<value> 0.3 </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Drag_ground">
+	    <description>Delta drag due to ground effect</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/coefficient/CDground-effect</property>
+	    </product>
+	</function>
+
+    </axis>
+
+    <!-- ================================ SIDE ================================ -->
+
+    <axis name="SIDE">
+
+	<function name="aero/force/Side_beta">
+	    <description>Side force due to beta</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/beta-rad</property>
+		<value> -0.8887 </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Side_roll_rate">
+	    <description>Side force due to roll rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/p-aero-rad_sec</property>
+		<table>
+		    <independentVar lookup="row">aero/Re</independentVar>
+		    <tableData>
+			44955428   0.3012
+			49450972   0.0175
+			67433144   0.0078
+			90956848   0.0043
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/force/Side_yaw_rate">
+	    <description>Side force due to yaw rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/r-aero-rad_sec</property>
+		<value> 0.7678 </value>
+	    </product>
+	</function>
+
+	<function name="aero/force/Side_rudder">
+	    <description>Side force due to rudder</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>fcs/rudder-pos-rad</property>
+		<property>aero/coefficient/CyRudder</property>
+		<property>aero/coefficient/CyRaeroelastic</property>
+		<property>/damage/controls/flight/rudder-condition</property>
+	    </product>
+	</function>
+
+    </axis>
+
+    <!-- ================================ PITCH ================================ -->
+
+    <axis name="PITCH">
+	<!--
+	    As for Lift (CL), for Pitch (Cm) using QBarUW is more appropriate for Cm than
+	    the generic QBar.See JSBSim issue #89 Pitch oscillations at rest, Brakes "ON",
+	    with pure crosswind https://github.com/JSBSim-Team/jsbsim/issues/89.
+	    Use QBarUW for formula involving Alpha. It is the value of QBar restricted to
+	    the vertical plane airspeed components contribution.
+	-->
+
+	<function name="aero/moment/Pitch_alpha">
+	    <description>Pitch moment due to alpha</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/cbarw-ft</property>
+		<property>aero/alpha-rad</property>
+		<value> -0.7496 </value>
+	    </product>
+	</function>
+
+	<!-- NB: CLde x lh-ft = Cmde x cbarw-ft -->
+	<function name="aero/moment/Pitch_elevator">
+	    <description>
+		Pitch moment due to elevator
+	    </description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/cbarw-ft</property>
+		<property>fcs/elevator-pos-rad</property>
+		<property>aero/coefficient/CmdElevator</property>
+		<property>/damage/controls/flight/elevator-condition</property>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Pitch_damp">
+	    <description>Pitch moment due to pitch rate</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/cbarw-ft</property>
+		<property>aero/ci2vel</property>
+		<property>velocities/q-aero-rad_sec</property>
+		<value> -21 </value>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Pitch_alphadot">
+	    <description>Pitch moment due to alpha rate</description>
+	    <product>
+		<property>aero/qbarUW-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/cbarw-ft</property>
+		<property>aero/ci2vel</property>
+		<property>aero/alphadot-rad_sec</property>
+		<value> -4 </value>
+	    </product>
+	</function>
+    </axis>
+
+    <!-- ================================ ROLL ================================ -->
+
+    <axis name="ROLL">
+
+	<function name="aero/moment/Roll_beta">
+	    <description>Roll moment due to beta</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/beta-rad</property>
+		<property>gear/gear-no-wow</property>
+		<value>-0.1</value>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Roll_damp">
+	    <description>Roll moment due to roll rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/p-aero-rad_sec</property>
+		<value> -1.0627 </value>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Roll_yaw">
+	    <description>Roll moment due to yaw rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/r-aero-rad_sec</property>
+		<value>0.15</value>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Roll_aileron">
+	    <description>Roll moment due to aileron</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>fcs/left-aileron-pos-rad</property>
+		<property>/damage/controls/flight/aileron-condition</property>
+		<table>
+		    <independentVar>velocities/mach</independentVar>
+		    <tableData>
+			0	0.1000
+			2	0.0250
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Roll_rudder">
+	    <description>Roll moment due to rudder</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>fcs/rudder-pos-rad</property>
+		<property>/damage/controls/flight/rudder-condition</property>
+		<value> 0.0100 </value>
+	    </product>
+	</function>
+
+    </axis>
+
+    <!-- ================================ YAW ================================ -->
+
+    <axis name="YAW">
+	<!--
+	    Use QBarUV for formula involving Beta. It is the value of QBar restricted
+	    to the horizontal plane airspeed components contribution.
+	    For Yaw (Cn) QBarUV is more appropriate for Cn than the generic QBar.
+	-->
+
+	<!--
+	    To completely deisable the beta effect on the ground, multiple the coefficient
+	    with the property "aero/beta-switch"
+	-->
+	<function name="aero/moment/Yaw_beta">
+	    <description>Yaw moment due to beta</description>
+	    <product>
+		<property>aero/qbarUV-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/beta-rad</property>
+		<value> 0.1845 </value>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Yaw_roll_rate">
+	    <description>Yaw moment due to roll rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/p-rad_sec</property>
+		<table>
+		    <independentVar lookup="row">aero/Re</independentVar>
+		    <tableData>
+			44955428  -0.1301
+			49450972  -0.0076
+			67433144  -0.0034
+			90956848  -0.0018
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Yaw_damp">
+	    <description>Yaw moment due to yaw rate</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/bi2vel</property>
+		<property>velocities/r-aero-rad_sec</property>
+		<value> -0.1689 </value>
+	    </product>
+	</function>
+
+	<!-- NB: CYdr x lv-ft = Cndr x bw-ft -->
+	<function name="aero/moment/Yaw_rudder">
+	    <description>Yaw moment due to rudder</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>fcs/rudder-pos-rad</property>
+		<property>/damage/controls/flight/rudder-condition</property>
+		<property>aero/coefficient/CnRudder</property>
+	    </product>
+	</function>
+
+	<function name="aero/moment/Yaw_aileron">
+	    <description>Adverse yaw</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>fcs/left-aileron-pos-rad</property>
+		<property>/damage/controls/flight/aileron-condition</property>
+		<value> 0.0000 </value>
+	    </product>
+	</function>
+
+	<!-- Stall initiator -->
+	<function name="aero/moment/Yaw_alpha">
+	    <description>Yaw moment due to alpha</description>
+	    <product>
+		<property>aero/qbar-psf</property>
+		<property>metrics/Sw-sqft</property>
+		<property>metrics/bw-ft</property>
+		<property>aero/alpha-rad</property>
+		<property>gear/gear-no-wow</property>
+		<table>
+		    <independentVar lookup="row">aero/beta-rad</independentVar>
+		    <independentVar lookup="column">aero/Re</independentVar>
+		    <tableData>
+				44955428	49450972
+			-0.3491	-1.0000		0.0000
+			0.3491	 1.0000		0.0000
+		    </tableData>
+		</table>
+	    </product>
+	</function>
+
+    </axis>
+
+</aerodynamics>
+
+<external_reactions>
+<!-- the magnitude is set in the drag-chute system file -->
+    <force name="chute" frame="WIND">
+	<location unit="M">
+	    <x> 32.0 </x>
+	    <y>  0.0 </y>
+	    <z>  2.0 </z>
+	</location>
+	<direction>
+	    <x> -1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</direction>
+    </force>
+
+</external_reactions>
+
+</fdm_config>

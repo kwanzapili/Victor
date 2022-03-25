@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<PropertyList>
+
+    <path>ALTset.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>AltSetFrame2</object-name>
+	<object-name>Button11</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>SetALT-DT</object-name>
+	<object-name>SetALT-T</object-name>
+	<object-name>SetALT-H</object-name>
+	<object-name>SetALTfixed1</object-name>
+	<object-name>SetALTfixed2</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection3</name>
+	<object-name>ALTSETPLUS</object-name>
+	<object-name>ALTSETMINUS</object-name>
+    </animation>
+
+    <!-- objects we do not need -->
+    <animation>
+	<type>select</type>
+	<object-name>Collection3</object-name>
+    </animation>   
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection2</object-name>
+    </animation>
+
+    <animation>
+	<type>material</type>
+	<object-name>ALTSETON</object-name>
+	<emission>
+	    <red>  0.0</red>
+	    <green>0.9</green>
+	    <blue> 0.0</blue>
+	</emission>
+	<ambient>
+	    <red>  0.0</red>
+	    <green>1.0</green>
+	    <blue> 0.0</blue>
+	</ambient>
+    </animation>
+
+    <!-- Check if AP Altitude is set on and light on the green led-->
+    <animation>
+	<type>select</type>
+	<object-name>ALTSETON</object-name>
+	<condition>
+	    <equals>
+		<property>/controls/switches/altitude-mode</property>
+		<value type="bool">true</value>
+	    </equals>
+	    <equals>
+		<property>/controls/switches/autopilot</property>
+		<value type="bool">true</value>
+	    </equals>
+	</condition>
+    </animation> 
+
+    <!-- Alt set indicator Singles digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetALTfixed2</object-name>
+	<property>/instrumentation/flightdirector/altitude-select</property>
+	<factor> 0.1 </factor>
+	<step> 1 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Alt set indicator Deca digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetALTfixed1</object-name>
+	<property>/instrumentation/flightdirector/altitude-select</property>
+	<factor> 0.01 </factor>
+	<step> 10 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Alt set indicator Hundreds digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetALT-H</object-name>
+	<property>/instrumentation/flightdirector/altitude-select</property>
+	<factor> 0.001 </factor>
+	<step> 100 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Alt set indicator Thousands digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetALT-T</object-name>
+	<property>/instrumentation/flightdirector/altitude-select</property>
+	<factor>  0.0001 </factor>
+	<step> 1000</step>
+	<scroll>  1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Alt set indicator DecaThousands digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetALT-DT</object-name>
+	<property>/instrumentation/flightdirector/altitude-select</property>
+	<factor>   0.00001 </factor>
+	<step> 10000 </step>
+	<scroll>   1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Knob setting -->
+    <animation>
+	<type>knob</type>
+	<object-name>Button11</object-name>
+	<value>0.0</value>
+	<center>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 0 </z-m>
+	</center>
+	<axis>
+	    <x> -1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<factor>100</factor>
+		<min>0</min>
+		<max>50000</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+		<factor>1000</factor>
+		<min>0</min>
+		<max>50000</max>
+		<wrap>false</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<tooltip-id>altitude-select</tooltip-id>
+		<label>Altitude: %5d</label>
+		<property>/instrumentation/flightdirector/altitude-select</property>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- End Altitude setting -->
+
+    <!-- *** LoD for the whole model *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

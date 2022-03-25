@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!-- Low illumination of a panel instrument  -->
+
+<PropertyList>
+
+    <type>material</type>
+    <condition>
+	<property>controls/lighting/panel-lights</property>
+	<!-- We must have enough electrical power -->
+	<greater-than>
+	    <property>systems/electrical/outputs/panel-lights</property>
+	    <value> 100 </value>
+	</greater-than>
+    </condition>
+    <emission>
+	<factor-prop>controls/lighting/panel-norm</factor-prop>
+	<red>   0.40 </red>
+	<green> 0.20 </green>
+	<blue>  0.10 </blue>
+    </emission>
+    <shininess> 20 </shininess>
+
+</PropertyList>

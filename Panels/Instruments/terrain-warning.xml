@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Terrain warning display</name>
+    <w-base>80</w-base>
+    <h-base>35</h-base>
+
+    <layers>
+
+	<!-- The "bulb" -->
+	<layer>
+	    <name>Warning light</name>
+	    <type>switch</type>
+	    <layer>
+		<condition>
+		    <property>sim/alarms/terrain-warning</property>
+		</condition>
+		<name>on</name>
+		<texture>
+		    <path>Aircraft/Instruments/Textures/warning-lamps.rgb</path>
+		    <x1>0.25</x1>
+		    <y1>0.0</y1>
+		    <x2>0.5</x2>
+		    <y2>0.095</y2>
+		</texture>
+		<w>80</w>
+		<h>35</h>
+		<transformations>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-15</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>off</name>
+		<texture>
+		    <path>Aircraft/Instruments/Textures/warning-lamps.rgb</path>
+		    <x1>0.0</x1>
+		    <y1>0.0</y1>
+		    <x2>0.25</x2>
+		    <y2>0.095</y2>
+		</texture>
+		<w>80</w>
+		<h>35</h>
+		<transformations>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-15</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	</layer>
+
+	<!-- translucent lens -->
+	<layer>
+	    <name>Warning status</name>
+	    <type>switch</type>
+	    <layer>
+		<condition>
+		    <property>sim/alarms/terrain-warning</property>
+		</condition>
+		<name>on lens</name>
+		<texture>
+		    <path>Aircraft/Instruments/Textures/warning-lamps.rgb</path>
+		    <x1>0.2</x1>
+		    <y1>0.3</y1>
+		    <x2>0.6</x2>
+		    <y2>0.4</y2>
+		</texture>
+		<w>80</w>
+		<h>35</h>
+		<transformations>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-15</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>off lens</name>
+		<texture>
+		    <path>Aircraft/Instruments/Textures/warning-lamps.rgb</path>
+		    <x1>0.2</x1>
+		    <y1>0.7</y1>
+		    <x2>0.6</x2>
+		    <y2>0.8</y2>
+		</texture>
+		<w>80</w>
+		<h>35</h>
+		<transformations>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-15</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	</layer>
+
+	<layer>
+	    <name>Warning Switch</name>
+	    <type>switch</type>
+	    <layer>
+		<condition>
+		    <property>sim/alarms/terrain-warning</property>
+		</condition>
+		<name>Warning</name>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>12</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>Terrain</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-20</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Clear</name>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>12</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>Clear</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-18</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>-12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	</layer>
+
+    </layers>
+
+</PropertyList>

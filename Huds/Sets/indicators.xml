@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ gears -->
+    <label>
+	<name>Gear</name>
+	<x>200</x>
+	<y>-140</y>
+	<width>15</width>
+	<height>6</height>
+	<condition>
+	    <property>/controls/gear/gear-down</property>
+	</condition>
+	<format>Gear Down</format>
+	<halign>left</halign>
+    </label>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ terrain -->
+    <label>
+	<name>Terrain</name>
+	<x>200</x>
+	<y>-120</y>
+	<width>15</width>
+	<height>6</height>
+	<condition>
+	    <property>sim/alarms/terrain-warning</property>
+	    <not>
+		<property>/controls/gear/gear-down</property>
+	    </not>
+	</condition>
+	<format>Terrain Ahead</format>
+	<halign>left</halign>
+	<blinking>
+	    <interval>1.0</interval>
+	</blinking>
+    </label>
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~ low speed warning -->
+    <label>
+	<name>SpeedWarning</name>
+	<x>-300</x>
+	<y>-140</y>
+	<width>20</width>
+	<height>6</height>
+	<condition>
+	    <equals>
+		<property>/instrumentation/annunciator/low-speed</property>
+		<value>1</value>
+	    </equals>
+	</condition>
+	<format>Low Speed!</format>
+	<blinking>
+	    <interval>2.25</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ pitch and alpha alerts -->
+
+    <label>
+	<name>HighAlpha</name>
+	<x>-50</x>
+	<y>-175</y>
+	<width>20</width>
+	<height>6</height>
+	<condition>
+	    <property>/instrumentation/annunciator/high-alpha</property>
+	</condition>
+	<format>High Alpha</format>
+	<halign>center</halign>
+	<blinking>
+	    <interval>0.50</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <label>
+	<name>PitchRate</name>
+	<x> 30</x>
+	<y>-175</y>
+	<width>20</width>
+	<height>6</height>
+	<condition>
+	    <property>/instrumentation/annunciator/high-alpha</property>
+	</condition>
+	<format>Pitch Rate</format>
+	<halign>center</halign>
+	<blinking>
+	    <interval>0.50</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ stall alert -->
+    <label>
+	<name>StallAlert</name>
+	<x>-35</x>
+	<y>50</y>
+	<width>15</width>
+	<height>6</height>
+	<condition>
+	    <equals>
+		<property>/sim/alarms/stall-warning</property>
+		<value>2</value>
+	    </equals>
+	</condition>
+	<format>STALL ALERT!</format>
+	<blinking>
+	    <interval>0.5</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ stall warning -->
+    <label>
+	<name>StallWarning</name>
+	<x>-40</x>
+	<y>50</y>
+	<width>15</width>
+	<height>6</height>
+	<condition>
+	    <equals>
+		<property>/sim/alarms/stall-warning</property>
+		<value>1</value>
+	    </equals>
+	</condition>
+	<format>STALL WARNING!</format>
+	<blinking>
+	    <interval>0.8</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ fuel warning -->
+    <label>
+	<name>FuelWarning</name>
+	<x>-30</x>
+	<y>150</y>
+	<width>20</width>
+	<height>6</height>
+	<condition>
+	    <equals>
+		<property>/instrumentation/annunciator/fuel-warning</property>
+		<value>1</value>
+	    </equals>
+	</condition>
+	<format>BINGO FUEL!</format>
+	<blinking>
+	    <interval>2.25</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+    <label>
+	<name>FuelCritical</name>
+	<x>-25</x>
+	<y>120</y>
+	<width>15</width>
+	<height>6</height>
+	<condition>
+	    <equals>
+		<property>/instrumentation/annunciator/fuel-warning</property>
+		<value>2</value>
+	    </equals>
+	</condition>
+	<format>FUEL LOW!</format>
+	<blinking>
+	    <interval>1.25</interval>
+	</blinking>
+	<halign>left</halign>
+    </label>
+
+</PropertyList>

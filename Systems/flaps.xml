@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<system name="Flaps">
+
+    <channel name="Flaps" execrate="8">
+
+	<kinematic name="fcs/flap-pos-deg">
+	    <description> Flaps Control </description>
+	    <input>fcs/flap-cmd-norm</input>
+	    <traverse>
+		<setting>
+		    <position>  0 </position>
+		    <time>      0 </time>
+		</setting>
+		<setting>
+		    <position> 15 </position>
+		    <time>      4 </time>
+		</setting>
+		<setting>
+		    <position> 30 </position>
+		    <time>      3 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<aerosurface_scale name="fcs/flap-pos-norm">
+	    <description> Flap Normalization </description>
+	    <input>fcs/flap-pos-deg</input>
+	    <domain>
+		<min>  0 </min>
+		<max> 30 </max>
+	    </domain>
+	    <range>
+		<min> 0 </min>
+		<max> 1 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<!-- Utility to assign numbers to flap configurations: 0, 1, 2 -->
+	<switch name="/controls/flight/flaps-level">
+	    <description> Flaps Configuration </description>
+	    <default value="0"/>
+	    <test logic="AND" value="2">
+		/controls/flight/flaps GT 0.5
+	    </test>
+	    <test logic="AND" value="1">
+		/controls/flight/flaps GT 0
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

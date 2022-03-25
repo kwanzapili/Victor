@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+    <!-- Crater -->
+    <model>
+	<path>Aircraft/victor/Models/Effects/Armament/crater.xml</path>
+	<offsets>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m>-2 </z-m>
+	</offsets>
+    </model>
+
+    <!-- Smoke  -->
+    <model>
+	<path>Aircraft/victor/Models/Effects/Armament/Impact.xml</path>
+	<offsets>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 0 </z-m>
+	</offsets>
+    </model>
+
+    <!-- Fire -->
+    <model>
+	<path>Aircraft/victor/Models/Effects/Armament/smoke.xml</path>
+	<offsets>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 1 </z-m>
+	</offsets>
+    </model>
+
+</PropertyList>
+

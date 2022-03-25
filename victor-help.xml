@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+
+<!-- Handley Page Victor Help Menu -->
+
+<PropertyList>
+
+    <title>Handley Page Victor</title>
+
+    <key>
+	<name>=</name>
+	<desc>Configuration menu</desc>
+    </key>
+    <key>
+	<name>!</name>
+	<desc>Select first engine</desc>
+    </key>
+    <key>
+	<name>"</name>
+	<desc>Select second engine</desc>
+    </key>
+    <key>
+	<name>@</name>
+	<desc>Select third engine</desc>
+    </key>
+    <key>
+	<name>$</name>
+	<desc>Select fourth engine</desc>
+    </key>
+    <key>
+	<name>(</name>
+	<desc>Switch OFF selected engine</desc>
+    </key>
+    <key>
+	<name>)</name>
+	<desc>Switch ON selected engine</desc>
+    </key>
+    <key>
+	<name>#</name>
+	<desc>Engine master ON</desc>
+    </key>
+    <key>
+	<name>{</name>
+	<desc>Engine master OFF</desc>
+    </key>
+    <key>
+	<name>}</name>
+	<desc>Toggle master electric switch</desc>
+    </key>
+    <key>
+	<name>Ctrl-E</name>
+	<desc>Toggle external power on/off</desc>
+    </key>
+    <key>
+	<name>Ctrl-F</name>
+	<desc>Toggle APU on/off</desc>
+    </key>
+    <key>
+	<name>~</name>
+	<desc>Autostart</desc>
+    </key>
+    <key>
+	<name>^</name>
+	<desc>Toggle master arm switch</desc>
+    </key>
+    <key>
+	<name>D</name>
+	<desc>Toggle bomb bay door</desc>
+    </key>
+    <key>
+	<name>d</name>
+	<desc>Toggle crew hatch</desc>
+    </key>
+    <key>
+	<name>e</name>
+	<desc>Toggle refuelling switch</desc>
+    </key>
+    <key>
+	<name>E</name>
+	<desc>Extend refuelling drogues</desc>
+    </key>
+    <key>
+	<name>f</name>
+	<desc>Fire weaponry</desc>
+    </key>
+    <key>
+	<name>J/K</name>
+	<desc>Tail brake chute control</desc>
+    </key>
+    <key>
+	<name>j/k</name>
+	<desc>Operate speedbrakes</desc>
+    </key>
+    <key>
+	<name>l</name>
+	<desc>Toggle landing lights</desc>
+    </key>
+    <key>
+	<name>m/M</name>
+	<desc>Speed in mach/knots</desc>
+    </key>
+    <key>
+	<name>n</name>
+	<desc>Toggle navigation lights</desc>
+    </key>
+    <key>
+	<name>N</name>
+	<desc>Toggle strobe lights</desc>
+    </key>
+    <key>
+	<name>o</name>
+	<desc>Toggle weapon arming</desc>
+    </key>
+    <key>
+	<name>q</name>
+	<desc>Panel View</desc>
+    </key>
+    <key>
+	<name>r/R</name>
+	<desc>Select next station</desc>
+    </key>
+    <key>
+	<name>w</name>
+	<desc>Co-pilot View</desc>
+    </key>
+    <key>
+	<name>Ctrl-A</name>
+	<desc>Toggle autopilot</desc>
+    </key>
+    <key>
+	<name>Ctrl-D</name>
+	<desc>Toggle flight director</desc>
+    </key>
+    <key>
+	<name>Ctrl-G</name>
+	<desc>Toggle glide slope lock</desc>
+    </key>
+    <key>
+	<name>Ctrl-H</name>
+	<desc>Cycle through heading locks</desc>
+    </key>
+    <key>
+	<name>Ctrl-N</name>
+	<desc>Arm LOCalizer lock</desc>
+    </key>
+    <key>
+	<name>Ctrl-P</name>
+	<desc>Toggle pitch hold</desc>
+    </key>
+    <key>
+	<name>Ctrl-S</name>
+	<desc>Toggle auto-throttle</desc>
+    </key>
+    <key>
+	<name>Ctrl-T</name>
+	<desc>Toggle terrain lock</desc>
+    </key>
+    <key>
+	<name>Ctrl-W</name>
+	<desc>Toggle wing leveler</desc>
+    </key>
+
+    <text>
+        === Start up ===
+    The engine master switch if OFF
+    All engines are OFF
+    The electric master is OFF
+    The ground power is disconnected
+    The hatch is open
+    The parking brake is ON
+
+    ========== Start Routine ==========
+    Request the Palouste compressor starter => key "Ctrl-E"
+    Turn ON the engine master switch => key "#"
+    Turn ON the electric master switch => key "}"
+    Fire the starter => key ")"
+    The engine will spin up to a maximum of about 25% N2 (5.2% N1)
+    The engine cutoff switch is triggered automatically at this stage
+    Wait for the engine to to reach about 45% N2
+    Select the next engine and fire the starter again => key ")"
+    Wait for all engines to stablise (~30% N1 and 60% N2)
+    The external starter resources are automatically disconnected
+    The engine will spin up to a maximum of about %25 N2 (%5.2 N1)
+    Don't forget to close the hetch => key "d"
+    Flaps as necessary
+    Parking brake OFF (this also disconnects the external starter)
+    Then use the throttle to accelerate
+
+    Run on the ground until VR (depends on weight on payload)
+    Take off before ~230 knots to avoid damaging the tyres
+
+    ========== Speeds (AUW 140,000 lbs) ==========
+    Rotation:              150 knots
+    Initial Climb:         170 knots
+    Climb (below 24K ft):  250 knots
+    Climb (above 24K ft):  300 knots
+    Pattern:               200 knots
+    Approach:              190 knots
+    Threshhold:            160 knots
+    Touch down:            135 knots
+    Tail Chute:            235 knots
+
+   </text>
+
+</PropertyList>

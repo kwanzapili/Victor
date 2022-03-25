@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <adf>
+	<name>adf</name>
+	<number>0</number>
+    </adf>
+
+    <!-- 
+	Air Ground Radar provides terrain warning within a defined altitude band.
+    -->
+    <air-ground-radar>
+	<name>air-ground-radar</name>
+	<number>0</number>
+    </air-ground-radar>
+
+    <!--
+	For supersonic aircraft with an airspeed indicator NOT compensating for
+	a shockwave in front of the pitot tube (most probably the case), use:
+	total-pressure = /systems/pitot/measured-total-pressure-inhg
+    -->
+    <airspeed-indicator>
+	<name>airspeed-indicator</name>
+	<number>0</number>
+	<total-pressure>/systems/pitot[0]/measured-total-pressure-inhg</total-pressure>
+	<static-pressure>/systems/static[0]/pressure-inhg</static-pressure>
+	<has-overspeed-indicator type="bool">true</has-overspeed-indicator>
+    </airspeed-indicator>
+
+    <airspeed-indicator>
+	<name>airspeed-indicator</name>
+	<number>1</number>
+	<total-pressure>/systems/pitot[1]/measured-total-pressure-inhg</total-pressure>
+	<static-pressure>/systems/static[1]/pressure-inhg</static-pressure>
+	<has-overspeed-indicator type="bool">true</has-overspeed-indicator>
+    </airspeed-indicator>
+
+    <!--
+	The altimeters do not encode Mode-S by default, so we force them to do it
+	so that the transponder can run in Mode-S or others.
+    -->
+    <altimeter>
+	<name>altimeter</name>
+	<number>0</number>
+	<static-pressure>/systems/static[0]/pressure-inhg</static-pressure>
+	<quantum>0</quantum>
+	<tau>0.1</tau>
+	<encode-mode-c type="bool">true</encode-mode-c>
+	<encode-mode-s type="bool">true</encode-mode-s>
+    </altimeter>
+
+    <altimeter>
+	<name>altimeter</name>
+	<number>1</number>
+	<static-pressure>/systems/static[1]/pressure-inhg</static-pressure>
+	<quantum>0</quantum>
+	<tau>0.1</tau>
+	<encode-mode-c type="bool">true</encode-mode-c>
+	<encode-mode-s type="bool">true</encode-mode-s>
+    </altimeter>
+
+    <attitude-indicator>
+	<name>attitude-indicator</name>
+	<number>0</number>
+	<suction>/systems/vacuum-max/suction-inhg</suction>
+    </attitude-indicator>
+
+    <clock>
+	<name>clock</name>
+	<number>0</number>
+    </clock>
+
+    <comm-radio>
+	<name>comm</name>
+	<number>0</number>
+    </comm-radio>
+
+    <comm-radio>
+	<name>comm</name>
+	<number>1</number>
+    </comm-radio>
+
+    <dme>
+	<name>dme</name>
+	<number>0</number>
+    </dme>
+
+    <gps>
+	<name>gps</name>
+	<number>0</number>
+    </gps>
+
+    <heading-indicator>
+	<name>heading-indicator</name>
+	<number>0</number>
+	<suction>systems/vacuum-max/suction-inhg</suction>
+    </heading-indicator>
+
+    <!-- Directional Gyro (DG) compass -->
+    <heading-indicator-dg>
+	<number>0</number>
+    </heading-indicator-dg>
+
+    <magnetic-compass>
+	<name>magnetic-compass</name>
+	<number>0</number>
+    </magnetic-compass>
+
+    <marker-beacon>
+	<name>marker-beacon</name>
+	<number>0</number>
+    </marker-beacon>
+
+    <master-reference-gyro>
+	<name>master-reference-gyro</name>
+	<number>0</number>
+    </master-reference-gyro>
+
+    <!--
+	Ground proximity warning system. Note that it needs the following instruments:
+	"attitude-indicator", "altimeter", "airspeed-indicator", "radar-altimeter" and "nav[0]".
+    -->
+    <mk-viii>
+	<name>mk-viii</name>
+	<number>0</number>
+    </mk-viii>
+
+    <nav-radio>
+	<name>nav</name>
+	<number>0</number>
+    </nav-radio>
+
+    <nav-radio>
+	<name>nav</name>
+	<number>1</number>
+    </nav-radio>
+
+    <!--
+	A radar altimeter is always calibrated to the gear, hence provides precise
+	information on altitude during the final callouts before touch down.
+	This one will serve as a ground position indicator (GPI).
+    -->
+    <radar-altimeter>
+	<name>radar-altimeter</name>
+	<number>0</number>
+    </radar-altimeter>
+
+    <slip-skid-ball>
+	<name>slip-skid-ball</name>
+	<number>0</number>
+    </slip-skid-ball>
+
+    <tacan>
+	<name>tacan</name>
+	<number>0</number>
+    </tacan>
+
+    <tcas>
+	<name>tcas</name>
+	<number>0</number>
+    </tcas>
+
+    <!--
+	Mode-S transponders (configured with mode = 2) can transmit a ground bit to
+	indicate ground operation. If "auto-ground" is not defined, the ground bit is
+	switched manually by setting the transponder knob to GND. If auto-ground is
+	defined, the transponder simulates automatic switching of the ground bit
+	using the value of the property defined in auto-ground.
+
+	Note that Mode-A and Mode-C transponders do not transmit a ground bit, even
+	if the transponder knob is set to the GND position.
+
+	Mode-S transponders also transmit indicated airspeed. The default source of
+	this is /instrumentation/airspeed-indicator/indicated-speed-kt but this can be
+	changed by setting the "airspeed-path" property.
+    -->
+    <transponder>
+	<name>transponder</name>
+	<number>0</number>
+	<mode>2</mode>      <!-- 0 = Mode A, 1 = Mode C, 2 = Mode S -->
+	<encoder-path type="string">/instrumentation/altimeter</encoder-path>
+	<minimum-supply-volts type="double">8.0</minimum-supply-volts>
+	<kt70-compatibility type="bool">false</kt70-compatibility>
+	<auto-ground type="string">/instrumentation/fmc/flight-control-ground-mode</auto-ground>
+	<airspeed-path type="string">/instrumentation/airspeed-indicator/indicated-speed-kt</airspeed-path>
+    </transponder>
+
+    <turn-indicator>
+	<name>turn-indicator</name>
+	<number>0</number>
+	<!-- initialise value of "/systems/electrical/outputs/turn-coordinator" -->
+	<electrical>0</electrical>
+    </turn-indicator>
+
+    <vertical-speed-indicator>
+	<name>vertical-speed-indicator</name>
+	<number>0</number>
+	<static-pressure>/systems/static/pressure-inhg</static-pressure>
+	<static-temperature>/environment/temperature-degc</static-temperature>
+    </vertical-speed-indicator>
+
+</PropertyList>

@@ -1,0 +1,2771 @@
+<?xml version="1.0"?>
+
+<!-- Handley Page Victor Flight Modes and Autoflight Decision System -->
+
+<flight_control name="FCS: Victor">
+
+    <!--
+	******************************************************
+	This system consists of the main Flight Controls.
+	All channels are always active.
+	******************************************************
+    -->
+
+    <!--
+	LEMAC offset estimate is based on the seeking a CoG of ~30% MAC assuming
+	a full payload of fuel and armament. We get the following results:
+			Target % MAC
+	Load profile	25	30
+	MTOW		528.98	511.88
+	Full fuel	534.68	517.58
+	Therefore, we assume LEMAC to be ~ 517in from the datum.
+    FIXME
+    -->
+    <property value="517">aero/function/LEMAC-in</property>
+
+
+    <!-- This channel is responsible for the flight modes and thus must run continuously -->
+
+    <channel name="Flight Mode" execrate="8">
+
+	<!--
+	    ###############################################################################
+	    # Flight Modes
+	    #
+	    #   0 =  Init, 1 = Power On, 2 = Engines Starting, 3 = 2+ Engines On ,
+	    #   4 = WOW and Speed > 80 kt, 5 = WOW and Speed > 120 kt, 6 = Liftoff,
+	    #   7 = Airborne under 400ft or after 15 sec of liftoff,
+	    #   8 = Above 1,500 ft or after 120 sec of liftoff; cruise until LG extend,
+	    #   9 = Gear extended and under 800 ft,
+	    #   10 = WOW (touchdown),
+	    #   11 = On runway speed under 80 kt, 12 = Engines Off or 5 mins after TD
+	    #
+	    ###############################################################################
+	-->
+
+	<switch name="/instrumentation/fmc/flight-mode">
+	    <description> Set the flight mode value </description>
+	    <default value="/instrumentation/fmc/flight-mode"/>
+	    <!-- If crashed set to OFF -->
+	    <test value="0">
+		/sim/crashed EQ 1
+	    </test>
+	    <!-- Power On when AC power is available -->
+	    <test value="1">
+		/instrumentation/fmc/flight-mode EQ 0
+		systems/electrical/ac-power EQ 1
+	    </test>
+	    <!-- Engines On: when at least one of the engines is running -->
+	    <test value="2">
+		/instrumentation/fmc/flight-mode EQ 1
+		systems/propulsion/active-engines GT 0
+	    </test>
+	    <!-- All engines powered with brakes off (should really be 2 engines)-->
+	    <test value="3">
+		/instrumentation/fmc/flight-mode EQ 2
+		systems/propulsion/active-engines GT 3
+		/controls/gear/brake-parking NE 1
+	    </test>
+	    <!-- TAXI: aircraft is moving above 80 kts -->
+	    <test value="4">
+		/instrumentation/fmc/flight-mode EQ 3
+		velocities/vc-kts GE 80
+	    </test>
+	    <!-- Refusal speed (V1) reached -->
+	    <test value="5">
+		/instrumentation/fmc/flight-mode EQ 4
+		velocities/vc-kts GE /instrumentation/fmc/vspeeds/V1
+	    </test>
+	    <!-- Liftoff -->
+	    <test value="6">
+		/instrumentation/fmc/flight-mode EQ 5
+		gear/gear-no-wow EQ 1
+	    </test>
+	    <!-- Climbing: above 400 ft -->
+	    <test value="7">
+		/instrumentation/fmc/flight-mode EQ 6
+		position/h-agl-ft GT 400
+	    </test>
+	    <!-- Normal flight: above 1,500 ft -->
+	    <test value="8">
+		/instrumentation/fmc/flight-mode EQ 7
+		position/h-agl-ft GT 1500
+		/instrumentation/fmc/landing/go-around NE 1
+	    </test>
+	    <!-- Flare mode: below 1,000 ft with gear extended -->
+	    <test value="9">
+		/instrumentation/fmc/flight-mode EQ 8
+		position/h-agl-ft LE 1000
+		gear/gear-pos-norm GT 0.1
+	    </test>
+	    <!-- Touchdown -->
+	    <test value="10">
+		/instrumentation/fmc/flight-mode EQ 9
+		gear/main-gear-grounded EQ 1
+	    </test>
+	    <!-- Arrival: on ground with speed below 50 knots -->
+	    <test value="11">
+		/instrumentation/fmc/flight-mode EQ 10
+		velocities/vc-kts LT 50
+	    </test>
+	    <!-- Stopped at gate with parking brakes ON -->
+	    <test value="12">
+		/instrumentation/fmc/flight-mode EQ 11
+		/controls/gear/brake-parking EQ 1
+		systems/propulsion/active-engines EQ 0
+	    </test>
+	    <!-- Go-around: revert to climb mode if AGL exceeds 1,100 ft-->
+	    <test value="7">
+		/instrumentation/fmc/flight-mode GE 9
+		position/h-agl-ft GT 1100
+	    </test>
+	    <!-- Switch off -->
+	    <test value="0">
+		/instrumentation/fmc/flight-mode GT 1
+		systems/propulsion/active-engines EQ 0
+		/controls/electric/master-switch EQ 0
+		/controls/engines/master EQ 0
+	    </test>
+	</switch>
+
+	<!-- this switch is used to start the approach calculators -->
+	<switch name="/instrumentation/flightdirector/start-approach">
+	    <description>
+		Start approach calculations when LOCalizer is in range
+	    </description>
+	    <!-- it must be switched on and off -->
+	    <default value="/instrumentation/flightdirector/start-approach"/>
+	    <!-- switch off after landing, when going around, or before normal flight -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-control-flight-mode EQ 0
+		/instrumentation/fmc/landing/go-around EQ 1
+		/instrumentation/fmc/flight-mode LT 8
+	    </test>
+	    <!-- switch on when in range -->
+	    <test value="1">
+		/instrumentation/nav[0]/nav-loc EQ 1
+		/instrumentation/nav[0]/in-range EQ 1
+		/instrumentation/nav[0]/nav-distance LT 35000
+		<!-- not before ToD -->
+		/instrumentation/flightdirector/past-td EQ 1
+	    </test>
+	</switch>
+
+	<!-- switch to start monitoring landing operations -->
+	<switch name="/instrumentation/fmc/landing/monitor">
+	    <description>
+		Monitoring landing operations
+	    </description>
+	    <default value="0"/>
+	    <!--
+		switch ON either in:
+		flare flight mode to touchdown and rollout,
+		final appaoch flight phase or
+		when going around (for a few cleanup steps needed)
+	    -->
+	    <test logic="OR" value="1">
+		/instrumentation/flightdirector/fd-phase EQ 8
+		/instrumentation/fmc/flight-mode EQ 9
+		/instrumentation/fmc/flight-mode EQ 10
+		/instrumentation/fmc/landing/go-around EQ 1
+		/instrumentation/fmc/flight-control-rollout-mode EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel updates the CoG setting and weight conversions.
+	It runs continuously.
+    -->
+    <channel name="Weight" execrate="8">
+
+	<!-- estimate weight at destination -->
+	<summer name="/instrumentation/fmc/landing/est-weight-lbs">
+	    <input> inertia/weight-lbs </input>
+	    <input> -/consumables/fuel/projected-use-lbs </input>
+	</summer>
+
+	<!-- check if landing is possible at the current weight -->
+	<switch name="/instrumentation/fmc/landing/under-weight">
+	    <description>
+		Aircraft can land with current or projected weight
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		inertia/weight-lbs LT /limits/mass-and-balance/maximum-landing-mass-lbs
+		/instrumentation/fmc/landing/est-weight-lbs LE /limits/mass-and-balance/maximum-landing-mass-lbs
+	    </test>
+	</switch>
+
+	<!-- Load factors: Borrowed from the SR-71 FIXME -->
+
+	<fcs_function name="structural/limit-positive-g">
+	    <function>
+		<description> Upper load factor limit </description>
+		<table>
+		    <independentVar lookup="row"> inertia/weight-lbs </independentVar>
+		    <independentVar lookup="column"> velocities/mach </independentVar>
+		    <tableData>
+				0.5	1.0
+			90000	4.0	3.5
+			154000	4.0	2.5
+			204000	3.5	2.0
+		    </tableData>
+		</table>
+	    </function>
+	    <output>/limits/max-positive-g</output>
+	</fcs_function>
+
+	<fcs_function name="structural/limit-negative-g">
+	    <function>
+		<description> Lower load factor limit </description>
+		<table>
+		    <independentVar lookup="row"> inertia/weight-lbs </independentVar>
+		    <independentVar lookup="column"> velocities/mach </independentVar>
+		    <tableData>
+				0.5	1.0
+			90000	-3.0	-2.0
+			150000	-2.5	-2.0
+			210000	-2.0	-2.0
+		    </tableData>
+		</table>
+	    </function>
+	    <output>/limits/max-negative-g</output>
+	</fcs_function>
+
+	<!-- +++++++ CoG Calculations +++++++ FIXME -->
+
+	<!--  CG – LEMAC = Distance from LEMAC -->
+	<summer name="aero/function/CoG-offset-in">
+	    <description>
+		Distance from LEMAC
+	    </description>
+	    <input> inertia/cg-x-in </input>
+	    <input>-aero/function/LEMAC-in </input>
+	</summer>
+
+	<!--
+	    CG % MAC = Distance aft of LEMAC * 100 / MAC
+	    Since MAC = 28.51 ft, then 100 / MAC (in) = 0.29234 in
+	-->
+	<pure_gain name="aero/function/CoG-MAC-pct">
+	    <description>
+		Center of Gravity offset in percentage MAC
+	    </description>
+	    <input> aero/function/CoG-offset-in </input>
+	    <gain> 0.29234 </gain>
+	</pure_gain>
+
+	<!-- The unrestricted CoG range is from 20% to 25%.-->
+
+	<fcs_function name="aero/function/CoG-limit-min">
+	    <function>
+		<description> Minimum aft limit of CoG </description>
+		<table>
+		    <independentVar lookup="row"> inertia/weight-lbs </independentVar>
+		    <tableData>
+			100000	15
+			180000	20
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<fcs_function name="aero/function/CoG-limit-max">
+	    <function>
+		<description> Maximum aft limit of CoG </description>
+		<table>
+		    <independentVar lookup="row"> inertia/weight-lbs </independentVar>
+		    <tableData>
+			100000	25
+			180000	30
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    Calculate how far aft and forward the CoG is from the boundaries.
+	    The CoG should be maintained near the aft CoG to minimize evelon
+	    deflection and reduce drag. FIXME
+	-->
+
+	<!-- if this is negative, then the CoG is too far aft -->
+	<summer name="aero/function/CoG-aft-offset">
+	    <input> aero/function/CoG-limit-max </input>
+	    <input> -aero/function/CoG-MAC-pct </input>
+	</summer>
+
+	<!-- if this is negative, then the CoG is too far forward -->
+	<summer name="aero/function/CoG-fwd-offset">
+	    <input> aero/function/CoG-MAC-pct </input>
+	    <input> -aero/function/CoG-limit-min </input>
+	</summer>
+
+	<!--
+	    The code for the CoG state is as follows:
+	    -2 :- too far forward; start aft transfer
+	    -1 :- close to forward boundary; keep current transfer
+	    0 :- within permissable rane; turn off transfers
+	    1 :- close to aft boundary; keep current transfer
+	    2 :- too far aft; start forward transfer
+	-->
+	<switch name="/instrumentation/fmc/CoG-state">
+	    <default value="0"/>
+	    <!-- only enabled in normal flight mode (8) -->
+	    <test value="0">
+		/instrumentation/fmc/flight-mode NE 8
+	    </test>
+	    <test logic="AND" value="-2">
+		aero/function/CoG-fwd-offset LT 0
+	    </test>
+	    <test logic="AND" value="2">
+		aero/function/CoG-aft-offset LT 0
+	    </test>
+	    <!--
+		Note that the forward offset is larger because we want to be
+		closer to the aft limit and further from the forward limit.
+		Normally the fuel sequencing moves the CoG aft automatically.
+	    -->
+	    <test logic="AND" value="-1">
+		aero/function/CoG-fwd-offset LT 1.0
+	    </test>
+	    <test logic="AND" value="1">
+		aero/function/CoG-aft-offset LT 0.5
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- This channel updates the velocity settings. It runs continuously -->
+    <channel name="Velocities" execrate="8">
+
+	<!--
+	    Vso: Stall speed or minimum steady flight speed for which the aircraft
+	    is still controllable:
+
+	    In straight and level flight the Lift equals the Weight. That means,
+	    the aircraft will have a load factor of 1. More commonly, the load factor
+	    is referred to as g-force. So, here the aircraft will experience a g-force of 1.
+
+	    Lift formula: L = (ρ x V^2 x S x Clmax) / 2
+
+	    As Lift equals Weight, the 'V' in the formula can be considered as the 1g stall speed.
+	    So, rearranging it, gives:
+
+	    V = √ [ 2 x L / (ρ x S x Clmax) ] = √ [ (2 x M x g) / (ρ x S x Clmax) ]
+	    where:
+	    V = Stall Speed m/s or ft/s
+	    ρ (rho) = air density (for dry air at sea level: 0.0765 lb/cu ft or 1.225 kg/m³)
+	    g = 9.81 m/s^2 (32.17405 ft/s^2)
+	    S = wing area m^2 or cu ft
+	    Clmax = Max Coefficient of Lift at Stall
+	    M = mass kg or lbs
+	    1 slug = 32.17405 lbm, therefore 2 x M x g  = 2 x slugs
+	    Assume CLmax = 1.6
+	-->
+	<fcs_function name="velocities/Vso-squared">
+	    <function>
+		<description> Square of Vso in fps </description>
+		<quotient>
+		    <product>
+			<property> inertia/weight-lbs </property>
+			<value> 2 </value>
+		    </product>
+		    <product>
+			<property> atmosphere/rho-slugs_ft3 </property>
+			<property> metrics/Sw-sqft </property>
+			<value> 1.6 </value>    <!-- CLmax -->
+		    </product>
+		</quotient>
+	    </function>
+	</fcs_function>
+
+	<fcs_function name="velocities/Vso-fps">
+	    <function>
+		<description> Vso in fps </description>
+		<pow>
+		    <property> velocities/Vso-squared </property>
+		    <value> 0.5 </value>
+		</pow>
+	    </function>
+	</fcs_function>
+
+	<pure_gain name="/instrumentation/fmc/vspeeds/Vso">
+	    <description> Vso in knots </description>
+	    <input> velocities/Vso-fps </input>
+	    <gain> 0.5925 </gain>       <!-- FPS2KT -->
+	</pure_gain>
+
+	<!-- utility switch for the Vspeeds channel -->
+	<switch name="fmc/calc-vspeeds">
+	    <description> Calculate V-speeds </description>
+	    <default value="fmc/calc-vspeeds"/>
+	    <!-- switch off before taxing (4) of beyond climb mode (7) -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode LT 4
+		/instrumentation/fmc/flight-mode GT 7
+	    </test>
+	    <!-- switch on when taxing (4) -->
+	    <test logic="AND" value="1">
+		/instrumentation/fmc/flight-mode EQ 4
+	    </test>
+	</switch>
+
+	<!-- Utility to compute the current vertical speed in fpm -->
+	<pure_gain name="/autopilot/internal/vert-speed-fpm">
+	    <description> Vertical speed in fpm </description>
+	    <input> velocities/v-down-fps </input>
+	    <gain> -60 </gain>
+	</pure_gain>
+
+	<!-- Minimum speed based on flap settings -->
+        <fcs_function name="fmc/speed/minimum-keas">
+            <function>
+                <description> Minimum speed </description>
+                <table>
+                    <independentVar lookup="row"> /controls/flight/flaps-level </independentVar>
+                    <independentVar lookup="column"> velocities/mach </independentVar>
+                    <tableData>
+                    		0.45	0.5	0.8
+                        0	140	250	300
+                        1	130	200	245
+                        2	120	180	225
+                    </tableData>
+                </table>
+            </function>
+        </fcs_function>
+
+	<!-- Low speed warning indicator -->
+	<switch name="/instrumentation/annunciator/low-speed">
+	    <description>
+		Low speed warning
+	    </description>
+	    <default value="0"/>
+	    <!-- airspeed is below KEAS limit -->
+	    <test logic="AND" value="1">
+		velocities/ve-kts LT fmc/speed/minimum-keas
+		/instrumentation/fmc/flight-control-flight-mode EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	The following channel computes V1, V2 and VR. It is only needed from takeoff
+	to climb mode.
+    -->
+    <channel name="Vspeeds" execute="fmc/calc-vspeeds" execrate="8">
+
+    <!--
+	Maximum Take-Off Weight (MTOW): 216,009 lbs (97,980 kg)
+	Typical Weight (partial tanks): 180,000 lbs
+	Typical Operating Empty Weight: 90,996 lbs (41,275 kg)
+
+	The following functions simply interpolate between the lower and upper speed limts
+	based on the current weight and empty/maximum weight of the plane.
+    -->
+
+    <!--
+	V1: Decision speed:
+	This is the maximum speed at which a rejected take-off can be initiated in
+	the event of an emergency. V1 is also the minimum speed at which a pilot
+	can continue take-off following an engine failure.
+    -->
+	<fcs_function name="/instrumentation/fmc/vspeeds/V1">
+	    <function>
+		<description>Takeoff refusal speed V1</description>
+		<table>
+		    <independentVar>inertia/weight-lbs</independentVar>
+		    <independentVar lookup="column"> fcs/flap-pos-deg </independentVar>
+		    <tableData>
+				    0       15      30
+			100000	   130     125     120
+			216000	   140     135     130
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    VR: Rotation speed:
+	    VR is the speed at which rotation can be initiated at the appropriate
+	    rate of about 3° per second. VR ensures that V2 is reached at 35 feet
+	    above the runway surface at the latest, including in the event of an
+	    engine failure at VEF. Therefore at 35 feet, the actual speed is usually
+	    greater than V2.
+	-->
+	<fcs_function name="/instrumentation/fmc/vspeeds/VR">
+	    <function>
+		<description>
+		    Rotation speed VR (Vso * flapFactor)
+		</description>
+		<product>
+		    <property> /instrumentation/fmc/vspeeds/Vso </property>
+		    <table>
+			<independentVar lookup="row"> fcs/flap-pos-deg </independentVar>
+			<tableData>
+			    0   1.40
+			    15  1.30
+			    30  1.20
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	    <clipto>
+		<min> /instrumentation/fmc/vspeeds/V1 </min>
+		<max> 170 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    V2: Take-off safety speed:
+	    The minimum take-off speed that the aircraft must attain by 35
+	    feet above the runway surface with one engine failed at VEF,
+	    and maintain during the second segment of the take-off.
+	    1.13 x VStall <= V2
+	-->
+	<fcs_function name="/instrumentation/fmc/vspeeds/V2">
+	    <function>
+		<description>
+		    Takeoff safety speed V2 (Vso * (flapFactor+0.05)) + 10
+		</description>
+		<sum>
+		    <product>
+			<property> /instrumentation/fmc/vspeeds/Vso </property>
+			<table>
+			    <independentVar lookup="row"> fcs/flap-pos-deg </independentVar>
+			    <tableData>
+				0       1.45
+				15      1.35
+				30      1.25
+			    </tableData>
+			</table>
+		    </product>
+		    <value> 10 </value>
+		</sum>
+	    </function>
+	    <clipto>
+		<min> /instrumentation/fmc/vspeeds/VR </min>
+		<max> 200 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Annunciators -->
+
+	<switch name="/instrumentation/annunciator/V1">
+	    <description> Announce V1 </description>
+	    <default value="/instrumentation/annunciator/V1"/>
+	    <!-- on when V1 is reached before liftoff (6) -->
+	    <test logic="AND" value="1">
+		/instrumentation/fmc/flight-mode LT 6
+		velocities/vc-kts GT /instrumentation/fmc/vspeeds/V1
+	    </test>
+	    <!-- off after liftoff (6) or before taxi (4)-->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode GE 6
+		/instrumentation/fmc/flight-mode LT 4
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/annunciator/VR">
+	    <description> Announce VR </description>
+	    <default value="/instrumentation/annunciator/VR"/>
+	    <!-- on when VR is reached before liftoff (6) -->
+	    <test logic="AND" value="1">
+		/instrumentation/fmc/flight-mode LT 6
+		velocities/vc-kts GT /instrumentation/fmc/vspeeds/VR
+	    </test>
+	    <!-- off after liftoff -->
+	    <test logic="AND" value="0">
+		/instrumentation/fmc/flight-mode GT 6
+	    </test>
+	</switch>
+
+	<!-- the V2 annunciator will stay ON once it is set -->
+	<switch name="/instrumentation/annunciator/V2">
+	    <description> Announce V2 </description>
+	    <default value="/instrumentation/annunciator/V2"/>
+	    <!-- off before taxi (4) -->
+	    <test logic="AND" value="0">
+		/instrumentation/fmc/flight-mode LT 4
+	    </test>
+	    <!-- on when V2 is reached -->
+	    <test logic="AND" value="1">
+		velocities/vc-kts GT /instrumentation/fmc/vspeeds/V2
+		/instrumentation/annunciator/V2 EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!--
+	The following channel computes Vref, Vapp and Vls. It is only needed during
+	the approach and landing phases.
+    -->
+    <channel name="Approach" execute="/instrumentation/flightdirector/start-approach" execrate="8">
+
+	<!--
+	    Flaps configuration factor: Vstall is based full flaps. Therefore we need the
+	    flaps configuration factor in all other cases. At no flaps we will assume an
+	    additonal 15 knots to Vstall.
+	-->
+	<fcs_function name="fmc/speed/flaps-factor">
+	    <description> Flaps Configuration factor in knots </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> fcs/flap-pos-deg </independentVar>
+		    <tableData>
+			0       15.0
+			15      6.0
+			30      0.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    Weight factor: Maximum landing weight is 185,000 lbs in an emergency
+	    Typical Operating Empty Weight: 90,996 lbs
+	    Typical Weight (partial tanks): 180,000 lbs
+	    Final speed 160 knots
+	    Touch down speed increases by weight. Up to 185,000 lbs the rate is:
+	    No flaps - 1 knot per 5,000 lb
+	    50% flaps - 1 knot per 6,000 lb
+	    Full flaps - 1 knot per 7,000 lb
+	-->
+	<fcs_function name="fmc/speed/weight-factor">
+	    <description> Weight Configuration factor in knots </description>
+	    <function>
+		<quotient>
+		    <difference>
+			<property> /instrumentation/fmc/landing/est-weight-lbs </property>
+			<value> 100000 </value>
+		    </difference>
+		    <table>
+			<independentVar lookup="row"> /controls/flight/flaps-level </independentVar>
+			<tableData>
+			    0	5000
+			    1	6000
+			    2	7000
+			</tableData>
+		    </table>
+		</quotient>
+	    </function>
+	    <clipto>
+		<min>  0 </min>
+		<max> 20 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    As a general rule, during flight phases, pilots should not select a speed below
+	    Vls (Lowest Selectable Speed), defined as 1.3 x Vstall of the actual configuration.
+	    The 1.23 factor is applicable to the fly-by-wire aircraft; 1.3 for the others.
+	    This rule applies for landing. During landing, pilots have to maintain
+	    stabilized approach, with a calibrated airspeed of no less than Vls down to a height
+	    of 50 feet above the destination airport.
+	-->
+	<summer name="fmc/speed/Vstall">
+	    <input> /instrumentation/fmc/vspeeds/Vso </input>
+	    <input> fmc/speed/flaps-factor </input>
+	</summer>
+
+	<!-- Adjust Vstall by weight factor  -->
+	<summer name="fmc/speed/Vconf">
+	    <input> fmc/speed/Vstall </input>
+	    <input> fmc/speed/weight-factor </input>
+	</summer>
+
+	<!--Vls: 1.26 x Vconf ≤ V ≤ 1.41 x Vconf -->
+	<pure_gain name="/instrumentation/fmc/vspeeds/Vls">
+	    <description> Lowest Selectable Speed </description>
+	    <input> fmc/speed/Vconf </input>
+	    <gain> 1.26 </gain>
+	</pure_gain>
+
+	<!--
+	    Reference Speed (Vref): This is the speed required as the landing runway threshold is
+	    crossed at a height of 50 feet in landing configuration if the calculated aircraft
+	    performance is to be achieved.
+	    That gives: Vref = Vls without the weight factor.
+	-->
+	<pure_gain name="/instrumentation/fmc/vspeeds/Vref">
+	    <description> Reference Speed (Vref) in knots </description>
+	    <input> fmc/speed/Vstall </input>
+	    <gain> 1.26 </gain>
+	</pure_gain>
+
+	<!--
+	    Wind correction factor in knots:
+	    Typically add half the headwind component plus all the gust factor.
+	    Limited to a minimum of 5 knots, and a maximum of 15 knots.
+	-->
+	<fcs_function name="fmc/speed/wind-factor-kt">
+	    <function>
+		<description> Wind factor </description>
+		<sum>
+		    <product>
+			<value> 0.5 </value>
+			<property> /environment/wind-speed-kt </property>
+		    </product>
+		    <property> /environment/metar[0]/gust-wind-speed-kt </property>
+		</sum>
+	    </function>
+	    <clipto>
+		<min>  5 </min>
+		<max> 15 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    Final Approach Speed: Vapp the aircraft speed during landing, 50 feet above the runway
+	    surface. The flaps/slats are in landing configuration, and the landing gears are extended.
+	    Vapp is limited by Vls: Vapp ≥ Vls.
+	    In normal operations, the Vapp is defined by:
+	    Vapp = Vls + wind correction
+	-->
+	<summer name="/instrumentation/fmc/vspeeds/Vapp">
+	    <input> /instrumentation/fmc/vspeeds/Vls </input>
+	    <input> fmc/speed/wind-factor-kt </input>
+	</summer>
+
+	<!-- Maximum touchdown speed is usually 1.15 x Vstall -->
+	<pure_gain name="/instrumentation/fmc/vspeeds/Vtd">
+	    <description> Touchdown speed </description>
+	    <input> fmc/speed/Vstall </input>
+	    <gain> 1.15 </gain>
+	</pure_gain>
+
+    </channel>
+
+    <!-- This channel is always active -->
+    <channel name="Autoflight System" execrate="4">
+
+	<!--
+	    ===============================================================
+	    Samplers - Pre-filters for autopilot target settings
+	    ===============================================================
+	-->
+
+	<!-- ++++++++++++++++++++++++ Lateral Mode ++++++++++++++++++++++++ -->
+
+	<!--
+	    Sample-and-hold current heading then switch to selected bearing or
+	    magnetic heading depending on mode.
+	-->
+	<switch name="/autopilot/internal/settings/heading-bug-deg">
+	    <description> Heading sample and hold </description>
+	    <default value="/instrumentation/heading-indicator-dg/indicated-heading-deg"/>
+	    <!-- HDG mode (2) -->
+	    <test value="/instrumentation/flightdirector/heading-bug-deg">
+		/instrumentation/flightdirector/lnav EQ 2
+	    </test>
+	    <!-- RUNWAY mode (6) -->
+	    <test value="/autopilot/internal/runway-heading-deg">
+		/instrumentation/flightdirector/lnav EQ 6
+	    </test>
+	</switch>
+
+	<!--
+	    Set the bank angle limits.
+	    These are based on the lateral mode:
+	    * Manual and Heading-hold modes:                45°
+	    * Auto-Nav mode or with pitch autopilot:        40°
+	    * Tacan and ILS modes:                          36°
+	    * ILS Approach mode:                            15°
+	-->
+
+	<switch name="/instrumentation/fmc/bank-angle/limit-max">
+	    <description>
+		Maximum bank angle limit by lateral mode
+	    </description>
+	    <default value="/instrumentation/fmc/bank-angle/heading"/>
+	    <!-- APPR mode (9) -->
+	    <test value="/instrumentation/fmc/bank-angle/approach">
+		/instrumentation/fmc/flight-mode GE 9
+	    </test>
+	    <!-- Tacan mode (5) or LOC mode (4) -->
+	    <test logic="OR" value="/instrumentation/fmc/bank-angle/tacan">
+		/instrumentation/flightdirector/lnav EQ 4
+		/instrumentation/flightdirector/lnav EQ 5
+	    </test>
+	    <!-- NAV mode (3) or pitch autopilot -->
+	    <test logic="OR" value="/instrumentation/fmc/bank-angle/nav">
+		/instrumentation/flightdirector/lnav EQ 6
+		/instrumentation/fmc/roc-lock EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/instrumentation/fmc/bank-angle/limit-min">
+	    <description>
+		Minimum bank angle limit by lateral mode
+	    </description>
+	    <input> /instrumentation/fmc/bank-angle/limit-max </input>
+	    <gain> -1 </gain>
+	</pure_gain>
+
+
+	<!-- ++++++++++++++++++++++++ Pitch Mode ++++++++++++++++++++++++ -->
+
+	<!-- Pitch sample-and-hold controller for vertical pitch modes -->
+	<switch name="/autopilot/internal/vertical-pitch-deg">
+	    <description> Vertical modes pitch sample and hold </description>
+	    <default value="/autopilot/internal/vertical-pitch-deg"/>
+	    <test value="/instrumentation/attitude-indicator/indicated-pitch-deg">
+		/autopilot/internal/vertical-pitch-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- Pitch sample-and-hold controller for speed-with-pitch-trim -->
+	<switch name="/autopilot/internal/settings/target-speed-pitch-deg">
+	    <description> Speed-with-Pitch sample and hold </description>
+	    <default value="/autopilot/internal/settings/target-speed-pitch-deg"/>
+	    <test value="/instrumentation/attitude-indicator/indicated-pitch-deg">
+		/autopilot/internal/speed-pitch-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- ++++++++++++++++++++++++ Altitude Mode ++++++++++++++++++++++++ -->
+
+	<!--
+	    Sample-and-hold current altitude, then pivot to FCU setting or managed
+	    altitude setting.
+	    This switch needs to come BEFORE the items below which rely on the
+	    current value of "/autopilot/internal/settings/target-altitude-ft".
+	-->
+	<switch name="/autopilot/internal/settings/target-altitude-ft">
+	    <description> Altitude multi-source settings </description>
+	    <default value="/autopilot/internal/settings/target-altitude-ft"/>
+	    <!--
+		The order of the following settings is critical. The settings that
+		are triggered in later phases should come earlier, otherwise they will
+		be masked and never set.
+	    -->
+
+	    <!-- selected from CP setting when some pitch mode is engaged -->
+	    <test logic="AND" value="/instrumentation/flightdirector/altitude-select">
+		/instrumentation/fmc/roc-lock EQ 1
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+	    </test>
+
+	    <!--
+		From here on, we assume altitude is managed. That means that:
+		"/instrumentation/flightdirector/vertical-alt-mode = -1"
+	    -->
+
+	    <!-- cruise altitude = mode 6 -->
+	    <test logic="OR" value="/instrumentation/fmc/cruise-alt-ft">
+		/instrumentation/flightdirector/vnav EQ 6
+		/instrumentation/flightdirector/acquire-cruise EQ 1
+	    </test>
+	    <!-- Source from the flightplan if active -->
+	    <test logic="AND" value="/instrumentation/fmc/altitude-ft">
+		/instrumentation/fmc/roc-lock EQ 1
+		/instrumentation/fmc/altitude-ft GT 0
+	    </test>
+	</switch>
+
+	<!--
+	    Calculate the difference between current altitude and set target altitude.
+	    Note that this is rate limited because the set target is interpolated from
+	    the initial value to the final one.
+	-->
+	<summer name="/autopilot/internal/elevation/alt-delta-ft">
+	    <input> /autopilot/settings/target-altitude-ft </input>
+	    <input> -position/h-sl-ft </input>
+	</summer>
+
+	<!--
+	    Calculate the difference between current altitude and set target altitude.
+	    Note that this is NOT rate limited because the set target is the final one.
+	-->
+	<summer name="/autopilot/internal/elevation/alt-true-delta-ft">
+	    <input> /autopilot/internal/settings/target-altitude-ft </input>
+	    <input> -position/h-sl-ft </input>
+	</summer>
+
+	<!-- Calculate the difference between current and target AGL -->
+	<summer name="/autopilot/internal/elevation/agl-delta-ft">
+	    <input> /autopilot/settings/target-agl-ft </input>
+	    <input> -position/h-agl-ft </input>
+	</summer>
+
+	<!--
+	    Elevation difference based on either AGL or Altitude targets.
+	    This value is rate limited to smooth transisitons.
+	-->
+	<switch name="/autopilot/internal/elevation/height-delta-ft">
+	    <description>
+		Height difference based on either AGL or Altitude
+	    </description>
+	    <default value="/autopilot/internal/elevation/alt-delta-ft"/>
+	    <!-- AGL mode (1) -->
+	    <test logic="OR" value="/autopilot/internal/elevation/agl-delta-ft">
+		/autopilot/internal/vertical-mode EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Elevation difference based on either AGL or Altitude targets.
+	    This value is NOT rate limited because it used the final altitude setting.
+	-->
+	<switch name="/autopilot/internal/elevation/height-true-delta-ft">
+	    <description>
+		Height difference based on either AGL or Altitude (true)
+	    </description>
+	    <default value="/autopilot/internal/elevation/alt-true-delta-ft"/>
+	    <!-- AGL mode (1) -->
+	    <test logic="OR" value="/autopilot/internal/elevation/agl-delta-ft">
+		/autopilot/internal/vertical-mode EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Absolute value of height difference.
+	    We use the true target "/autopilot/internal/settings/target-altitude-ft"
+	    rather than the rate limited "/autopilot/settings/target-altitude-ft".
+	    This is better suited for defining our proximity to the final target.
+	-->
+	<fcs_function name="/autopilot/internal/elevation/abs-height-delta-ft">
+	    <function>
+		<description>
+		    Absolute height difference based on either AGL or Altitude (true)
+		</description>
+		<abs>
+		    <property> /autopilot/internal/elevation/height-true-delta-ft </property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+	<!-- Define the altitude hold zone -->
+	<switch name="/autopilot/internal/elevation/in-alt-hold-zone">
+	    <description> In Altitude-Hold zone </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/autopilot/internal/elevation/abs-height-delta-ft LT /autopilot/internal/switch-to-alt-hold-ft
+	    </test>
+	</switch>
+
+	<!-- Define the descend-hold-climb status -->
+	<switch name="/autopilot/internal/elevation/des-hold-clb">
+	    <description> Select between climb, descend or hold altitude </description>
+	    <!-- default is to hold -->
+	    <default value="0"/>
+	    <!-- Hold if in the altitude hold zone -->
+	    <test logic="AND" value="0">
+		/autopilot/internal/elevation/in-alt-hold-zone EQ 1
+	    </test>
+	    <!-- climb mode (1) if the delta altitude is positive -->
+	    <test logic="AND" value="1">
+		/autopilot/internal/elevation/height-true-delta-ft GT 0
+	    </test>
+	    <!-- descend mode (-1) if the delta altitude is negative -->
+	    <test logic="AND" value="-1">
+		/autopilot/internal/elevation/height-true-delta-ft LT 0
+	    </test>
+	</switch>
+
+	<!-- Signal we have above the transistion altitude -->
+	<switch name="/instrumentation/annunciator/above-transition-alt">
+	    <description> Above the transition altitude </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		position/h-agl-ft GT /instrumentation/fmc/transition-ft
+		position/h-sl-ft GT 15000
+	    </test>
+	</switch>
+
+	<!-- ++++++++++++++++++++++++ Vertical Speed Mode ++++++++++++++++++++++++ -->
+
+	<!--
+	    Vertical speed setting:
+	    In climb/descent modes, assign the computed vertical speed to the autopilot setting.
+	    This is a "soft" setting in that it allows the autopilot to compute the actual
+	    vertical speed rate.
+	    If "vertical-speed-hold" is not set, we can sample the value in
+	    "/autopilot/internal/vert-speed-fpm".
+	-->
+
+	<switch name="/autopilot/internal/settings/vertical-speed-fpm">
+	    <description> Assign target vertical speed setting </description>
+	    <!-- do not change if "vertical-speed-hold" is set -->
+	    <default value="/autopilot/internal/settings/vertical-speed-fpm"/>
+	    <!-- the order of these tests is important -->
+	    <!--
+		Retard mode: use landing schedule
+	    -->
+	    <test logic="OR" value="/autopilot/internal/gs-sink-rate-fpm">
+		/instrumentation/fmc/flight-control-retard-mode EQ 1
+	    </test>
+	    <!--
+		Flare mode: interpolation sink rate calculated in nasal script
+	    -->
+	    <test logic="OR" value="/autopilot/internal/settings/vertical-speed-fpm">
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+	    </test>
+	    <!-- Flare mode with no glideslope -->
+	    <test value="-600">
+		/instrumentation/fmc/landing/commit EQ 1
+	    </test>
+	    <!-- V/S mode (2): read from CP setting -->
+	    <test logic="OR" value="/instrumentation/flightdirector/vertical-speed-select">
+		/instrumentation/flightdirector/vnav EQ 2
+	    </test>
+	    <!-- LEVEL mode (11), set to 0 -->
+	    <test value="0">
+		/instrumentation/flightdirector/vnav EQ 11
+	    </test>
+	    <!-- Descending from ToD to approach altitude -->
+	    <test value="/instrumentation/fmc/approach/descent-rate-fpm">
+	    <!-- during Descent (4) to (8) -->
+		/instrumentation/flightdirector/fd-phase GE 4
+		/instrumentation/flightdirector/fd-phase LE 8
+	    <!-- DES mode (8) -->
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	    <!-- variable vertical speed mode or DES (8) mode -->
+	    <test logic="OR" value="autopilot/target-vertical-speed-fpm">
+		/autopilot/internal/variable-vs-roc-lock EQ 1
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	    <!-- VNAV = CLB (7) -->
+	    <test value="/instrumentation/fmc/climb-rate-fpm">
+		/instrumentation/flightdirector/vnav EQ 7
+	    </test>
+	    <!-- when "vertical-speed-hold" is not set, sample the current rate -->
+	    <test value="/instrumentation/vertical-speed-indicator/indicated-speed-fpm">
+	    <!-- Vertical speed hold = 6 -->
+		/autopilot/internal/vertical-mode NE 6
+	    </test>
+	</switch>
+
+	<!-- ++++++++++++++++++++++++ Speed Mode ++++++++++++++++++++++++ -->
+
+	<!--
+	    We sample-and-hold the current airspeed when not in Speed mode,
+	    then pivot to the FCU setting or managed speed.
+	-->
+	<switch name="/autopilot/internal/settings/target-speed-kt">
+	    <description> Set target speed from various sources </description>
+	    <default value="/autopilot/internal/settings/target-speed-kt"/>
+	    <!-- sample when OFF (0) -->
+	    <test logic="OR" value="/instrumentation/airspeed-indicator[0]/indicated-speed-kt">
+		/instrumentation/flightdirector/spd EQ 0
+	    </test>
+	    <!-- Go-around mode: consant speed (this test should come early) -->
+	    <test value="250">
+		/instrumentation/fmc/landing/go-around EQ 1
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+	    </test>
+	    <!-- in all other managed modes, read from the rate limited value -->
+	    <test logic="AND" value="/autopilot/internal/managed-speed-kt">
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+		/instrumentation/flightdirector/autothrottle-engage EQ 1
+	    </test>
+	    <!-- "speed-with-pitch-trim" modes -->
+	    <test logic="OR" value="/autopilot/internal/speed-with-pitch-kt">
+		/autopilot/internal/speed-pitch-mode EQ 1
+	    </test>
+	    <!-- SPEED mode (1) or other autothrottle modes -->
+	    <test logic="OR" value="/instrumentation/flightdirector/speed-select">
+		/instrumentation/flightdirector/spd EQ 1
+		/instrumentation/flightdirector/autothrottle-engage EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    We sample-and-hold the current Mach estimate from the nasal module "systems"
+	    when not in Mach mode, then pivot to the FCU setting or managed mach.
+	-->
+	<switch name="/autopilot/internal/settings/target-speed-mach">
+	    <description> Set target Mach number from various sources </description>
+	    <default value="/autopilot/internal/settings/target-speed-mach"/>
+	    <!-- read from set climb speed in THRCLB mode (3) -->
+	    <test value="/instrumentation/fmc/climb-mach">
+		/instrumentation/flightdirector/spd EQ 3
+	    </test>
+	    <!-- cruise speed with CRZ (6) -->
+	    <test value="/instrumentation/fmc/cruise-mach">
+		/instrumentation/flightdirector/spd EQ 6
+	    </test>
+	    <!-- read from set descend speed in THRDES mode (4) -->
+	    <test value="/instrumentation/fmc/descend-mach">
+		/instrumentation/flightdirector/spd EQ 4
+	    </test>
+	    <!-- "mach-with-pitch-trim" modes -->
+	    <test logic="OR" value="/autopilot/internal/speed-with-pitch-mach">
+		/autopilot/internal/speed-pitch-mode EQ 1
+	    </test>
+	    <!-- SPD MACH mode (2) or other autothrottle modes -->
+	    <test logic="OR" value="/instrumentation/flightdirector/mach-select">
+		/instrumentation/flightdirector/spd EQ 2
+		/instrumentation/flightdirector/autothrottle-engage EQ 1
+	    </test>
+	    <!-- sample when OFF -->
+	    <test value="/instrumentation/airspeed-indicator[0]/indicated-mach">
+		/instrumentation/flightdirector/spd EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- The following channel is active when the autopilot is enabled -->
+    <channel name="Autoflight Helpers" execute="/instrumentation/flightdirector/autopilot-engage" execrate="4">
+
+    <!--
+	===============================================================
+	Calculators
+	===============================================================
+    -->
+
+    <!-- Set maximum pitch degrees based on airspeed -->
+	<fcs_function name="fmc/pitch/max-pitch-deg">
+	    <description> Maximum pitch degrees based on airspeed </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> velocities/vc-kts </independentVar>
+		    <tableData>
+			0	0
+			120	1
+			130	2
+			140	3
+			160	5
+			180	8
+			200	10
+			220	11
+			240	12
+			260	13
+			280	13
+			300	14
+			340	16
+			400	20
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<switch name="/instrumentation/fmc/limit-pitch-deg-max">
+	    <description> Limit pitch degrees </description>
+	    <default value="fmc/pitch/max-pitch-deg"/>
+	    <!-- if the stall warning is on, then level off -->
+	    <test value="2">
+		systems/stall-warn-norm GT 0
+	    </test>
+	</switch>
+
+	<!-- Set minimum pitch degrees based on mode -->
+	<switch name="/instrumentation/fmc/limit-pitch-deg-min">
+	    <description> Minimum pitch degrees </description>
+	    <default value="-8"/>
+	    <!-- Ground mode: level flight -->
+	    <test value="0">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <!--
+		Retard mode to touchdown: limit to +1
+		Flare mode to retard: limit between -0 (about level) and +1
+		Glideslope: based on AGL staring from -8 to 0
+		These are set in the the "Landing" channel
+	    -->
+	    <test logic="OR" value="fmc/pitch/min-pitch-deg">
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+		/instrumentation/fmc/flight-mode GE 9
+	    </test>
+	</switch>
+
+	<!-- Set minimum pitch degrees for speed-with-pitch mode -->
+	<switch name="/autopilot/internal/speed-with-pitch-min">
+	    <description> Minimum pitch degrees for speed modes </description>
+	    <default value="-8"/>
+	    <!-- Ground mode: no descending -->
+	    <test logic="OR" value="0.0">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <!-- if the stall warning is on, then allow sinking -->
+	    <test value="-6.0">
+		systems/stall-warn-norm GT 0
+	    </test>
+	    <!-- Climb modes: no descending -->
+	    <test logic="OR" value="1.0">
+		/autopilot/internal/elevation/des-hold-clb EQ 1
+	    </test>
+	    <!-- Flare mode: limit to 0 -->
+	    <test value="0">
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+	    </test>
+	</switch>
+
+	<!-- Set maximum pitch degrees for speed-with-pitch mode -->
+	<switch name="/autopilot/internal/speed-with-pitch-max">
+	    <description> Maximum pitch degrees for speed modes </description>
+	    <default value="fmc/pitch/max-pitch-deg"/>
+	    <!--
+		if the stall warning is on, then level off
+		do not climb when in descend mode
+	    -->
+	    <test logic="OR" value="2.0">
+		systems/stall-warn-norm GT 0
+		/autopilot/internal/elevation/des-hold-clb EQ -1
+	    </test>
+	</switch>
+
+	<!--
+	    Determine the permitted vertical speeds based on three criteria:
+	    * Airspeed - to prevent stalls
+	    * Altitude - reduced at high altitudes
+	    * Operational climb modes
+	-->
+
+	<!-- VS limit due to airspeed -->
+	<fcs_function name="/autopilot/internal/vs-limits/upper-speed-based">
+	    <description> Vertical speed upper limit by airspeed </description>
+	    <function>
+		<!-- start at 0 fpm at 140 kts and rise to the maximum of 12,000 fpm -->
+		<table>
+		    <independentVar lookup="row"> velocities/vc-kts </independentVar>
+		    <tableData>
+			140	0
+			200	30
+			300 	70
+			350	100
+			400	150
+			500	175
+			600	200
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- Upper VS limit due to altitude -->
+	<fcs_function name="/autopilot/internal/vs-limits/upper-alt-based">
+	    <description> Vertical speed upper limit by altitude </description>
+	    <function>
+		<!--
+		    We start the permitted vertical speed at 100 fps at ground level,
+		    increase it to 250 fps at 5,000-10,100 ft then reduce to 200 fps
+		    between 10,000 - 30,000 ft and then reduce it gradually
+		    to 25 fps up to the service limit of ~60,000 ft.
+		-->
+		<table>
+		    <independentVar lookup="row"> position/h-sl-ft </independentVar>
+		    <tableData>
+			0	100
+			5000	250
+			10000	250
+			20000	200
+			30000	200
+			60000   25
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- Upper VS limit due to mode -->
+	<switch name="/autopilot/internal/vs-limits/upper-mode-based">
+	    <description> Vertical speed upper limit by flight mode </description>
+	    <default value="/limits/max-vs-fps"/>
+	    <!-- climb nodes - limited to 100 fps -->
+	    <test logic="OR" value="100">
+		<!-- OPCLB (4) -->
+		/instrumentation/flightdirector/vnav EQ 4
+		<!-- CLB (7) -->
+		/instrumentation/flightdirector/vnav EQ 7
+	    </test>
+	    <!-- glideslope (9): limited to 13 fps -->
+	    <test value="13">
+		/instrumentation/flightdirector/vnav EQ 9
+	    </test>
+	</switch>
+
+	<!-- Set the upper vertical speed (in fps) as the minimum of the three above-->
+	<fcs_function name="/instrumentation/fmc/limit-vs-fps-max">
+	    <description> Upper vertical speed (in fps) </description>
+	    <function>
+		<min>
+		    <property>/autopilot/internal/vs-limits/upper-speed-based</property>
+		    <property>/autopilot/internal/vs-limits/upper-alt-based</property>
+		    <property>/autopilot/internal/vs-limits/upper-mode-based</property>
+		</min>
+	    </function>
+	    <clipto>
+		<min>  0 </min>
+		<max> /limits/max-vs-fps </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Lower VS limit due to altitude -->
+	<fcs_function name="/autopilot/internal/vs-limits/lower-alt-based">
+	    <description> Vertical speed lower limit by altitude </description>
+	    <function>
+		<!--
+		    We start the permitted vertical speed at -50 fps at ground level,
+		    decrease it to -60 fps at 5,000-10,100 ft then decrease it further
+		    to -80 fps between 15,000 to 30,000 ft then increase it gradually
+		    to -25 fps above 60,000 ft.
+		-->
+		<table>
+		    <independentVar lookup="row"> position/h-agl-ft </independentVar>
+		    <tableData>
+			0	-50
+			5000	-60
+			10000	-70
+			15000	-80
+			30000	-80
+			60000	-25
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- Lower VS limit due to mode -->
+	<switch name="/autopilot/internal/vs-limits/lower-mode-based">
+	    <description> Vertical speed lower limit flight mode </description>
+	    <default value="/limits/min-vs-fps"/>
+	    <!-- Managed or selected descent modes: limit to 4,200 fpm -->
+	    <test logic="OR" value="-70">
+		<!-- OP DES (5) -->
+		/instrumentation/flightdirector/vnav EQ 5
+		<!-- DES (8) -->
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	    <!-- Glideslope (9): limit to 1,800 fpm -->
+	    <test value="-30">
+		/instrumentation/flightdirector/vnav EQ 9
+	    </test>
+	</switch>
+
+	<!-- Set the lower vertical speed (in fps) as the maximum of the two above-->
+	<fcs_function name="/instrumentation/fmc/limit-vs-fps-min">
+	    <description> Vertical speed lower limit (in fps) </description>
+	    <function>
+		<max>
+		    <property>/autopilot/internal/vs-limits/lower-alt-based</property>
+		    <property>/autopilot/internal/vs-limits/lower-mode-based</property>
+		</max>
+	    </function>
+	    <clipto>
+		<min> /limits/min-vs-fps </min>
+		<max>   0 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Calculate a factor for the KPs for ALT and V/S at differrent altitudes -->
+	<fcs_function name="/autopilot/internal/kp-alt-adjustment-factor">
+	    <description> KP adjustment factor by altitude </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> position/h-sl-ft </independentVar>
+		    <tableData>
+			0	1.0
+			15000	1.0
+			35000	0.5
+			50000	0.1
+		    </tableData>
+		</table>
+	    </function>
+	    <clipto>
+		<min> 0.1 </min>
+		<max> 1.0 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Apply the factor to the KP for ALT hold -->
+	<pure_gain name="/autopilot/internal/kp-for-alt-hold">
+	    <description> Adjust Kp for Alt hold </description>
+	    <input> /autopilot/internal/kp-for-alt-hold-base </input>
+	    <gain> /autopilot/internal/kp-alt-adjustment-factor </gain>
+	</pure_gain>
+
+	<!-- Apply the factor to the KP for V/S hold -->
+	<pure_gain name="/autopilot/internal/kp-for-vs-hold">
+	    <description> Adjust Kp for V/S hold </description>
+	    <input> /autopilot/internal/kp-for-vs-hold-base </input>
+	    <gain> /autopilot/internal/kp-alt-adjustment-factor </gain>
+	</pure_gain>
+
+	<!--
+	    Number of waypoints remaining: this is "0" when on the last waypoint.
+	-->
+	<summer name="autopilot/remaining-wpts">
+	    <input> /autopilot/route-manager/route/num </input>
+	    <input> -/autopilot/route-manager/current-wp </input>
+	    <bias> -1 </bias>
+	</summer>
+
+	<!-- Logic that switches on the waypoint channel below. -->
+	<switch name="autopilot/monitor-wp">
+	    <description> Monitor waypoints </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/route-manager/active EQ 1
+		/autopilot/route-manager/airborne EQ 1
+		autopilot/remaining-wpts GE 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- The following channel is active when waypoint monitoring is enabled -->
+    <channel name="Waypoint Helpers" execute="autopilot/monitor-wp" execrate="8">
+
+    <!--
+	===============================================================
+	Waypoint helpers
+	===============================================================
+    -->
+
+    <!--
+	Logic when waypoint turns are being monitored.
+    -->
+	<switch name="/autopilot/internal/waypoint-monitor-on">
+	    <description> Monitor waypoints </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/autopilot/route-manager/active EQ 1
+		/autopilot/route-manager/airborne EQ 1
+		autopilot/remaining-wpts GT 0
+		<!-- managed mode -->
+		/instrumentation/flightdirector/lateral-managed-mode EQ -1
+		<!-- not in flare mode -->
+		/instrumentation/fmc/flight-control-flare-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- Waypoint at turn distance -->
+	<switch name="/autopilot/internal/waypoint-switch-on">
+	    <description> Waypoint turn distance switch </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/internal/waypoint-monitor-on EQ 1
+		<!-- within turn distance -->
+		/autopilot/route-manager/wp/dist LT /instrumentation/fmc/turn-distance-nm
+	    </test>
+	</switch>
+
+	<!-- Waypoint nearby (used when turn was not made earlier) -->
+	<switch name="/autopilot/internal/waypoint-nearby">
+	    <description> Waypoint nearby switch </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/internal/waypoint-monitor-on EQ 1
+		/autopilot/route-manager/wp[0]/eta-seconds LT 6.0
+	    </test>
+	</switch>
+
+	<!--
+	    Logic that checks that the the waypoint has a valid distance, ETA, and altitude
+	-->
+	<switch name="/autopilot/internal/waypoint-valid">
+	    <description> Waypoint parameters validity </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/internal/waypoint-monitor-on EQ 1
+		/instrumentation/gps/wp/wp[1]/valid EQ 1
+		/autopilot/route-manager/current-wp GE 0
+		<!-- the following is only non-zero for valid waypoints -->
+		/autopilot/settings/target-altitude-ft GT 200
+	    </test>
+	</switch>
+
+	<!-- Calculate the necessary gain in ft per sec to the next waypoint -->
+
+	<switch name="autopilot/TTW-sec">
+	    <description> Clipped estimated time to waypoint in secs </description>
+	    <default value="/instrumentation/gps/wp/wp[1]/TTW-sec"/>
+	    <test logic="OR" value="0.1">
+		/autopilot/internal/waypoint-valid EQ 0
+		/instrumentation/gps/wp/wp[1]/TTW-sec LT 0.1
+	    </test>
+	</switch>
+
+	<fcs_function name="/autopilot/internal/waypoint-vspeed-gain">
+	    <description> Target vertical speed gain between waypoints </description>
+	    <function>
+		<quotient>
+		    <!-- get the rate per min scaled by 10% (60 * 1.10) -->
+		    <value> 66.0 </value>
+		    <property> autopilot/TTW-sec </property>
+		</quotient>
+	    </function>
+	</fcs_function>
+
+	<!-- Set the target AGL for the last three waypoints  -->
+	<fcs_function name="autopilot/target-agl-ft">
+	    <description> Target AGL for waypoints </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> autopilot/remaining-wpts </independentVar>
+		    <tableData>
+			0       1500
+			1       2000
+			2       2000
+			3       4000
+			4       5000
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+    <!-- The following channel is active when the autopilot is enabled -->
+    <channel name="Altitude Helpers" execute="/instrumentation/flightdirector/autopilot-engage" execrate="2">
+
+    <!--
+	===============================================================
+	Altitude helpers
+	===============================================================
+    -->
+
+    <!-- During the final approach, set the AGL to predefined values -->
+	<switch name="/autopilot/settings/target-agl-ft">
+	    <description>
+		Target AGL during final approach
+	    </description>
+	    <default value="/autopilot/settings/target-agl-ft"/>
+	    <test value="autopilot/target-agl-ft">
+	    <!-- AGL mode -->
+		/autopilot/internal/vertical-mode EQ 1
+	    <!-- LOC armed -->
+		/instrumentation/flightdirector/loc-arm EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Altitude / AGL Hold Controller:
+	    Stage #1 sets target rate of climb based on the difference between the
+	    current altitude / AGL and target altitude / AGL.
+	-->
+
+	<pure_gain name="autopilot/altitude-climb-rate-fps">
+	    <description> Altitude Hold Target Rate of Climb </description>
+	    <input> /autopilot/internal/elevation/alt-delta-ft </input>
+	    <gain> /autopilot/internal/kp-for-alt-climb-rate </gain>
+	    <clipto>
+		<min> /instrumentation/fmc/limit-vs-fps-min </min>
+		<max> /instrumentation/fmc/limit-vs-fps-max </max>
+	    </clipto>
+	</pure_gain>
+
+	<pure_gain name="autopilot/agl-climb-rate-fps">
+	    <description> AGL Hold Target Rate of Climb </description>
+	    <input> /autopilot/internal/elevation/agl-delta-ft </input>
+	    <gain> /autopilot/internal/kp-for-agl-climb-rate </gain>
+	    <clipto>
+		<min> /instrumentation/fmc/limit-vs-fps-min </min>
+		<max> /instrumentation/fmc/limit-vs-fps-max </max>
+	    </clipto>
+	</pure_gain>
+
+    </channel>
+
+    <!-- The following channel is active when the autopilot is enabled -->
+    <channel name="Vertical Speed Helpers" execute="/instrumentation/flightdirector/autopilot-engage" execrate="4">
+
+    <!--
+	===============================================================
+	Vertical Speed helpers
+	===============================================================
+    -->
+
+    <!-- Utility to compute the target vertical speed in fps -->
+	<fcs_function name="/autopilot/internal/settings/vertical-speed-fps">
+	    <description> Target vertical speed in fps </description>
+	    <function>
+		<quotient>
+		    <property> /autopilot/settings/vertical-speed-fpm </property>
+		    <value> 60 </value>
+		</quotient>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    In DEScent mode, the route manager might be inative, so we compute a
+	    speed of descent via a table. Start at 1 min descent period at 1,000 ft
+	    difference and clamp at 5 mins at 10,000 ft difference.
+	-->
+	<fcs_function name="autopilot/descent-gain-factor">
+	    <description> Gain multiplier for managed descent </description>
+	    <function>
+		<quotient>
+		    <value> 1 </value>
+		    <table>
+			<independentVar> /autopilot/internal/elevation/height-delta-ft </independentVar>
+			<tableData>
+			    -10000      5
+			    -5000       3
+			    -1000       1
+			</tableData>
+		    </table>
+		</quotient>
+	    </function>
+	</fcs_function>
+
+	<!-- Determine a gain factor per min based on vertical mode -->
+	<switch name="autopilot/vs-gain-per-min">
+	    <description> Gain multiplier for base vertical speed (fpm) </description>
+	    <!-- the default multiplier is the climb factor -->
+	    <default value="/autopilot/internal/climb-factor"/>
+	    <!-- In between waypoints, use the computed gain -->
+	    <test value="/autopilot/internal/waypoint-vspeed-gain">
+	    <!-- we must be in DES mode (8) -->
+		/instrumentation/flightdirector/vnav EQ 8
+	    <!-- here we have valid a waypoint -->
+		/autopilot/internal/waypoint-valid EQ 1
+		/instrumentation/fmc/roc-lock EQ 1
+	    </test>
+	    <test value="autopilot/descent-gain-factor">
+	    <!-- we must be in DES mode (8) -->
+		/instrumentation/flightdirector/vnav EQ 8
+	    <!-- no valid waypoint found -->
+		/autopilot/internal/waypoint-valid EQ 0
+		/instrumentation/fmc/roc-lock EQ 1
+	    </test>
+	</switch>
+
+	<!-- calculate the final gain per sec -->
+	<fcs_function name="autopilot/vs-gain-per-sec">
+	    <description> Gain multiplier for base vertical speed (fps) </description>
+	    <function>
+		<quotient>
+		    <property> autopilot/vs-gain-per-min </property>
+		    <value> 60 </value>
+		</quotient>
+	    </function>
+	</fcs_function>
+
+	<!-- Climb and descent rates based on difference to target altitude -->
+	<pure_gain name="autopilot/target-vertical-speed-fps">
+	    <description>
+		Target vertical speed (fps) at a given altitude difference
+	    </description>
+	    <input> /autopilot/internal/elevation/height-delta-ft </input>
+	    <gain> autopilot/vs-gain-per-sec </gain>
+	    <clipto>
+		<min> /instrumentation/fmc/limit-vs-fps-min </min>
+		<max> /instrumentation/fmc/limit-vs-fps-max </max>
+	    </clipto>
+	</pure_gain>
+
+	<pure_gain name="autopilot/target-vertical-speed-fpm">
+	    <description>
+		Target vertical speed (fpm) at a given altitude difference
+	    </description>
+	    <input> autopilot/target-vertical-speed-fps </input>
+	    <gain> 60 </gain>   <!-- converts to minutes -->
+	</pure_gain>
+
+	<!-- Absolute value of target vertical speed -->
+	<fcs_function name="autopilot/target-vertical-speed-abs">
+	    <description> Absolute value of target vertical speed </description>
+	    <function>
+		<abs>
+		    <property> autopilot/target-vertical-speed-fpm </property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+        <!-- Absolute value of VS setting used by an animation -->
+        <fcs_function name="/instrumentation/flightdirector/vertical-speed-abs">
+            <description> Absolute value of vertical-speed-select </description>
+            <function>
+                <abs>
+                    <property>/instrumentation/flightdirector/vertical-speed-select</property>
+                </abs>
+            </function>
+        </fcs_function>
+
+	<!-- Absolute value of AP VS setting used by a switch below -->
+	<fcs_function name="autopilot/vertical-speed-abs">
+	    <description> Absolute value of vertical-speed-fpm </description>
+	    <function>
+		<abs>
+		    <property>/autopilot/settings/vertical-speed-fpm</property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    There are several ways that vertical speed is controlled:
+	    * (A) Within the ALT-HOLD zone - disable vertical-hold
+	    * (B) Both VS and ALT are managed
+	    * (C) Approaching the ALT-HOLD zone - this is the transistion zone
+	    * (D) Only VS is managed - active beyond the ALT-HOLD zone
+	    * (E) VS is selected - active beyond the transistion and ALT-HOLD zones
+	-->
+
+	<!-- Logic to enable variable vertical speed computations depending on flight mode -->
+	<switch name="/autopilot/internal/variable-vs-enabled">
+	    <description> Enable variable VS mode </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<!-- after takeoff -->
+		/instrumentation/fmc/flight-mode GT 6
+		<!-- before flare mode -->
+		/instrumentation/fmc/flight-mode LT 9
+	    </test>
+	</switch>
+
+	<!-- Logic for (A) - Marks the transistion to Altitude hold -->
+	<switch name="/autopilot/internal/switch-to-alt-hold">
+	    <description> Switch to Alt Hold </description>
+	    <!-- Assume TRUE by default -->
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		/instrumentation/fmc/flight-control-flight-mode EQ 0
+		<!-- we must be in normal flight -->
+		/instrumentation/fmc/flight-mode NE 8
+		<!-- We are NOT in the Alt-Hold zone -->
+		/autopilot/internal/elevation/in-alt-hold-zone EQ 0
+		<!-- we must be in altitude acquisition mode -->
+		/instrumentation/flightdirector/alt-acquire-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- Mode (B) is the represented by "instrumentation/flightdirector/vertical-managed-mode" -->
+
+	<!-- Logic for (C) - Check if we are close to the transistion point to Altitude-hold -->
+	<switch name="/autopilot/internal/switch-to-alt-hold-near">
+	    <description> Approaching Switch to Alt Hold </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-control-flight-mode EQ 0
+		<!-- we must be in normal flight -->
+		/instrumentation/fmc/flight-mode NE 8
+		/autopilot/internal/variable-vs-enabled EQ 0
+		<!-- we must be in altitude acquisition mode -->
+		/instrumentation/flightdirector/alt-acquire-mode EQ 0
+		<!-- Not in Alt-Hold zone -->
+		/autopilot/internal/switch-to-alt-hold EQ 1
+		<!-- beyond 1,000 ft of target -->
+		/autopilot/internal/elevation/abs-height-delta-ft GT 1000
+	    </test>
+	    <test value="0">
+		<!-- the set speed is smaller than the computed speed -->
+		autopilot/vertical-speed-abs LT autopilot/target-vertical-speed-abs
+	    </test>
+	</switch>
+
+	<!-- Logic for (D) - only VS is managed -->
+	<switch name="/autopilot/internal/variable-vs-mode">
+	    <description> Managed VS Mode between targets </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/autopilot/internal/variable-vs-enabled EQ 0
+		<!-- we must be in altitude acquisition mode -->
+		/instrumentation/flightdirector/alt-acquire-mode EQ 0
+		<!-- Not in "vertical-speed-hold" -->
+		/autopilot/internal/vertical-mode NE 6
+		<!-- managed VS -->
+		/instrumentation/flightdirector/vertical-vs-mode NE -1
+		<!-- select ALT -->
+		/instrumentation/flightdirector/vertical-alt-mode NE 0
+		/autopilot/internal/switch-to-alt-hold-near EQ 1
+		/autopilot/internal/switch-to-alt-hold EQ 1
+	    </test>
+	</switch>
+
+	<!-- Lock the RoC to use the variable speed computer -->
+	<switch name="/autopilot/internal/variable-vs-roc-lock">
+	    <description> Variable VS RoC Lock </description>
+	    <default value="1"/>
+	    <test value="0">
+		/autopilot/internal/variable-vs-enabled EQ 0
+	    </test>
+	    <test value="0">
+		/autopilot/internal/switch-to-alt-hold-near EQ 0
+		/autopilot/internal/variable-vs-mode EQ 0
+	    </test>
+	</switch>
+
+	<!--
+	    Calculate vertical speed based on the altitude schedule:
+	    * Initial climb (to 5,000 ft): 2,500 fpm
+	    * Phase 1 climb: 5,000 to 15,000: 4,200 fpm
+	    * Phase 2 climb: 15,000 to 25,000: 3,000 fpm
+	    * Above 30.000 ft: 1,000 fpm
+	    Some adjustments (hack) are made for weight and flaps.
+	    Typical takeoff weight is 150,000 lbs with partial fuel. At this weight,
+	    we use the baseline rates.
+	-->
+	<fcs_function name="/instrumentation/fmc/climb-rate-fpm">
+	    <description> Climb rate in managed mode (fpm) )</description>
+	    <function>
+		<product>
+		    <!-- factor for the weight -->
+		    <table>
+			<independentVar lookup="row"> inertia/weight-lbs </independentVar>
+			<tableData>
+			    100000	1.05
+			    150000	1.00
+			    210000	0.90
+			</tableData>
+		    </table>
+		    <!-- factor for the flaps setting -->
+		    <table>
+			<independentVar lookup="row"> /controls/flight/flaps-level </independentVar>
+			<tableData>
+			    0   1.00
+			    1   0.75
+			    2   0.60
+			</tableData>
+		    </table>
+		    <!-- base schedule -->
+		    <table>
+			<independentVar lookup="row"> position/h-agl-ft </independentVar>
+			<tableData>
+			    5000        2500
+			    15000       4200
+			    25000	3000
+			    30000       1000
+			    40000       500
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+    <!-- The following channel is active when the autothrottle is engaged -->
+    <channel name="Speed" execute="/instrumentation/flightdirector/autothrottle-engage" execrate="8">
+
+    <!--
+	===============================================================
+	Speed helpers
+	===============================================================
+    -->
+
+    <!--
+	At high altitudes, we need to maintain a minimum speed regardless of elevation
+	above ground. This particularly impartant in mountainous regions, the AGL might
+	deceive us into thinking we are approaching an airport.
+    -->
+
+	<fcs_function name="/instrumentation/fmc/speed-min-keas">
+	    <description> Minimum in-flight KEAS </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> position/h-sl-ft </independentVar>
+		    <independentVar lookup="column"> velocities/mach </independentVar>
+		    <tableData>
+				0.0	0.5	1.0
+			5000	150	250	300
+			10000	170	250	300
+			20000	200	250	300
+			25000   200	250	310
+			50000	250	250	310
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    In managed climb, we set the airspeed based on flight level.
+	    Climb rate is set at "/instrumentation/fmc/climb-rate-fpm".
+	    The minimum cruise speed in 310 KEAS. We use the range of
+	    250 - 350 knots.
+	    Takeoff:			210 kts
+	    Gear UP:			250 kts
+	    Initial Climb (to FL200):	300 kts
+	    Normal Climb (to FL500):	350 kts
+
+	    These figures are in KEAS, so we need a Nasal script to convert them
+	    into KIAS.
+	-->
+
+	<fcs_function name="/instrumentation/fmc/climb-keas">
+	    <description> Managed speed in climb mode (knots) </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> position/h-agl-ft </independentVar>
+		    <tableData>
+			0	200
+			1500	250
+			20000	300
+			30000	350
+			50000	350
+			60000	300
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- We use the climb KEAS to derive the Mach speed. -->
+
+	<!--
+	    Set target descend speed based on altitude. These figures are in KEAS,
+	    so we will need a Nasal timer to convert them into KIAS.
+	    The following schedule assumes a weight of 100,000 of less:
+
+	    Descent (to FL150):         300 kts
+	    Descent (to FL100):         270 kts
+	    Descent (FL100 & below):    200 kts
+	    
+	    Adjustments are made for higher weights.
+	-->
+	<fcs_function name="/instrumentation/fmc/descend-keas">
+	    <description> Managed speed in descend mode (knots) </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> position/h-agl-ft </independentVar>
+		    <independentVar lookup="column"> inertia/weight-lbs </independentVar>
+		    <tableData>
+		    		100000	150000	200000
+			1500    160	175	190
+			2000    180	190	200
+			5000    200	210	220
+			6000    210	220	230
+			10000   260	280	300
+			15000	300	300	300
+			20000   300	300	300
+			30000   350	350	350
+			50000	350	350	350
+			60000	300	300	300
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- Select the appropriate speed setting in managed mode -->
+	<switch name="/autopilot/internal/managed-speed-kt">
+	    <description> Managed speed modes targets </description>
+	    <default value="/autopilot/internal/managed-speed-kt"/>
+	    <!-- THR CLB (3) use climb speed -->
+	    <test logic="AND" value="/instrumentation/fmc/climb-speed">
+		/instrumentation/flightdirector/spd EQ 3
+	    </test>
+	    <!-- CRZ (6) at cruise altitude -->
+	    <test logic="AND" value="/instrumentation/fmc/cruise-speed">
+		/instrumentation/flightdirector/spd EQ 6
+	    </test>
+	    <!-- Throttle Idle (5) maintains the last setting -->
+	    <test logic="AND" value="/autopilot/internal/managed-speed-kt">
+		/instrumentation/flightdirector/spd EQ 5
+	    </test>
+	    <!-- after touchdown set to 0: 9 = Land, 10 = WOW (touchdown) -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode GE 10
+		/instrumentation/flightdirector/fd-phase EQ 9
+	    </test>
+	    <!-- retard set to Vtd -->
+	    <test logic="OR" value="/instrumentation/fmc/vspeeds/Vtd">
+		/instrumentation/fmc/flight-control-retard-mode EQ 1
+	    </test>
+	    <!-- flare set to Vref -->
+	    <test logic="OR" value="/instrumentation/fmc/vspeeds/Vref">
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+	    </test>
+	    <!-- Landing phase: 9 = flare or approach armed or active -->
+	    <test logic="OR" value="/instrumentation/fmc/vspeeds/Vapp">
+		/instrumentation/fmc/flight-mode EQ 9
+		/instrumentation/flightdirector/appr-arm EQ 1
+		/instrumentation/flightdirector/appr-enable EQ 1
+	    </test>
+	    <!-- Landing phase: 7 = Localizer Approach-->
+	    <test logic="AND" value="/instrumentation/fmc/descend-speed">
+		/instrumentation/flightdirector/fd-phase EQ 7
+		position/h-agl-ft LT 5000
+	    </test>
+	    <!-- Any other descent mode using THR DES (4) -->
+	    <test logic="OR" value="/instrumentation/fmc/descend-speed">
+		/instrumentation/flightdirector/spd EQ 4
+		/instrumentation/flightdirector/fd-phase GE 4
+	    </test>
+	    <!-- Go-around: constant speed of 230 -->
+	    <test value="230">
+		/instrumentation/fmc/landing/go-around EQ 1
+	    </test>
+	    <!-- before ToD in no particular mode, use 300 -->
+	    <test logic="OR" value="300">
+		/instrumentation/flightdirector/past-td EQ 0
+		/instrumentation/flightdirector/fd-phase LT 4
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- The following channel is active during the approach phase -->
+    <channel name="Autoland" execute="/instrumentation/flightdirector/start-approach" execrate="8">
+
+    <!-- =============================================================== -->
+    <!-- VOR/LOC helpers                                                 -->
+    <!-- =============================================================== -->
+
+    <!--
+	LOCalizer arm when the following conditions apply:
+	* LOCalizer is in range and servicable
+	* The distance to the LOCalizer is less than 35,000
+	* The AGL is under 8,000ft
+	* Autopilot is engaged
+	* The LOC button is ON
+	* Flight mode is either NORMAL:8 or FLARE:9,
+    -->
+
+    <!-- this switch is merely for convenience to be reused elsewhere -->
+	<switch name="/instrumentation/flightdirector/loc-nearby">
+	    <description>
+		LOCalizer is in range without considering height or settings
+	    </description>
+	    <default value="0"/>
+	    <test value="1">
+		/damage/instrumentation/nav1/cdi-condition GT 0.5
+		/instrumentation/nav[0]/nav-loc EQ 1
+		/instrumentation/nav[0]/in-range EQ 1
+		/instrumentation/nav[0]/nav-distance LT 35000
+		<!-- Not taking off or after flaring -->
+		/instrumentation/fmc/flight-control-flight-mode EQ 1
+		/instrumentation/fmc/flight-control-retard-mode EQ 0
+		/instrumentation/fmc/flight-mode GT 7
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/flightdirector/loc-arm">
+	    <description> Arm LOCalizer on final approach </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/instrumentation/flightdirector/loc-on EQ 1
+		/instrumentation/flightdirector/loc-nearby EQ 1
+		position/h-agl-ft LT 8000
+	    </test>
+	</switch>
+
+	<!-- Signal that approach is nearby -->
+	<switch name="/instrumentation/flightdirector/in-approach">
+	    <description> Signal that we are in the approach phase </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/loc-arm EQ 1
+		<!-- route-manager must be active -->
+		/autopilot/route-manager/active EQ 1
+		<!-- either normal (8) or flare modes (9) -->
+		<test logic="OR" value="1">
+		    /instrumentation/fmc/flight-mode EQ 8
+		    /instrumentation/fmc/flight-mode EQ 9
+		</test>
+	    </test>
+	</switch>
+
+	<!-- Compute absolute heading needle deflection -->
+	<fcs_function name="autopilot/vorloc-abs-deflection-norm">
+	    <description> Absolute normalised heading needle deflection </description>
+	    <function>
+		<abs>
+		    <property>/instrumentation/nav[0]/heading-needle-deflection-norm</property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+	<!-- Compute the absolute VOR/LOC tracking error -->
+	<fcs_function name="autopilot/vorloc-delta-abs">
+	    <description> Absolute VOR/LOC tracking error </description>
+	    <function>
+		<abs>
+		    <property>/autopilot/internal/nav1-heading-error-deg</property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    The cdi deflection should be +/-10 degrees for a full range of deflection.
+	    The normalised value is 1/10 of this range. We define a good lock to be within
+	    50% of the mid-line and a weak lock to be between 50 - 95% of the mid-line.
+	-->
+
+	<switch name="/autopilot/internal/vorloc-intercepted-good">
+	    <description> Good Intercept of LOCalizer </description>
+	    <default value="0"/>
+	    <test value="0">
+		/instrumentation/flightdirector/loc-arm EQ 0
+	    </test>
+	    <test value="1">
+		autopilot/vorloc-abs-deflection-norm LE 0.5
+		autopilot/vorloc-delta-abs LT 15
+	    </test>
+	</switch>
+
+	<switch name="/autopilot/internal/vorloc-intercepted-weak">
+	    <description> Weak Intercept of LOCalizer </description>
+	    <default value="0"/>
+	    <test value="0">
+		/instrumentation/flightdirector/loc-arm EQ 0
+	    </test>
+	    <test value="1">
+		autopilot/vorloc-abs-deflection-norm GT 0.50
+		autopilot/vorloc-abs-deflection-norm LT 0.95
+		autopilot/vorloc-delta-abs LT 15
+	    </test>
+	</switch>
+
+	<!--
+	    LOC is enabled when the LOCalizer is intercepted and managed lateral mode
+	    is set.
+	-->
+	<switch name="/instrumentation/flightdirector/loc-enable">
+	    <description> Switch to LOCalizer mode </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/internal/vorloc-intercepted-good EQ 1
+		<!-- managed lateral mode -->
+		/instrumentation/flightdirector/lateral-managed-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- =============================================================== -->
+	<!-- Glideslope helpers                                              -->
+	<!-- =============================================================== -->
+
+	<!--
+	    The sink rate is defined by the ILS system. However we need to limit it
+	    particularly in flare and retard modes. The limits are:
+	    * Before flaring => 30 fps (1,800 fpm) to 13 fps (780 fpm) based on AGL
+	    * In flare mode => interpolate from current sink rate to retard limit
+	    * During retard => based on weight (up to ~ 600 fpm)
+	    Touchdown Sink Rates:
+	    Decreases from 600 fpm at 100,000 lbs (empty) to 360 fpm at 185,000 lbs (MLW)
+	-->
+
+	<fcs_function name="/autopilot/internal/gs-sink-rate-fps">
+	    <description> Sink rate for glideslope without intercept </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> /position/gear-agl-ft </independentVar>
+		    <independentVar lookup="column"> inertia/weight-lbs </independentVar>
+		    <tableData>
+				100000	150000	185000
+			0       -7      -6      -5
+			10      -8      -7      -6
+			30      -9      -8      -7
+			50      -10	-9      -8
+			100     -15    -14      -13
+			200     -20    -19      -18
+			500     -25    -25      -25
+			1000    -30    -30      -30
+			2000    -35    -35      -35
+			3000    -40    -40      -40
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- convert the sink rate to fpm -->
+	<pure_gain name="/autopilot/internal/gs-sink-rate-fpm">
+	    <description> Sink rate in fpm </description>
+	    <input> /autopilot/internal/gs-sink-rate-fps </input>
+	    <gain> 60 </gain>
+	</pure_gain>
+
+	<!--
+	    Set the minimium pitch so that we are about level at retard and pitch up on
+	    touchdown. Flare happens at 100 ft and retard at 30 ft AGL. If the pitch
+	    is too hight at retard, the plane might climb again
+	-->
+	<fcs_function name="fmc/pitch/min-pitch-deg">
+	    <description> Minimum pitch degrees during landing </description>
+	    <function>
+		<table>
+		    <independentVar lookup="row"> /position/gear-agl-ft </independentVar>
+		    <tableData>
+			0       1.0
+			5       0.5
+			10      0.0
+			30      -1.0
+			50      -2.0
+			100     -3.0
+			200     -4.0
+			500     -5.0
+			2000    -8.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    APPRoach arm when the following conditions apply:
+	    * Glideslope is in range and servicable
+	    * The distance to the LOCalizer is less than 30,000
+	    * The AGL is under 4,000ft
+	    * Autopilot is engaged
+	    * APPR button is ON
+	    * Flight mode is either NORMAL:8 or FLARE:9,
+	-->
+	<switch name="/instrumentation/flightdirector/appr-arm">
+	    <description> APPRoach arming when in range of ILS </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/instrumentation/flightdirector/appr-on EQ 1
+		/damage/instrumentation/nav1/gs-condition GT 0.5
+		/instrumentation/flightdirector/loc-nearby EQ 1
+		/instrumentation/nav[0]/gs-in-range EQ 1
+		position/h-agl-ft LT 4000
+	    </test>
+	</switch>
+
+	<!-- Compute absolute glideslope needle deflection -->
+	<fcs_function name="autopilot/gs-abs-deflection-norm">
+	    <description> Absolute normalised glideslope needle deflection </description>
+	    <function>
+		<abs>
+		    <property>/instrumentation/nav[0]/gs-needle-deflection-norm</property>
+		</abs>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    With some adjustment to the sink rate, we can improve the quality of the
+	    glideslope intercept. This is computed from the deflection angle and the
+	    horizontal speed. A negative deflections indicates that we are above the
+	    mid-line, so we need a faster sink rate, i.e. the adjustment is -ve.
+	-->
+	<fcs_function name="autopilot/gs-sink-rate-adjust">
+	    <description>
+		Adjustment needed to sink rate to capture mid-line of G/S
+	    </description>
+	    <function>
+		<product>
+		    <property> /instrumentation/nav[0]/gs-in-range </property>
+		    <property> velocities/vc-fps </property>
+		    <table>
+			<independentVar lookup="row"> /instrumentation/nav[0]/gs-needle-deflection-norm </independentVar>
+			<tableData>
+			    -1.0000     -0.01222
+			    -0.8571     -0.01047
+			    -0.7143     -0.00873
+			    -0.5714     -0.00698
+			    -0.4286     -0.00524
+			    -0.2857     -0.00349
+			    -0.1429     -0.00175
+			    0.0000      0.00000
+			    0.1429      0.00175
+			    0.2857      0.00349
+			    0.4286      0.00524
+			    0.5714      0.00698
+			    0.7143      0.00873
+			    0.8571      0.01047
+			    1.0000      0.01222
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    When the glideslope has been intercepted but it outside the 50% band
+	    around the midline, we classify it was a weak inteception.
+	-->
+	<switch name="/autopilot/internal/gs-intercepted-weak">
+	    <description>
+		The glideslope intercept is weak
+	    </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/appr-arm EQ 1
+		autopilot/gs-abs-deflection-norm LT 0.99
+		autopilot/gs-abs-deflection-norm GT 0.50
+		autopilot/vorloc-delta-abs LT 15
+	    </test>
+	</switch>
+
+	<!-- The GS intercept is good if the deflection is within -/+ 50% of the midline -->
+	<switch name="/autopilot/internal/gs-intercepted-good">
+	    <description> The glideslope intercept is good </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/appr-arm EQ 1
+		autopilot/gs-abs-deflection-norm LE 0.5
+		autopilot/vorloc-delta-abs LT 15
+	    </test>
+	</switch>
+
+	<!--
+	    The glideslope should be enabled if both it and the LOCalizer have been intercepted.
+	-->
+	<switch name="/instrumentation/flightdirector/appr-enable">
+	    <description> Enable glideslope when ILS is intercepted </description>
+	    <default value="0"/>
+	    <test value="1">
+		/autopilot/internal/gs-intercepted-good EQ 1
+		/autopilot/internal/vorloc-intercepted-good EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	The following channel is active during the actual landing phase. It starts later
+	than the "Autoland" channel and extends into the rollout phase. It also covers
+	the "go-around" phase.
+    -->
+    <channel name="Landing" execute="/instrumentation/fmc/landing/monitor" execrate="8">
+
+    <!--
+	When landing, 3 nm of travel should be allowed for every 1,000 feet descent.
+	We evaluate the necessary descent rate to the runway from the current position.
+	The actual rate varies as we approach the landing zone, starting from about -350 ft/nm
+	to about -800 ft/nm at flare.
+	Note that a faster approach speed needs a faster descend. Hence our -800 ft/nm allowance.
+    -->
+	<fcs_function name="/instrumentation/fmc/landing/descent-rate-target">
+	    <function>
+		<description> Landing descent rate target </description>
+		<table>
+		    <independentVar> /position/gear-agl-ft </independentVar>
+		    <tableData>
+			100	-800
+			500	-700
+			1000	-600
+			2000	-350
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- RETARD logic at 30 feet -->
+	<switch name="/instrumentation/fmc/flight-control-retard-mode">
+	    <description> Retard when within 30 feet of runway </description>
+	    <default value="/instrumentation/fmc/flight-control-retard-mode"/>
+	    <test logic="OR" value="0">
+		<!-- reset if we climb above flare threshold -->
+		/position/gear-agl-ft GT 50
+		<!-- reset on touchdown -->
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <!-- set when at the threshold height -->
+	    <test value="1">
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+		/position/gear-agl-ft LT 30
+	    </test>
+	</switch>
+
+	<!--
+	    Commit to landing if we have the ILS signal or if we lose part
+	    of it but are within a given height based on the signal type.
+	-->
+	<switch name="/instrumentation/fmc/landing/commit">
+	    <description>
+		Commit to landing with or without the ILS signal
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<!-- in flare phase -->
+		/instrumentation/fmc/flight-mode EQ 9
+		<!-- within LOC threshold height -->
+		/position/gear-agl-ft LT /instrumentation/fmc/parameters/loc-agl
+		<!-- within GS threshold height -->
+		/position/gear-agl-ft LT /instrumentation/fmc/parameters/gs-agl
+	    </test>
+	</switch>
+
+	<!-- Rollout mode after touchdown -->
+	<switch name="/instrumentation/fmc/flight-control-rollout-mode">
+	    <description>
+		Switch to rollout when all wheels are on the ground
+	    </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/fmc/flight-mode EQ 10
+		/gear/gear[0]/wow EQ 1
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	</switch>
+
+	<!-- Reset go around when we are over 4,500 ft above ground  -->
+	<switch name="/instrumentation/fmc/landing/go-around">
+	    <description>
+		Set or reset the go around signal
+	    </description>
+	    <default value="/instrumentation/fmc/landing/go-around"/>
+	    <!-- reset once safely away or on the ground -->
+	    <test logic="OR" value="0">
+		position/h-agl-ft GT 4500
+		/instrumentation/fmc/landing/commit EQ 1
+		/instrumentation/fmc/flight-control-flight-mode EQ 0
+	    </test>
+	    <!--
+		When landing 3 nm of travel should be allowed for every 1,000 feet descent.
+		So go around if the descent rate necessary is higher than 450 ft/nm.
+		Strictly speaking the threshold ought to -333 ft/nm at the start of the
+		descent. This dclines sharply as we approach the landing zone to almost
+		1,000 ft/nm. The "descent-rate-ratio" compares the current and target rates
+		of descent. Thus if it exceeds 1, then the current rate is too slow to
+		reach the landing zone in time. Go-around would then be suggested.
+		We allow some margin (10%) before triggering "go-around".
+	    -->
+	    <test logic="AND" value="1">
+	    	<!-- FIXME -->
+		/instrumentation/fmc/landing/descent-rate-ratio GT 2.1
+		<!-- in final approach phase (8) -->
+		/instrumentation/flightdirector/fd-phase EQ 8
+	    </test>
+	    <!--
+		Also trigger, if the gear is not down at height of 600 ft
+		in normal flight mode (8) and final approach phase (8)
+	    -->
+	    <test logic="AND" value="1">
+		/instrumentation/fmc/flight-mode EQ 8
+		/instrumentation/flightdirector/fd-phase EQ 8
+		/position/gear-agl-ft LT 600
+		gear/gear-pos-norm LT 0.5
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	The following channel implements the Automatic Pitch Warning (APW) and
+	High Alpha of Attack Warning systems. It is active during the actual
+	flight phase.
+    -->
+    <channel name="Pitch and Alpha" execute="/instrumentation/fmc/flight-control-flight-mode" execrate="8">
+    <!--
+	The APW system is based on analysing the angle of attack + pitch rate.
+	If the APW boundary is breached, a warning is activated.
+	The High Alpha warning is fixed at angle of attack 14° (fmc/pitch/alpha-limit-deg).
+    -->
+
+	<switch name="/instrumentation/annunciator/high-alpha">
+	    <description> High Alpha warning </description>
+	    <default value="0"/>
+	    <!-- the APW system is powered by instruments DC power -->
+	    <test  logic="OR" value="0">
+		/systems/electrical/outputs/instruments EQ 0
+		gear/gear-no-wow EQ 0
+	    </test>
+	    <test  logic="AND" value="1">
+		aero/alpha-deg GT fmc/pitch/alpha-limit-deg
+	    </test>
+	</switch>
+
+	<!--
+	    APW pitch rate boundaries by angle of attack at different Mach numbers
+	-->
+	<fcs_function name="fmc/pitch/rate-limit-deg_sec">
+	    <function>
+		<description>
+		    Pitch rate (deg/sec) boundary vs alpha
+		</description>
+		<table>
+		    <independentVar lookup="row"> velocities/mach </independentVar>
+		    <independentVar lookup="column"> aero/alpha-deg </independentVar>
+		    <tableData>
+				0	8	10	11	12	13	14	15
+			0.3	14.5	6.7	4.8	3.8	2.8	1.9	0.9	0.0
+			0.4	11.3	4.5	2.9	2.0	1.2	0.4	0.0	0.0
+			0.5	8.0	2.6	1.3	0.7	0.0	0.0	0.0	0.0
+			1.0	8.0	2.5	1.1	0.6	0.0	0.0	0.0	0.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+	<!-- convert the pitch rate limit to rad/sec -->
+	<pure_gain name="fmc/pitch/rate-limit-rad_sec">
+	    <input> fmc/pitch/rate-limit-deg_sec </input>
+	    <gain> 0.017453 </gain>
+	</pure_gain>
+
+	<!--
+	    Notes:
+	    * "velocities/?-rad_sec" retrieves a body frame angular velocity component
+	    relative to the ECEF frame
+	    * "velocities/?-aero-rad_sec"is "velocities/?-rad_sec" with  wind applied,
+	    where "?" is either "p" (x-axis roll), "q" (y-axis pitch)
+	    or "r" (z-axis yaw)
+	-->
+
+	<switch name="/instrumentation/annunciator/pitch-warning">
+	    <description> Automatic Pitch Warning </description>
+	    <default value="0"/>
+	    <!-- the APW system is powered by instruments DC power -->
+	    <test  logic="OR" value="0">
+		/systems/electrical/outputs/instruments EQ 0
+		gear/gear-no-wow EQ 0
+	    </test>
+	    <test  logic="AND" value="1">
+		velocities/q-aero-rad_sec GT fmc/pitch/rate-limit-rad_sec
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- ====================== Fault management ====================== -->
+
+    <channel name="Faults" execrate="8">
+
+	<!--
+	    Disengage autothrottle if the the total condition of the engines
+	    falls below 50%
+	    Also prevent it from being selected if the parking brakes are on.
+	-->
+	<switch name="/instrumentation/flightdirector/autothrottle-engage">
+	    <description> Disengage autothrottle </description>
+	    <default value="/instrumentation/flightdirector/autothrottle-engage"/>
+	    <test  logic="AND" value="0">
+		<!-- Conditon less than 50% (2/4) -->
+		systems/propulsion/engines-condition LT 2
+	    </test>
+	    <test  logic="AND" value="0">
+		/controls/gear/brake-parking EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Change the speed mode if one of these components fails:
+	    airspeed inmdicator or elevator indicator.
+	-->
+	<switch name="/instrumentation/flightdirector/spd">
+	    <description> Change speed mode </description>
+	    <default value="/instrumentation/flightdirector/spd"/>
+	    <test  logic="AND" value="0">
+		<!-- Off if condition of ASI is below 50% -->
+		/damage/instrumentation/asi-condition LT 0.5
+	    </test>
+	    <test  logic="AND" value="1">
+		<!-- Switch from pitch to throttle mode if the elevator condition is below 50% -->
+		/damage/controls/flight/elevator-condition LT 0.5
+		<!-- SPDPTCH = 7 -->
+		/instrumentation/flightdirector/spd EQ 7
+	    </test>
+	</switch>
+
+	<!--
+	    Change the lateral mode if one of these components fails:
+	    heading indicator, turn indicator, or navigation indicator.
+	-->
+	<switch name="/instrumentation/flightdirector/lnav">
+	    <description> Change lateral mode </description>
+	    <default value="/instrumentation/flightdirector/lnav"/>
+	    <test  logic="AND" value="0">
+		<!-- Disable wing level (1) if the turn indicator condition is below 50% -->
+		/damage/instrumentation/turn-condition LT 0.5
+		/instrumentation/flightdirector/lnav EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		<!--
+		    Switch to wing level (1) from heading modes (2 or 3) if the heading indicator
+		    condition is below 50% providing the turn indicator is working.
+		-->
+		/damage/instrumentation/hsi-condition LT 0.5
+		<test logic="OR" value="1">
+		    <!-- 2 = HDG, 3 = NAV -->
+		    /instrumentation/flightdirector/lnav EQ 2
+		    /instrumentation/flightdirector/lnav EQ 3
+		</test>
+	    </test>
+	    <test  logic="AND" value="1">
+		<!--
+		    Switch to wing level (1) from localiser mode (4) if the navigation indicator
+		    condition is below 50% providing the turn indicator is working.
+		-->
+		/damage/instrumentation/nav1/cdi-condition LT 0.5
+		/instrumentation/flightdirector/lnav EQ 4
+	    </test>
+	    <test  logic="AND" value="0">
+		<!--
+		    Disable runway mode (6) if either the turn indicator condition
+		    or the heading indicator condition is below 50%
+		-->
+		/instrumentation/flightdirector/lnav EQ 6
+		<test logic="OR" value="1">
+		    /damage/instrumentation/turn-condition LT 0.5
+		    /damage/instrumentation/hsi-condition LT 0.5
+		</test>
+	    </test>
+	</switch>
+
+	<!--
+	    Change the vertical mode if one of these components fails:
+	    altimeter, attitude indicator, vertical speed indicator,
+	    airspeed indicator, or elevators.
+	-->
+	<switch name="/instrumentation/flightdirector/vnav">
+	    <description> Change vertical mode </description>
+	    <default value="/instrumentation/flightdirector/vnav"/>
+	    <test  logic="AND" value="0">
+		<!-- Disable all modes if the elevators condition is below 50% -->
+		/damage/controls/flight/elevator-condition LT 0.5
+	    </test>
+	    <test  logic="AND" value="2">
+		<!--
+		    Switch to V/S mode (2) from altitude hold modes (1, 6 and 10) or
+		    climb/descent modes (4, 5, 7 and 9) if the altimeter condition is below 50%
+		    and the vertical speed indicator is still working.
+		-->
+		/damage/instrumentation/altimeter-condition LT 0.5
+		/damage/instrumentation/vsi-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!-- 1 = ALT, 4 = OP CLB, 5 = OP DES, 6 = ALTCRZ, 7 = CLB, 8 = DES. 10 = AGL -->
+		    /instrumentation/flightdirector/vnav EQ 1
+		    /instrumentation/flightdirector/vnav EQ 4
+		    /instrumentation/flightdirector/vnav EQ 5
+		    /instrumentation/flightdirector/vnav EQ 6
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 10
+		</test>
+	    </test>
+	    <test  logic="AND" value="3">
+		<!--
+		    Switch to pitch mode (3) from altitude hold modes (1, 6 and 10) or
+		    climb/descent modes (4, 5, 7 and 9) if the altimeter condition is below 50%
+		    and the attitude indicator is still working.
+		-->
+		/damage/instrumentation/altimeter-condition LT 0.5
+		/damage/instrumentation/ai-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!-- 1 = ALT, 4 = OP CLB, 5 = OP DES, 6 = ALTCRZ, 7 = CLB, 8 = DES. 10 = AGL -->
+		    /instrumentation/flightdirector/vnav EQ 1
+		    /instrumentation/flightdirector/vnav EQ 4
+		    /instrumentation/flightdirector/vnav EQ 5
+		    /instrumentation/flightdirector/vnav EQ 6
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 10
+		</test>
+	    </test>
+	    <test  logic="AND" value="0">
+		<!--
+		    Switch to OFF (0) from altitude hold modes (1, 6 and 10) or
+		    climb/descent modes (4, 5, 7 and 9) if the altimeter condition is below 50%
+		    and the neither the attitude nor the vertical speed indicators are working.
+		-->
+		/damage/instrumentation/altimeter-condition LT 0.5
+		<test logic="OR" value="1">
+		    <!-- 1 = ALT, 4 = OP CLB, 5 = OP DES, 6 = ALTCRZ, 7 = CLB, 8 = DES. 10 = AGL -->
+		    /instrumentation/flightdirector/vnav EQ 1
+		    /instrumentation/flightdirector/vnav EQ 4
+		    /instrumentation/flightdirector/vnav EQ 5
+		    /instrumentation/flightdirector/vnav EQ 6
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 10
+		</test>
+	    </test>
+	    <test  logic="AND" value="2">
+		<!--
+		    Switch to V/S hold (2) from the pitch mode (3) if the attitude
+		    indicator is below 50% and the vertical speed indicator is working.
+		-->
+		/damage/instrumentation/ai-condition LT 0.5
+		/damage/instrumentation/vsi-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!-- 3 = FPA -->
+		    /instrumentation/flightdirector/vnav EQ 3
+		</test>
+	    </test>
+	    <test  logic="AND" value="1">
+		<!--
+		    Switch to altitude hold (1) from the pitch modes (3, 4 and 5)
+		    if the attitude indicator is below 50% and the altimeter is working.
+		-->
+		/damage/instrumentation/ai-condition LT 0.5
+		/damage/instrumentation/altimeter-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!-- 3 = FPA, 4 = OP CLB, 5 = OP DES -->
+		    /instrumentation/flightdirector/vnav GE 3
+		    /instrumentation/flightdirector/vnav LE 5
+		</test>
+	    </test>
+	    <test  logic="AND" value="0">
+		<!--
+		    Switch to OFF (0) from the pitch modes (3, 4 and 5) if the attitude indicator
+		    is below 50% and the altimeter is not working.
+		-->
+		/damage/instrumentation/ai-condition LT 0.5
+		<test logic="OR" value="1">
+		    <!-- 3 = FPA, 4 = OP CLB, 5 = OP DES -->
+		    /instrumentation/flightdirector/vnav GE 3
+		    /instrumentation/flightdirector/vnav LE 5
+		</test>
+	    </test>
+	    <test  logic="AND" value="3">
+		<!--
+		    Switch to FPA mode (3) from GS mode (9) if the navigation indicator
+		    condition is below 50% and the attitude indicator is working.
+		-->
+		/damage/instrumentation/nav1/gs-condition LT 0.5
+		/damage/instrumentation/ai-condition GT 0.5
+		/instrumentation/flightdirector/vnav EQ 9
+	    </test>
+	    <test  logic="AND" value="0">
+		<!--
+		    Switch to OFF (0) from GS mode (9) if the navigation indicator
+		    condition is below 50% and the attitude indicator is not working.
+		-->
+		/damage/instrumentation/nav1/gs-condition LT 0.5
+		/instrumentation/flightdirector/vnav EQ 9
+	    </test>
+	    <test  logic="AND" value="1">
+		<!--
+		    Switch to altitude hold (1) from speed climb/descent modes based on V/S
+		    (2, 7, 8 and 9) if the VSI condition is below 50% and the altimeter is working.
+		-->
+		/damage/instrumentation/vsi-condition LT 0.5
+		/damage/instrumentation/altimeter-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!--  2 = V/S, 7 = CLB, 8 = DES, 9 = G/S -->
+		    /instrumentation/flightdirector/vnav EQ 2
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 9
+		</test>
+	    </test>
+	    <test  logic="AND" value="3">
+		<!--
+		    Switch to pitch hold (3) from speed climb/descent modes based on V/S
+		    (2, 7, 8 and 9) if the VSI condition is below 50% and the
+		    attitude indicator is working.
+		-->
+		/damage/instrumentation/vsi-condition LT 0.5
+		/damage/instrumentation/ai-condition GT 0.5
+		<test logic="OR" value="1">
+		    <!--  2 = V/S, 7 = CLB, 8 = DES, 9 = G/S -->
+		    /instrumentation/flightdirector/vnav EQ 2
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 9
+		</test>
+	    </test>
+	    <test  logic="AND" value="0">
+		<!--
+		    Switch to OFF (0) from speed climb/descent modes based on V/S
+		    (2, 7, 8 and 9) if the VSI condition is below 50% and neither the
+		    altimeter nor attitude indicator are working.
+		-->
+		/damage/instrumentation/vsi-condition LT 0.5
+		<test logic="OR" value="1">
+		    <!--  2 = V/S, 7 = CLB, 8 = DES, 9 = G/S -->
+		    /instrumentation/flightdirector/vnav EQ 2
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		    /instrumentation/flightdirector/vnav EQ 9
+		</test>
+	    </test>
+	    <test  logic="AND" value="1">
+		<!--
+		    Switch to altitude hold (1) from climb/descent modes based on airspeed
+		    (4 and 5) if the ASI condition is below 50%.
+		-->
+		/damage/instrumentation/asi-condition LT 0.5
+		<test logic="OR" value="1">
+		    <!--  5 = OP DES, 4 = OP CLB -->
+		    /instrumentation/flightdirector/vnav EQ 5
+		    /instrumentation/flightdirector/vnav EQ 4
+		</test>
+	    </test>
+	</switch>
+
+    </channel>
+
+</flight_control>

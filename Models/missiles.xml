@@ -1,0 +1,78 @@
+<?xml version="1.0"?>                                                                                          
+
+<PropertyList>
+
+    <!-- Shrike Missiles x4 - two on each wing pylon -->
+
+    <model>
+	<name>ShrikeMount1</name>
+	<path>Aircraft/victor/Models/shrikemount.xml</path>
+	<offsets>
+	    <x-m> 19.0</x-m>
+	    <y-m>-11.0</y-m>
+	    <z-m>-0.30</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Shrike1</name>
+	<path>Aircraft/victor/Models/shrike1.xml</path>
+	<offsets>
+	    <x-m> 19.5</x-m>
+	    <y-m>-11.4</y-m>
+	    <z-m>-0.75</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Shrike2</name>
+	<path>Aircraft/victor/Models/shrike2.xml</path>
+	<offsets>
+	    <x-m> 19.0</x-m>
+	    <y-m>-10.6</y-m>
+	    <z-m>-0.75</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>ShrikeMount2</name>
+	<path>Aircraft/victor/Models/shrikemount.xml</path>
+	<offsets>
+	    <x-m> 19.0</x-m>
+	    <y-m> 11.0</y-m>
+	    <z-m>-0.30</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Shrike3</name>
+	<path>Aircraft/victor/Models/shrike3.xml</path>
+	<offsets>
+	    <x-m> 19.0</x-m>
+	    <y-m> 10.6</y-m>
+	    <z-m>-0.75</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Shrike4</name>
+	<path>Aircraft/victor/Models/shrike4.xml</path>
+	<offsets>
+	    <x-m> 19.5</x-m>
+	    <y-m> 11.4</y-m>
+	    <z-m>-0.75</z-m>
+	</offsets>
+    </model>
+
+    <!-- Blue Steel Nuclear Missile -->
+    <model>
+	<name>BlueSteel</name>
+	<path>Aircraft/victor/Models/BlueSteel.xml</path>
+	<offsets>
+	    <x-m>18.5</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-1.0</z-m>
+	</offsets>
+    </model>
+
+</PropertyList>

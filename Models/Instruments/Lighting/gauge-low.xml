@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<!-- Low illumination of a gauge (probably off) -->
+
+<PropertyList>
+
+    <type>material</type>
+    <condition>
+	<property>controls/lighting/instrument-lights</property>
+	<!-- We must have enough electrical power -->
+	<greater-than>
+	    <property>systems/electrical/outputs/instrument-lights</property>
+	    <value> 100 </value>
+	</greater-than>
+    </condition>
+    <emission>
+	<factor-prop>controls/lighting/instruments-norm</factor-prop>
+	<red>   0.11 </red>
+	<green> 0.07 </green>
+	<blue>  0.04 </blue>
+    </emission>
+    <diffuse>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </diffuse>
+    <ambient>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </ambient>
+    <specular>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </specular>
+
+</PropertyList>

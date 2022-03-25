@@ -1,0 +1,866 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Digital AP Vertical Controls</name>
+    <w-base>120</w-base>
+    <h-base>60</h-base>
+
+    <params>
+	<alt-disp>/autopilot/settings/target-altitude-ft</alt-disp>
+	<alt-ctrl>/instrumentation/flightdirector/altitude-select</alt-ctrl>
+	<vs-disp>/autopilot/settings/vertical-speed-fpm</vs-disp>
+	<vs-ctrl>/instrumentation/flightdirector/vertical-speed-select</vs-ctrl>
+    </params>
+
+    <layers>
+
+	<layer>
+	    <name>background</name>
+	    <texture>
+		<path>Panels/Instruments/Textures/trans-green-bg.rgb</path>
+		<x1>0.6</x1>
+		<y1>0.2</y1>
+		<x2>0.9</x2>
+		<y2>0.3</y2>
+	    </texture>
+	    <w>120</w>
+	    <h>60</h>
+	</layer>
+
+	<!-- Overrall mode -->
+
+	<layer>
+	    <name>Vertical Mode</name>
+	    <type>text</type>
+	    <font>helvetica_bold</font>
+	    <point-size>16</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>0.3 </green>
+		<blue> 0.4 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>Vert: </text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>12</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<!-- Vertical mode display: ALT, PITCH, V/S, AGL, CLB, DES, G/S -->
+	<layer>
+	    <name>Mode Display</name>
+	    <type>switch</type>
+	    <layer>
+		<name>Alt Mode</name>
+		<condition>
+		    <or>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>1</value>
+			</equals>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>6</value>
+			</equals>
+		    </or>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>ALT</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>V/S Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/vnav</property>
+			<value>2</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>V/S</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Pitch Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/vnav</property>
+			<value>3</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>PITCH</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Climb Mode</name>
+		<condition>
+		    <or>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>4</value>
+			</equals>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>7</value>
+			</equals>
+		    </or>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>CLIMB</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Descend Mode</name>
+		<condition>
+		    <or>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>5</value>
+			</equals>
+			<equals>
+			    <property>/instrumentation/flightdirector/vnav</property>
+			    <value>8</value>
+			</equals>
+		    </or>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>DESCEND</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>GS Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/vnav</property>
+			<value>9</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>G/S</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>AGL Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/vnav</property>
+			<value>10</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>AGL</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Off Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/vnav</property>
+			<value>0</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>OFF</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <!-- end switch -->
+	</layer>
+
+	<!-- Altitude-hold mode -->
+
+	<layer>
+	    <name>Select Alt</name>
+	    <type>text</type>
+	    <font>arial_black</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>A:</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-6</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 1000 alt</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-38</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 100 alt</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.8 </red>
+		<green>0.8 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-23</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>AP altitude display</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>6</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>number-value</type>
+		    <property alias="../../../../../params/alt-disp"/>
+		    <format>%5.0f</format>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-13</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 100 alt</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.8 </red>
+		<green>0.8 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>32</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 1000 alt</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>47</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<!-- V/S mode -->
+
+	<layer>
+	    <name>Select V/S</name>
+	    <type>text</type>
+	    <font>arial_black</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>V:</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-23</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 1000 vs</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-38</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 100 vs</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.8 </green>
+		<blue> 0.8 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-23</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>AP V/S display</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>6</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>number-value</type>
+		    <property alias="../../../../../params/vs-disp"/>
+		    <format>%5.0f</format>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-13</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 100 vs</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.8 </green>
+		<blue> 0.8 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>32</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 1000 vs</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>47</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+    </layers>
+
+    <actions>
+
+	<!-- Select ALT HLD mode -->
+	<action>
+	    <name>Select alt</name>
+	    <button>0</button>
+	    <x>-58</x>
+	    <y>-8</y>
+	    <w>18</w>
+	    <h>15</h>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_alt();</script>
+	    </binding>
+	</action>
+
+	<!-- ALT adjustments -->
+
+	<action>
+	    <name>Minus 1000 alt</name>
+	    <button>0</button>
+	    <x>-38</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/alt-ctrl"/>
+		<step>-1000</step>
+		<min>0</min>
+		<max>70000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Minus 100 alt</name>
+	    <button>0</button>
+	    <x>-23</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/alt-ctrl"/>
+		<step>-100</step>
+		<min>0</min>
+		<max>70000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 100 alt</name>
+	    <button>0</button>
+	    <x>30</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/alt-ctrl"/>
+		<step>100</step>
+		<min>100</min>
+		<max>70000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 1000 alt</name>
+	    <button>0</button>
+	    <x>45</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/alt-ctrl"/>
+		<step>1000</step>
+		<min>100</min>
+		<max>70000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<!-- Select V/S mode -->
+	<action>
+	    <name>Select V/S</name>
+	    <button>0</button>
+	    <x>-58</x>
+	    <y>-25</y>
+	    <w>18</w>
+	    <h>15</h>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_vfpm();</script>
+	    </binding>
+	</action>
+
+	<!-- V/S adjustments -->
+
+	<action>
+	    <name>Minus 1000 vs</name>
+	    <button>0</button>
+	    <x>-38</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/vs-ctrl"/>
+		<step>-1000</step>
+		<min>-6000</min>
+		<max>12000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Minus 100 vs</name>
+	    <button>0</button>
+	    <x>-23</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/vs-ctrl"/>
+		<step>-100</step>
+		<min>-6000</min>
+		<max>12000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 100 vs</name>
+	    <button>0</button>
+	    <x>30</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/vs-ctrl"/>
+		<step>100</step>
+		<min>-6000</min>
+		<max>12000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 1000 vs</name>
+	    <button>0</button>
+	    <x>45</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/vs-ctrl"/>
+		<step>1000</step>
+		<min>-6000</min>
+		<max>12000</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+    </actions>
+
+</PropertyList>

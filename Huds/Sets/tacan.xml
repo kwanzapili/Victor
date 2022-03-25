@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- TACAN Tanker -->
+    <label>
+	<width>2</width>
+	<height>2</height>
+	<format>Tanker:   %5s</format>
+	<halign>left</halign>
+	<input>
+	    <property>/instrumentation/tacan/name</property>
+	</input>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </label>
+
+    <label>
+	<y>-10</y>
+	<width>2</width>
+	<height>2</height>
+	<format>Bearing:  %4.0f</format>
+	<halign>left</halign>
+	<input>
+	    <property>/instrumentation/tacan/indicated-bearing-true-deg</property>
+	</input>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </label>
+
+    <label>
+	<y>-20</y>
+	<width>2</width>
+	<height>2</height>
+	<format>Distance: %3.2f nm</format>
+	<halign>left</halign>
+	<input>
+	    <property>/instrumentation/tacan/indicated-distance-nm</property>
+	</input>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </label>
+
+    <label>
+	<width>2</width>
+	<height>2</height>
+	<y>-30</y>
+	<format>Time:     %2d min</format>
+	<halign>left</halign>
+	<input>
+	    <property>/instrumentation/fmc/tacan-mins</property>
+	</input>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </label>
+
+    <label>
+	<width>2</width>
+	<height>2</height>
+	<y>-40</y>
+	<format>Time:     %2d sec</format>
+	<halign>left</halign>
+	<input>
+	    <property>/instrumentation/fmc/tacan-secs</property>
+	</input>
+	<condition>
+	    <property>/instrumentation/tacan/in-range</property>
+	</condition>
+    </label>
+
+</PropertyList>

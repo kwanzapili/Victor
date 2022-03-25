@@ -1,0 +1,1334 @@
+<?xml version="1.0"?>
+
+<!--
+    ************************************************************************
+    Handley Page Victor Bomber/Tanker
+
+    Started Feb 2009 by Alex Park,
+    Modified by Kwanza March 2021
+    ************************************************************************
+-->
+
+<PropertyList>
+
+    <sim>
+
+	<description type="string">Handley Page Victor</description>
+	<long-description type="string">
+	    One of the "V-Bombers", designed in the 1950s for long-range delivery of
+	    nuclear weapons, and one of the parts of the UK nuclear deterent during
+	    the cold war. The Victor was the last of the V-bombers to be retired from
+	    service in 1993. A number of Victors were modified for strategic reconnaissance
+	    and others converted into tankers.
+	</long-description>
+
+	<aircraft-version>2021.8</aircraft-version>
+
+	<rating>
+	    <FDM type="int">2</FDM>
+	    <systems type="int">3</systems>
+	    <cockpit type="int">3</cockpit>
+	    <model type="int">4</model>
+	</rating>
+
+	<authors>
+	    <author n="0">
+		<name>Alex Park</name>
+		<description>Original Author</description>
+	    </author>
+	    <author n="1">
+		<name>Kwanza</name>
+		<description>Enhancements</description>
+	    </author>
+	</authors>
+
+	<maintainers>
+	    <maintainer n="0">
+		<name>Kwanza</name>
+		<email>kwanza@chui.kilavuka.nyumbani</email>
+	    </maintainer>
+	</maintainers >
+
+	<tags>
+	    <tag n="0">Handley Page</tag>
+	    <tag n="1">bomber</tag>
+	    <tag n="2">tanker</tag>
+	    <tag n="3">1950s</tag>
+	    <tag n="4">1960s</tag>
+	    <tag n="5">1970s</tag>
+	    <tag n="6">1980s</tag>
+	    <tag n="7">coldwar</tag>
+	    <tag n="8">retractable-gear</tag>
+	    <tag n="9">refuel</tag>
+	    <tag n="10">jet</tag>
+	</tags>
+
+	<urls>
+	    <support>http://forum.flightgear.org</support>
+	    <wikipedia>https://en.wikipedia.org/wiki/Handley_Page_Victor</wikipedia>
+	    <code-repository>https://sourceforge.net/p/flightgear/fgaddon/HEAD/tree/trunk/Aircraft/victor/</code-repository>
+	</urls>
+
+	<status>beta</status>
+	<minimum-fg-version>2018.3</minimum-fg-version>
+
+	<previews>
+	    <preview>
+		<type>exterior</type>
+		<splash type="bool">true</splash>
+		<path>Previews/Victor_K2-1.jpg</path>
+	    </preview>
+	    <preview>
+		<type>exterior</type>
+		<splash type="bool">true</splash>
+		<path>Previews/Victor_K2-1.jpg</path>
+	    </preview>
+	    <preview>
+		<type>exterior</type>
+		<splash type="bool">true</splash>
+		<path>victork2-splash.png</path>
+	    </preview>
+	</previews>
+
+	<flight-model archive="y">jsb</flight-model>
+	<aero archive="y">victor</aero>
+
+	<panel>
+	    <path type="string">Panels/victor-panel.xml</path>
+	    <visibility type="bool">false</visibility>
+	</panel>
+
+	<model>
+	    <path archive="y">Aircraft/victor/Models/victor.xml</path>
+	</model>
+
+	<!-- Initial variant and armament properties - controlled by aircraft dialog -->
+	<variant>
+	    <name type="string">B2RS</name>
+	    <bomber type="bool">true</bomber>
+	    <nbomber type="bool">true</nbomber>
+	    <shrikes type="bool">true</shrikes>
+	    <nmissile type="bool">true</nmissile>
+	    <tanker type="bool">false</tanker>
+	</variant>
+
+	<armament>
+	    <mission type="string">Black Buck Six</mission>
+	    <!-- impact parameters are saved here -->
+	    <weapons>
+		<impact-time type="float">0.0</impact-time>
+		<time-lapse type="float">0.0</time-lapse>
+		<yield-ktn type="float">0.0</yield-ktn>
+		<effect type="float">0.0</effect>
+	    </weapons>
+	</armament>
+
+	<submodels>
+	    <serviceable type="bool">true</serviceable>
+	    <path>Aircraft/victor/Submodels/armament.xml</path>
+	</submodels>
+
+	<sound>
+	    <path>Aircraft/victor/Sounds/victor-sounds.xml</path>
+	    <effects>
+		<!-- doors -->
+		<bay-lock type="bool">false</bay-lock>
+		<chute-switch type="int">-1</chute-switch>
+		<!-- generic switch -->
+		<switch type="bool">false</switch>
+	    </effects>
+	    <armament>
+		<armament-release type="bool">false</armament-release>
+		<explosion type="bool">false</explosion>
+		<explosion-volume type="float">0.5</explosion-volume>
+		<cruise-missile type="bool">false</cruise-missile>
+		<missile-fired type="bool">false</missile-fired>
+		<missile-hit type="bool">false</missile-hit>
+		<missile-volume type="float">0.5</missile-volume>
+	    </armament>
+	</sound>
+
+	<menubar include="Dialogs/victor-menu.xml"/>
+
+	<help include="victor-help.xml"/>
+
+        <!--
+            ======
+            Views
+            ======
+
+            Notes:
+            x-offset-m: Positive values to the right of origin (view position).
+            y-offset-m: Positive values move up from origin.
+            z-offset-m: Positive values move back (or in) from origin.
+        -->
+
+	<!-- position the pilot viewpoint and angle -->
+	<view n="0">
+	    <internal archive="y">true</internal>
+	    <config>
+		<x-offset-m archive="y">-0.51</x-offset-m>
+		<y-offset-m archive="y"> 1.20</y-offset-m>
+		<z-offset-m archive="y"> 3.75</z-offset-m>
+		<pitch-offset-deg>-5.0</pitch-offset-deg>
+	    </config>
+	</view>
+
+	<view n="1">
+	    <config>
+		<z-offset-m type="double" archive="y">-50</z-offset-m>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+		<default-field-of-view-deg type="double">60.0</default-field-of-view-deg>
+	    </config>
+	</view>
+
+	<view n="2">
+	    <config>
+		<x-offset-m archive="y" type="double">8.0</x-offset-m>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+		<pitch-offset-deg>5.0</pitch-offset-deg>
+	    </config>
+	</view>
+
+	<view n="3">
+	    <config>
+		<!-- big plane, so extend chase view offset a bit -->
+		<z-offset-m type="double" archive="y">-80</z-offset-m>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+	    </config>
+	</view>
+
+	<view n="4">
+	    <config>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+	    </config>
+	</view>
+
+	<!-- chase view without yaw -->
+	<view n="5">
+	    <config>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+	    </config>
+	</view>
+
+	<!-- fly-by view -->
+	<view n="6">
+	    <config>
+		<target-z-offset-m type="double" archive="y">15</target-z-offset-m>
+	    </config>
+	</view>
+
+	<!-- position the co-pilot viewpoint and angle -->
+	<!-- This is definitely a dual-control a/c -->
+	<view n="100">
+	    <name>Co-pilot View</name>
+	    <internal archive="y">true</internal>
+	    <type>lookfrom</type>
+	    <config>
+		<from-model type="bool">true</from-model>
+		<ground-level-nearplane-m type="double">0.5f</ground-level-nearplane-m>
+		<x-offset-m archive="y">0.50</x-offset-m>
+		<y-offset-m archive="y">1.00</y-offset-m>
+		<z-offset-m archive="y">3.35</z-offset-m>
+		<pitch-offset-deg>-5.0</pitch-offset-deg>
+		<default-field-of-view-deg>75</default-field-of-view-deg>
+		<dynamic-view type="bool">true</dynamic-view>
+	    </config>
+	</view>
+
+	<view n="101">
+	    <name>Panel View</name>
+	    <internal archive="y">true</internal>
+	    <type>lookfrom</type>
+	    <config>
+		<from-model type="bool">true</from-model>
+		<x-offset-m archive="y">0.00</x-offset-m>
+		<y-offset-m archive="y">1.00</y-offset-m>
+		<z-offset-m archive="y">3.40</z-offset-m>
+		<pitch-offset-deg>0.0</pitch-offset-deg>
+		<default-field-of-view-deg type="double">75.0</default-field-of-view-deg>
+	    </config>
+	</view>
+
+	<view n="102">
+	    <name>Arm View</name>
+	    <internal archive="y">true</internal>
+	    <type>lookfrom</type>
+	    <config>
+		<from-model type="bool">true</from-model>
+		<x-offset-m archive="y">-0.75</x-offset-m>
+		<y-offset-m archive="y"> 1.00</y-offset-m>
+		<z-offset-m archive="y"> 3.00</z-offset-m>
+		<pitch-offset-deg>-70.0</pitch-offset-deg>
+		<default-field-of-view-deg type="double">50.0</default-field-of-view-deg>
+	    </config>
+	</view>
+
+	<!-- big plane, so extend chase view offset a bit -->
+	<chase-distance-m type="double" archive="y">-70.0</chase-distance-m>
+
+	<flaps>
+	    <setting>0.00</setting>
+	    <setting>0.50</setting>
+	    <setting>1.00</setting>
+	</flaps>
+
+	<!--
+	    Three-position (retracted, medium drag, high drag) airbrakes
+	    0.0 - Retracted
+	    0.5 - Partially out - 15 degrees
+	    1.0 - Fully extended - 50 degrees
+	    There are no spoilers on the plane.
+	-->
+	<speedbrake>
+	    <setting type="float">0.0</setting>
+	    <setting type="float">0.5</setting>
+	    <setting type="float">1.0</setting>
+	</speedbrake>
+
+	<systems>
+	    <path type="string">Aircraft/victor/Systems/systems.xml</path>
+
+	    <!-- Disable the generic autopilot -->
+	    <autopilot n="0">
+		<serviceable>false</serviceable>
+	    </autopilot>
+
+	    <!-- override the autopilot helper (1) -->
+	    <autopilot n="1">
+		<name>Victor custom</name>
+		<path>Systems/autopilot.xml</path>
+	    </autopilot>
+
+	    <property-rule n="100">
+		<name>Utility Helper</name>
+		<path>Systems/utility.xml</path>
+	    </property-rule>
+
+	    <property-rule n="101">
+		<name>Arms Controller</name>
+		<path>Systems/arms-controller.xml</path>
+	    </property-rule>
+	</systems>
+
+	<!-- HUDs -->
+	<hud>
+	    <path n="1">Aircraft/victor/Huds/hud.xml</path>
+	    <path n="2">Aircraft/victor/Huds/minimal.xml</path>
+	    <visibility n="1" type="bool">false</visibility>
+	    <visibility n="2" type="bool">false</visibility>
+	    <enable3d>true</enable3d>
+
+	    <color>
+		<transparent type="bool">true</transparent>
+		<antialiased type="bool">true</antialiased>
+		<brightness type="float">0.85</brightness>
+		<alpha type="float">0.85</alpha>
+	    </color>
+	    <palette>
+		<color n="0">
+		    <red type="float">0.38</red>
+		    <green type="float">1.0</green>
+		    <blue type="float">0.22</blue>
+		</color>
+		<color n="1">
+		    <red type="float">1.0</red>
+		    <green type="float">0.0</green>
+		    <blue type="float">0.0</blue>
+		</color>
+	    </palette>
+	</hud>
+
+        <virtual-cockpit type="bool">true</virtual-cockpit>
+        <allow-toggle-cockpit type="bool">true</allow-toggle-cockpit>
+
+	<instrumentation>
+	    <path>Aircraft/victor/Systems/instrumentation.xml</path>
+	</instrumentation>
+
+	<flight-recorder include="Aircraft/victor/Systems/flightrecorder.xml"/>
+
+	<rendering>
+	    <!-- blackout and redout settings -->
+	    <redout>
+		<enabled type="bool" userarchive="y">true</enabled>
+		<parameters>
+		    <blackout-onset-g type="double">3.0</blackout-onset-g>
+		    <blackout-complete-g type="double">7.0</blackout-complete-g>
+		    <onset-blackout-sec type="double">300</onset-blackout-sec>
+		    <fast-blackout-sec type="double">10</fast-blackout-sec>
+		    <redout-onset-g type="double">-2</redout-onset-g>
+		    <redout-complete-g type="double">-4</redout-complete-g>
+		    <onset-redout-sec type="double">45</onset-redout-sec>
+		    <fast-redout-sec type="double">7.5</fast-redout-sec>
+		    <recover-fast-sec type="double">7</recover-fast-sec>
+		    <recover-slow-sec type="double">15</recover-slow-sec>
+		</parameters>
+	    </redout>
+	    <headshake>
+		<enabled type="bool" userarchive="y">true</enabled>
+	    </headshake>
+
+	    <!-- my own switch for selecting between classi and ALS rendering -->
+	    <als-lights type="bool">true</als-lights>
+	</rendering>
+
+    </sim>
+
+    <!--
+	We will need "position/gear-agl-ft" for the marker beacons, MK VIII and the crash module.
+	Hence, we need to define it here and then use a filter to update its value.
+    -->
+    <position>
+	<gear-agl-ft type="double">5.0</gear-agl-ft>
+    </position>
+
+    <!-- Switch this property true or false to allow following aircraft to refuel or not -->
+    <tanker type="bool">false</tanker>
+
+    <!-- Autopilot settings -->
+    <autopilot>
+
+	<internal include="Systems/props-ap-int.xml"/>
+
+	<locks>
+	    <passive-mode type="int">-1</passive-mode>
+	</locks>
+
+	<settings>
+	    <heading-bug-deg type="double">0.0</heading-bug-deg>
+	    <target-agl-ft type="int">2000</target-agl-ft>
+	    <target-altitude-ft type="int">15000</target-altitude-ft>
+	    <target-aoa-deg type="float">1.0</target-aoa-deg>
+	    <target-pitch-deg type="float">6</target-pitch-deg>
+	    <target-speed-kt type="float">300.0</target-speed-kt>
+	    <target-speed-mach type="float">0.5</target-speed-mach>
+	    <true-heading-deg type="double">0.0</true-heading-deg>
+	    <vertical-speed-fpm type="float">0.0</vertical-speed-fpm>
+	</settings>
+
+    </autopilot>
+
+    <consumables>
+	<fuel>
+	    <!-- Wing tanks -->>
+	    <tank n="0">
+		<name type="string">Portside 1</name>
+		<tank-num type="int">1</tank-num>
+	    </tank>
+	    <tank n="1">
+		<name type="string">Portside 3+4</name>
+		<tank-num type="int">2</tank-num>
+	    </tank>
+	    <tank n="2">
+		<name type="string">Portside 5</name>
+		<tank-num type="int">3</tank-num>
+	    </tank>
+	    <tank n="3">
+		<name type="string">Portside 6</name>
+		<tank-num type="int">4</tank-num>
+	    </tank>
+	    <tank n="4">
+		<name type="string">Portside UW</name>
+		<tank-num type="int">5</tank-num>
+	    </tank>
+	    <tank n="5">
+		<name type="string">Starboard 1</name>
+		<tank-num type="int">6</tank-num>
+	    </tank>
+	    <tank n="6">
+		<name type="string">Starboard 3+4</name>
+		<tank-num type="int">7</tank-num>
+	    </tank>
+	    <tank n="7">
+		<name type="string">Starboard 5</name>
+		<tank-num type="int">8</tank-num>
+	    </tank>
+	    <tank n="8">
+		<name type="string">Starboard 6</name>
+		<tank-num type="int">9</tank-num>
+	    </tank>
+	    <tank n="9">
+		<name type="string">Starboard UW</name>
+		<tank-num type="int">10</tank-num>
+	    </tank>
+	    
+	    <!-- Fuselage tanks -->>
+	    <tank n="10">
+		<name type="string">Fuselage 7</name>
+		<tank-num type="int">11</tank-num>
+	    </tank>
+	    <tank n="11">
+		<name type="string">Fuselage 8+9 </name>
+		<tank-num type="int">12</tank-num>
+	    </tank>
+	    <tank n="12">
+		<name type="string">Fuselage 10+11</name>
+		<tank-num type="int">13</tank-num>
+	    </tank>
+	    <tank n="13">
+		<name type="string">Fuselage 12</name>
+		<tank-num type="int">14</tank-num>
+	    </tank>
+	    
+	    <!-- Bom bay tanks -->
+	    <tank n="14">
+		<name type="string">Bomb Bay Fore</name>
+		<tank-num type="int">15</tank-num>
+	    </tank>
+	    <tank n="15">
+		<name type="string">Bomb Bay Aft</name>
+		<tank-num type="int">16</tank-num>
+	    </tank>
+
+	<!-- APU collector tank -->
+	<tank n="16">
+	<name type="string">APU Collector</name>
+	</tank>
+
+	<!-- tank groups -->
+	<group1-lbs type="float">0.0</group1-lbs>
+            <group2-lbs type="float">0.0</group2-lbs>
+            <group3-lbs type="float">0.0</group3-lbs>
+            <group4-lbs type="float">0.0</group4-lbs>
+            
+             <projected-use-lbs type="float">0.0</projected-use-lbs>
+            <total-used-lbs type="float">0.0</total-used-lbs>
+	</fuel>
+    </consumables>
+
+    <controls>
+
+	<!-- Deicing -->
+	<anti-ice>
+	    <window-heat-degc type="int">0</window-heat-degc>
+	    <window-temperature-degc type="int">0</window-temperature-degc>
+	</anti-ice>
+
+	<APU>
+	    <off-start-run type="int">0</off-start-run>
+	    <run type="bool">false</run>
+	    <trigger-switch type="int">-1</trigger-switch>
+	</APU>
+
+	<!-- Armament -->
+	<armament include="Systems/props-armament.xml"/>
+
+	<!-- Doors -->
+	<doors>
+	    <cockpit-switch type="int">0</cockpit-switch>
+	    <cockpit-lock type="bool">false</cockpit-lock>
+	    <bb-door-pos type="int">0</bb-door-pos>
+	    <emergency-bb-door-pos type="bool">false</emergency-bb-door-pos>
+	    <emergency-bb-jettison-pos type="bool">false</emergency-bb-jettison-pos>
+	</doors>
+
+	<electric>
+	    <master-switch type="bool">false</master-switch>
+	    <battery-switch type="bool">false</battery-switch>
+	    <external-power type="bool" >false</external-power>
+	</electric>
+
+	<engines>
+	    <shutdown type="bool">false</shutdown>
+	    <!-- engine shutdown in progress --> 
+	    <starter-engaged type="bool">false</starter-engaged>
+	    <!-- Currently selected engine for starter -->
+	    <starter-selected type="int">0</starter-selected>
+	    <start-required type="bool">false</start-required>
+	    <master type="bool">false</master>
+	    <engine n="0">
+		<fuel-pump type="bool">false</fuel-pump>
+		<master type="bool">false</master>
+		<on-fire type="bool">false</on-fire>
+		<reset-cmd type="bool">false</reset-cmd>
+		<starter-sound type="float">0.0</starter-sound>
+	    </engine>
+	    <engine n="1">
+		<fuel-pump type="bool" >false</fuel-pump>
+		<master type="bool">false</master>
+		<on-fire type="bool">false</on-fire>
+		<reset-cmd type="bool">false</reset-cmd>
+		<starter-sound type="float">0.0</starter-sound>
+	    </engine>
+	    <engine n="2">
+		<fuel-pump type="bool">false</fuel-pump>
+		<master type="bool">false</master>
+		<on-fire type="bool">false</on-fire>
+		<reset-cmd type="bool">false</reset-cmd>
+		<starter-sound type="float">0.0</starter-sound>
+	    </engine>
+	    <engine n="3">
+		<fuel-pump type="bool" >false</fuel-pump>
+		<master type="bool">false</master>
+		<on-fire type="bool">false</on-fire>
+		<reset-cmd type="bool">false</reset-cmd>
+		<starter-sound type="float">0.0</starter-sound>
+	    </engine>
+	    <engine n="4">
+		<fuel-pump type="bool" >false</fuel-pump>
+		<master type="bool">false</master>
+		<on-fire type="bool">false</on-fire>
+		<reset-cmd type="bool">false</reset-cmd>
+		<starter-sound type="float">0.0</starter-sound>
+	    </engine>
+	</engines>
+
+	<flight>
+	    <chute-pos-norm type="float">0.0</chute-pos-norm>
+	    <drag-chute type="bool">false</drag-chute>
+	    <speedbrake-pos-deg alias="/fdm/jsbsim/fcs/speedbrake-pos-deg"/>
+	</flight>
+
+	<!-- Fuel settings -->
+	<fuel>
+	    <!-- aft fuel transfer switch -->
+	    <aft-transfer type="bool">false</aft-transfer>
+	    <!-- cross-feed fuel transfer switch -->
+	    <cross-feed type="bool">false</cross-feed>
+	    <!-- forward fuel transfer switch -->
+	    <fwd-transfer type="bool">false</fwd-transfer>
+
+	    <tank n="0">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="1">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="2">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="3">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="4">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="5">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="6">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="7">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="8">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="9">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="10">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="11">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="12">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="13">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="14">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+	    <tank n="15">
+		<boost-pump n="0" type="bool">false</boost-pump>
+		<boost-pump n="1" type="bool">false</boost-pump>
+	    </tank>
+
+	</fuel>
+
+	<!-- Start with the Parking Brake ON and landing gear locked -->
+	<gear>
+	    <gear-guard type="bool">false</gear-guard>
+	    <gear-locked type="bool">true</gear-locked>
+	</gear>
+
+	<!-- Hydraulic system -->
+	<hydraulic>
+	    <!-- average pressure across all four systems -->
+	    <pressure-psi type="float">0.0</pressure-psi>
+
+	    <system n="0">
+		<electric-pressure-norm type="float">0.0</electric-pressure-norm>
+		<electric-pressure-psi type="int">0</electric-pressure-psi>
+		<engine-pressure-norm type="float">0.0</engine-pressure-norm>
+		<engine-pressure-psi type="int">0</engine-pressure-psi >
+	    </system>
+
+	    <system n="1">
+		<electric-pressure-norm type="float">0.0</electric-pressure-norm>
+		<electric-pressure-psi type="int">0</electric-pressure-psi>
+		<engine-pressure-norm type="float">0.0</engine-pressure-norm>
+		<engine-pressure-psi type="int">0</engine-pressure-psi >
+	    </system>
+
+	    <system n="2">
+		<electric-pressure-norm type="float">0.0</electric-pressure-norm>
+		<electric-pressure-psi type="int">0</electric-pressure-psi>
+		<engine-pressure-norm type="float">0.0</engine-pressure-norm>
+		<engine-pressure-psi type="int">0</engine-pressure-psi >
+	    </system>
+
+	    <system n="3">
+		<electric-pressure-norm type="float">0.0</electric-pressure-norm>
+		<electric-pressure-psi type="int">0</electric-pressure-psi>
+		<engine-pressure-norm type="float">0.0</engine-pressure-norm>
+		<engine-pressure-psi type="int">0</engine-pressure-psi >
+	    </system>
+	</hydraulic>
+
+	<pressurization>
+	    <cabin-pressure-rate-sec type="float">0.0</cabin-pressure-rate-sec>
+	</pressurization>
+
+	<pneumatic>
+	    <engine n="0">
+		<bleed type="bool">false</bleed>
+	    </engine>
+	    <engine n="1">
+		<bleed type="bool">false</bleed>
+	    </engine>
+	    <engine n="2">
+		<bleed type="bool">false</bleed>
+	    </engine>
+	    <engine n="3">
+		<bleed type="bool">false</bleed>
+	    </engine>
+	</pneumatic>
+
+	<radar>
+	    <altimeter>
+		<caged-flag type="bool">false</caged-flag>
+		<limiter-active type="bool">false</limiter-active>
+		<limiter-height-ft type="float">5000.0</limiter-height-ft>
+		<limiter-height-units type="float">500.0</limiter-height-units>
+		<limiter-light-amber type="bool">false</limiter-light-amber>
+		<limiter-light-green type="bool">false</limiter-light-green>
+		<limiter-light-mode type="int">0</limiter-light-mode>
+		<limiter-light-red type="bool">false</limiter-light-red>
+		<limiter-light-test type="bool">false</limiter-light-test>
+		<!--
+		    The "sensitivity-five-thousand" property determines the multiple convertor from
+		    "limiter-height-units" to "limiter-height-ft". This is either 1 or 10.
+		    So when "sensitivity-five-thousand" is "true", the RA works up to
+		    5,000 ft (~1,500 m).
+		-->
+		<sensitivity-five-thousand type="bool">true</sensitivity-five-thousand>
+		<!-- set the fraction of the sensitivity range where warning commence -->
+		<warning-height-frac type="float">0.20</warning-height-frac>
+	    </altimeter>
+
+	    <terrain-warning>
+		<max-range-nm type="float">5.0</max-range-nm>
+		<min-range-nm type="float">0.5</min-range-nm>
+	    </terrain-warning>
+	</radar>
+
+	<refuelling>
+	    <tanker type="bool">false</tanker>
+	</refuelling>
+
+	<!-- Switches -->
+	<switches>
+	    <autopilot type="bool">false</autopilot>
+	    <autothrottle type="bool">false</autothrottle>
+	    <altitude-mode type="bool">false</altitude-mode>
+	    <cabin-pressure type="int">0</cabin-pressure>
+	    <cabin-temperature-degc type="float">15</cabin-temperature-degc>
+	    <chute type="int">-1</chute>
+	    <heading-mode type="bool">false</heading-mode>
+	    <lights-brightness type="float">0.5</lights-brightness>
+	    <master-avionics type="bool">false</master-avionics>
+	    <nav-mode type="bool">false</nav-mode>
+	    <nose-lights type="int">0</nose-lights>
+	    <pitot-heat type="bool">false</pitot-heat>
+	    <RAT type="bool">false</RAT>
+	    <refuel type="bool">false</refuel>
+	    <refuel-pump type="bool">false</refuel-pump>
+	</switches>
+
+    </controls>
+
+    <!-- Damage from crashes and failures -->
+    <damage include="Systems/props-damage.xml"/>
+
+    <engines>
+	<engine n="0">
+	    <running type="bool">false</running>
+	    <cutoff type="bool">false</cutoff>
+	    <set-thrust type="bool">false</set-thrust>
+	    <thrust-lever type="double">0.0</thrust-lever>
+	</engine>
+	<engine n="1">
+	    <running type="bool">false</running>
+	    <cutoff type="bool">false</cutoff>
+	    <set-thrust type="bool">false</set-thrust>
+	    <thrust-lever type="double">0.0</thrust-lever>
+	</engine>
+	<engine n="2">
+	    <running type="bool">false</running>
+	    <cutoff type="bool">false</cutoff>
+	    <set-thrust type="bool">false</set-thrust>
+	    <thrust-lever type="double">0.0</thrust-lever>
+	</engine>
+	<engine n="3">
+	    <running type="bool">false</running>
+	    <cutoff type="bool">false</cutoff>
+	    <set-thrust type="bool">false</set-thrust>
+	    <thrust-lever type="double">0.0</thrust-lever>
+	</engine>
+
+	<!--  APU engine -->
+	<engine n="4">
+	    <running type="bool">false</running>
+	    <cutoff type="bool">false</cutoff>
+	</engine>
+    </engines>
+
+    <!-- initialise JSBsim properties -->
+    <fdm>
+	<jsbsim include="Systems/props-jsb.xml"/>
+    </fdm>
+
+    <!-- Key mappings -->
+    <input>
+	<keyboard include="Aircraft/victor/Systems/victor-keyboard.xml">
+	</keyboard>
+    </input>
+
+    <instrumentation>
+
+	<!--
+	    Copy of JSBsim g-load used for animating accelerometer and other effects.
+	    With JSBSim aircraft we cannot use the property "/accelerations/pilot-g".
+	-->
+	<accelerometer>
+	    <g-load type="float">1.0</g-load>
+	    <!-- maximum and minimum pilot g-forces for g-meter -->
+	    <pilot-gmax type="float">7.0</pilot-gmax>
+	    <pilot-gmin type="float">-4.0</pilot-gmin>
+	</accelerometer>
+
+	<!-- CTL 62 ADF Control for ADF-462 receiver -->
+	<adf>
+	    <func-knob type="int">0</func-knob>
+	    <ident-audible type="bool">false</ident-audible>
+	    <mode type="string">off</mode>
+	    <power-btn type="bool">false</power-btn>
+	</adf>
+
+	<!-- Forward facing radar for terrain collision detection -->
+	<air-ground-radar>
+
+	    <serviceable type="bool">true</serviceable>
+	    <!-- Modes are WX (weather) | WXA | MAP | TW (terrain) -->
+	    <mode type="string">TW</mode>
+	    <!-- For TW the "mode-control" needs to be 5 -->
+	    <mode-control type="int">5</mode-control>
+	    <!-- input properties not actually used internally by the instrument -->
+	    <power-btn type="bool">false</power-btn>
+
+	    <!--
+		Antenna position configuration is done in the x-forward, y-right,
+		z-up coordinates (in metres). The terrain following radar is in the
+		nose cone.
+	    -->
+	    <antenna>
+		<x-offset-m type="double"> 0.0</x-offset-m>
+		<y-offset-m type="double">-0.5</y-offset-m>
+		<z-offset-m type="double"> 0.0</z-offset-m>
+	    </antenna>
+
+	    <!-- For wxRadarBg (not currently used) -->
+	    <display-controls>
+		<!-- WX: draw the cloud radar echo (unsupported) -->
+		<WX type="bool" archive="y">false</WX>
+		<!-- Radar position: draw echoes -->
+		<pos type="bool" archive="y">false</pos>
+		<!-- Data: draw data -->
+		<data type="bool"  archive="y">false</data>
+		<!-- Symbol: draw symols -->
+		<symbol type="bool" archive="y">true</symbol>
+		<!-- Centre: centre the map (this property is reset internally) -->
+		<centre type="bool" archive="y">true</centre>
+		<!-- Rotate: rotate display by a heading value -->
+		<rotate type="bool" archive="y">true</rotate>
+		<!-- TCAS: draw TCAS -->
+		<tcas type="bool" archive="y">true</tcas>
+		<!-- abs-altitude: For TCAS display use absolute altitude or relative altitude -->
+		<abs-altitude type="bool" archive="y">false</abs-altitude>
+	    </display-controls>
+
+	    <!-- Additions for TCAS -->
+	    <font>
+		<tcas>
+		    <color n="0"> <!-- distant targets -->
+			<red type="float">0</red>
+			<green type="float">1</green>
+			<blue type="float">1</blue>
+		    </color>
+		    <color n="1"> <!-- proximity targets -->
+			<red type="float">0</red>
+			<green type="float">1</green>
+			<blue type="float">1</blue>
+		    </color>
+		    <color n="2"> <!-- TA threat targets -->
+			<red type="float">1</red>
+			<green type="float">0.5</green>
+			<blue type="float">0</blue>
+		    </color>
+		    <color n="3"> <!-- RA threat targets -->
+			<red type="float">1</red>
+			<green type="float">0</green>
+			<blue type="float">0</blue>
+		    </color>
+		</tcas>
+	    </font>
+	    <echo-texture-path type="string">Aircraft/Instruments/Textures/wxecho-orange.rgb</echo-texture-path>
+
+	    <!--
+		terrain-warning set the property "/sim/alarms/terrain-warning" to "true"
+		if a hit is detected within range. The details are set in the "hit" branch.
+	    -->
+	    <terrain-warning>
+		<!-- azimuth step and limit for scan -->
+		<az-limit-deg type="double">1</az-limit-deg>
+		<az-step-deg type="double">1</az-step-deg>
+		<!-- elevation step and limit for scan -->
+		<elev-limit-deg type="double">2</elev-limit-deg>
+		<elev-step-deg type="double">2</elev-step-deg>
+		<!-- detection range - ignore everything outside this range -->
+		<max-range-m type="double">4000</max-range-m>
+		<min-range-m type="double">250</min-range-m>
+		<tilt type="double">-2</tilt>
+		<stabilisation>
+		    <roll type="bool">true</roll>
+		    <pitch type="bool">false</pitch>
+		</stabilisation>
+	    </terrain-warning>
+
+	</air-ground-radar>
+
+	<!-- If "has-overspeed-indicator" is enabled, then set the limits -->
+	<airspeed-indicator n="0">
+	    <ias-limit alias="/limits/vne"/>
+	    <mach-limit alias="/limits/mmo"/>
+	    <alt-threshold type="int">50000</alt-threshold>
+	</airspeed-indicator>
+
+	<airspeed-indicator n="1">
+	    <ias-limit alias="/limits/vne"/>
+	    <mach-limit alias="/limits/mmo"/>
+	    <alt-threshold type="int">50000</alt-threshold>
+	    <serviceable type="bool" archive="y">true</serviceable>
+	</airspeed-indicator>
+
+	<!-- the second altimeter must be made serviceable -->
+	<altimeter n="1">
+	    <serviceable type="bool" archive="y">true</serviceable>
+	</altimeter>
+
+	<annunciator>
+	    <above-transition-alt type="bool">false</above-transition-alt>
+	    <cockpit-unsafe type="bool">false</cockpit-unsafe>
+	    <fuel-warning type="int">0</fuel-warning>
+	    <ground-power type="bool">false</ground-power>
+	    <high-alpha type="bool">false</high-alpha>
+	    <low-speed type="bool">false</low-speed>
+	    <master-caution type="bool">false</master-caution>
+	    <pitch-warning type="bool">false</pitch-warning>
+	    <refuel-pump type="bool">false</refuel-pump>
+	    <V1 type="bool">false</V1>
+	    <V2 type="bool">false</V2>
+	    <VR type="bool">false</VR>
+	    <warning-signal type="int">0</warning-signal>
+	</annunciator>
+
+	<!-- A gyro underspin "error" is added if gyro is spinning below the threshold -->
+	<attitude-indicator>
+	    <caged-flag type="bool">false</caged-flag>
+	    <horizon-offset-deg type="float">0</horizon-offset-deg>
+	    <tumble-norm type="double">0.0</tumble-norm>
+	    <config>
+		<max-roll-error-deg type="double">15.0</max-roll-error-deg>
+		<max-pitch-error-deg type="double">5.0</max-pitch-error-deg>
+		<spin-thresh type="double">0.8</spin-thresh>
+		<tumble-flag type="bool">false</tumble-flag>
+	    </config>
+	</attitude-indicator>
+
+	<!--  CTL 22 communication radio -->
+	<comm n="0">
+	    <power-btn type="bool">false</power-btn>
+	    <power-switch type="bool">true</power-switch>
+	</comm>
+
+	<!--  CTL 22 communication radio -->
+	<comm n="1">
+	    <power-btn type="bool">false</power-btn>
+	    <power-switch type="bool">true</power-switch>
+	</comm>
+
+	<!-- KDI 572 DME -->
+	<dme>
+	    <frequencies>
+		<source type="string"></source>
+	    </frequencies>
+	    <ident type="bool">true</ident>
+	    <power-btn type="bool">false</power-btn>
+	    <volume type="double">0.6</volume>
+	</dme>
+
+	<fmc include="Systems/props-fmc.xml"/>
+
+	<flightdirector include="Systems/props-fd.xml"/>
+
+	<magnetic-compass>
+	    <serviceable type="bool">true</serviceable>
+	    <pitch-offset-deg type="double">0.0</pitch-offset-deg>
+	</magnetic-compass>
+
+	<marker-beacon>
+	    <audio-btn type="bool">true</audio-btn>
+	    <blink-mode type="string">standard</blink-mode>
+	    <power-btn type="bool">false</power-btn>
+	    <test type="bool">false</test>
+	    <volume type="float">0.6</volume>
+	</marker-beacon>
+
+	<master-reference-gyro>
+	    <!-- set "fast-erect" to "true" to speed up the gyro erection -->
+	    <fast-erect type="bool">true</fast-erect>
+	    <heading-bug-error-deg type="double">0.0</heading-bug-error-deg>
+	    <!-- set "heading-source" to "false" to get magnetic heading -->
+	    <heading-source type="bool">false</heading-source>
+	    <indicated-hdg-deg type="double">0.0</indicated-hdg-deg>
+	    <indicated-hdg-rate-degps type="double">0.0</indicated-hdg-rate-degps>
+	    <indicated-mag-hdg-deg alias="/instrumentation/magnetic-compass/indicated-heading-deg"/>
+	    <indicated-pitch-deg type="double">0.0</indicated-pitch-deg>
+	    <indicated-pitch-rate-degps type="double">0.0</indicated-pitch-rate-degps>
+	    <indicated-roll-deg type="double">0.0</indicated-roll-deg>
+	    <indicated-roll-rate-degps type="double">0.0</indicated-roll-rate-degps>
+	    <!-- this flag switches to "true" if enough power is supplied -->
+	    <off-flag type="bool">true</off-flag>
+	</master-reference-gyro>
+
+	<mk-viii>
+	    <!-- https://wiki.flightgear.org/Ground_proximity_warning_system -->
+	    <serviceable type="bool">true</serviceable>   <!-- EGPWS_ENABLE -->
+
+	    <configuration-module>
+		<category-1> 255 </category-1>  <!-- AIRCRAFT_MODE_TYPE_SELECT -->
+		<category-3>   2 </category-3>  <!-- POSITION_INPUT_SELECT -->
+		<category-4>   6 </category-4>  <!-- ALTITUDE_CALLOUTS -->
+		<category-5>   0 </category-5>  <!-- AUDIO_MENU_SELECT -->
+		<category-6>   1 </category-6>  <!-- TERRAIN_DISPLAY_SELECT -->
+		<!-- I have disabled bit 2: bank angle alert -->
+		<category-7> 120 </category-7>  <!-- OPTIONS_SELECT_GROUP_1 -->
+		<category-8>   4 </category-8>  <!-- RADIO_ALTITUDE_INPUT_SELECT -->
+		<category-9>   3 </category-9>  <!-- NAVIGATION_INPUT_SELECT -->
+		<category-10>  6 </category-10> <!-- ATTITUDE_INPUT_SELECT -->
+		<category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->
+		<category-14>  0 </category-14> <!-- AUDIO_OUTPUT_LEVEL -->
+	    </configuration-module>
+
+	    <inputs>                        <!-- Module I/O -->
+		<arinc429>
+		    <decision-height-ncd type="bool"> false </decision-height-ncd>
+		    <decision-height> 200 </decision-height>
+		</arinc429>
+	    </inputs>
+
+	    <speaker>        <!-- Speaker Configuration -->
+		<max-dist type="float"> 2 </max-dist>        <!-- Max. distance where speaker is heard -->
+		<reference-dist type="float"> 1 </reference-dist> <!-- Distance to pilot -->
+		<volume> 0.4 </volume>          <!-- Volume at reference distance -->
+	    </speaker>
+
+	    <voice>
+		<file-prefix type="string">Sounds/mk-viii/</file-prefix>
+		<!-- sound file path and prefix -->
+	    </voice>
+	</mk-viii>
+
+	<pressurisation>
+	    <cabin-altitude-ft type="int">0</cabin-altitude-ft>
+	    <cabin-pressure-psi type="float">14.7</cabin-pressure-psi>
+	    <cabin-temperature-degc type="float">15</cabin-temperature-degc>
+	    <delta-pressure-psi type="float">0.0</delta-pressure-psi>
+	    <target-cabin-pressure-psi type="float">14.7</target-cabin-pressure-psi>
+	    <target-cabin-temperature-degc type="float">15</target-cabin-temperature-degc>
+	</pressurisation>
+
+	<nav n="0">
+	    <power-btn type="bool">false</power-btn>
+	    <power-switch type="bool">false</power-switch>
+	</nav>
+
+	<nav n="1">
+	    <power-btn type="bool">false</power-btn>
+	    <power-switch type="bool">false</power-switch>
+	</nav>
+
+	<radar-altimeter>
+	    <serviceable type="bool">true</serviceable>
+	    <!-- azimuth step and limit for scan -->
+	    <az-limit-deg type="double">15.0</az-limit-deg>
+	    <az-step-deg type="double">15.0</az-step-deg>
+	    <!-- elevation step and limit for scan -->
+	    <elev-limit type="double">10.0</elev-limit>
+	    <elev-step-deg type="double">5.0</elev-step-deg>
+	    <max-range-m type="double">1500.0</max-range-m>
+	    <min-range-m type="double">0.001</min-range-m>
+	    <!--
+		Radar warnings are raised below or near h = "set-height-ft".
+		The "set-excursion-percent" (p) defines the warning level:
+		Level -1 (red)   = height is below (100 - p)% of h
+		Level  1 (green) = height is above (100 + p)% of h
+		Level  0 (amber) = height is within p% of h
+		Warning are set in "/sim/alarms/rad-alt-warning".
+	    -->
+	    <set-height-ft type="float">1000</set-height-ft>
+	    <set-excursion-percent type="float">5</set-excursion-percent>
+	    <!--
+		Antenna position configuration is done in the x-forward, y-right,
+		z-up coordinates (in metres).
+	    -->
+	    <antenna>
+		<x-offset-m type="double">-2.660540</x-offset-m>
+		<y-offset-m type="double"> 0.0 </y-offset-m>
+		<z-offset-m type="double">-0.627565</z-offset-m>
+	    </antenna>
+
+	    <!-- additions for this plane  -->
+	    <power-btn type="bool">false</power-btn>
+	</radar-altimeter>
+
+	<!-- set "override" to true to disable automatic updates to the output -->
+	<slip-skid-ball>
+	    <override type="bool">false</override>
+	    <serviceable type="bool">true</serviceable>
+	</slip-skid-ball>
+
+	<tacan n="0">
+	    <ident type="string"></ident>
+	    <name type="string"></name>
+	    <in-range type="bool">false</in-range>
+	    <indicated-distance-nm type="double">0.0</indicated-distance-nm>
+	    <indicated-ground-speed-kt type="double">0.0</indicated-ground-speed-kt>
+	    <indicated-time-min type="double">0.0</indicated-time-min>
+	    <indicated-bearing-true-deg type="double">0.0</indicated-bearing-true-deg>
+	    <power-on type="bool" archive="y">false</power-on>
+	    <serviceable type="bool" archive="y">true</serviceable>
+	    <switch-position type="int" archive="y">1</switch-position>
+	    <tacan-xy type="bool" archive="y">false</tacan-xy>
+	</tacan>
+
+	<!-- Traffic alert and collision avoidance system -->
+	<tcas>
+	    <!-- https://wiki.flightgear.org/Traffic_alert_and_collision_avoidance_system -->
+	    <serviceable type="bool">true</serviceable>
+	    <!-- TCAS ENABLE -->
+
+	    <inputs>
+		<mode type="int">3</mode>       <!-- 0=off, 1=standby, 2=TA-only, 3=auto (TA/RA) -->
+	    </inputs>
+
+	    <!-- Speaker Configuration -->
+	    <speaker>
+		<max-dist type="float"> 2 </max-dist>          <!-- Max. distance where speaker is heard -->
+		<reference-dist type="float"> 1 </reference-dist> <!-- Distance to pilot -->
+		<volume type="float"> 1.0 </volume>            <!-- Volume at reference distance -->
+	    </speaker>
+
+	</tcas>
+
+	<!--
+	    Transponder Id Codes: 1200 is the standard code for VFR flight,
+	    0000 is reserved for military use,
+	-->
+	<transponder>
+	    <id-code type="int">0000</id-code>
+	    <inputs>
+		<!-- starts in OFF mode (0); default is ON (4) -->
+		<knob-mode type="int">0</knob-mode>
+	    </inputs>
+	    <power-btn type="bool">false</power-btn>
+	</transponder>
+
+    </instrumentation>
+
+    <!--
+	For any system (e.g. pitot) except for the first (with index 0),
+	we need to set the "serviceable" property.
+    -->
+    <systems>
+
+	<pitot n="1">
+	    <serviceable type="bool">true</serviceable>
+	</pitot>
+
+	<static n="1">
+	    <serviceable type="bool">true</serviceable>
+	    <pressure-psi type="float">0.0</pressure-psi>
+	</static>
+
+	<vacuum n="1">
+	    <serviceable type="bool">true</serviceable>
+	</vacuum>
+
+	<vacuum n="2">
+	    <serviceable type="bool">true</serviceable>
+	</vacuum>
+
+	<vacuum n="3">
+	    <serviceable type="bool">true</serviceable>
+	</vacuum>
+
+	<vacuum-max>
+	    <suction-inhg type="double">0.0</suction-inhg>
+	</vacuum-max>
+
+	<!-- Aerial refuelling capability -->
+	<refuel>
+	    <serviceable type="bool">true</serviceable>
+	    <type type="string">probe</type>
+	    <offset-x-m type="float">0</offset-x-m>
+	    <offset-y-m type="float">0</offset-y-m>
+	    <offset-z-m type="float">1</offset-z-m>
+	    <contact type="bool">false</contact>
+	</refuel>
+
+    </systems>
+
+    <!-- Nasal modules -->
+    <nasal>
+
+	<victor>
+	    <file>Aircraft/victor/Nasal/victor-header.nas</file>
+	    <file>Aircraft/victor/Nasal/victor.nas</file>
+	    <file>Aircraft/victor/Nasal/system.nas</file>
+	    <file>Aircraft/victor/Nasal/ctrlpanel.nas</file>
+	    <file>Aircraft/victor/Nasal/doors.nas</file>
+	    <file>Aircraft/victor/Nasal/flightdirector.nas</file>
+	    <file>Aircraft/victor/Nasal/fms.nas</file>
+	    <file>Aircraft/victor/Nasal/Atmos.nas</file>
+	</victor>
+
+	<starter>
+	    <file>Aircraft/victor/Nasal/starter.nas</file>
+	</starter>
+
+	<tyresmoke>
+	    <file>Aircraft/victor/Nasal/tyresmoke.nas</file>
+	</tyresmoke>
+
+	<crash>
+	    <file>Aircraft/victor/Nasal/crash.nas</file>
+	</crash>
+
+	<failures>
+	    <file>Aircraft/Generic/limits.nas</file>
+	    <file>Aircraft/victor/Nasal/failures.nas</file>
+	</failures>
+
+	<aar>
+	    <file>Aircraft/Generic/aar.nas</file>
+	</aar>
+
+    </nasal>
+
+    <!-- Aircraft limits -->
+    <limits>
+
+	<max-flap-extension-speed>
+	    <flaps type="float">0.5</flaps>
+	    <speed type="float">250</speed>
+	</max-flap-extension-speed>
+	<max-flap-extension-speed>
+	    <flaps type="float">1.0</flaps>
+	    <speed type="float">230</speed>
+	</max-flap-extension-speed>
+
+	<!-- Never exceed speed: 1,030 KPH / 640 MPH / 555 KT -->
+        <vne type="int">555</vne>
+        <!-- Maximum speed in level flight at maximum continuous power -->
+        <mmo type="float">0.98</mmo>
+        <!-- Stall speed or minimum steady flight speed. -->
+        <Vstall-kt type="int">120</Vstall-kt>
+
+	<max-gear-extension-speed type="int">235</max-gear-extension-speed>
+
+	<max-positive-g type="float"> 4.0</max-positive-g>
+	<max-negative-g type="float">-2.0</max-negative-g>
+
+	<!-- maximum permissible vertical speed -->
+	<max-vs-fps type="float">200</max-vs-fps>
+	<!-- minimum, permissible vertical speed -->
+	<min-vs-fps type="float">-80</min-vs-fps>
+
+	<mass-and-balance>
+	    <maximum-takeoff-mass-lbs type="float">  216000 </maximum-takeoff-mass-lbs>
+	    <maximum-landing-mass-lbs type="float">  185000 </maximum-landing-mass-lbs>
+	    <maximum-zero-fuel-mass-lbs type="float"> 90996 </maximum-zero-fuel-mass-lbs>
+	</mass-and-balance>
+
+    </limits>
+
+    <!-- Default payload -->
+    <payload>
+
+	<!-- Crew: 5 men-->
+	<weight n="0">
+	    <name type="string">Crew</name>
+	    <weight-lb alias="/fdm/jsbsim/inertia/pointmass-weight-lbs[0]"/>
+	    <min-lb type="double"> 350.0</min-lb>
+	    <max-lb type="double">1250.0</max-lb>
+	</weight>
+
+	<!--
+	    Equipment: based on mission - including fuel for tankers.
+	    Armament are modelled separately so do not include that here.
+	    The maximum payload is 51,000 lbs (equipment + armament).
+	-->
+	<weight n="1">
+	    <name type="string">Equipment</name>
+	    <weight-lb alias="/fdm/jsbsim/inertia/pointmass-weight-lbs[1]"/>
+	    <min-lb type="double"> 400 </min-lb>
+	    <max-lb type="double">49600</max-lb>
+	</weight>
+
+    </payload>
+
+    <!-- JSBSim Atmosphere model used instead of that from FG -->
+    <environment>
+	<!-- link the metar rain data with the base one -->
+	<rain-norm alias="/environment/metar[0]/rain-norm"/>
+	<snow-norm alias="/environment/metar[0]/snow-norm"/>
+
+	<params>
+	    <control-fdm-atmosphere type="bool">false</control-fdm-atmosphere>
+	    <jsbsim-turbulence-model type="string">ttMilspec</jsbsim-turbulence-model>
+	</params>
+    </environment>
+
+</PropertyList>

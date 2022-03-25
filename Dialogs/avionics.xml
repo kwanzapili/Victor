@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>avionics</name>
+    <modal>false</modal>
+    <layout>vbox</layout>
+    <pref-width>500</pref-width>
+
+    <empty><stretch>1</stretch></empty>
+    <text>
+	<label>Avionics Instrument Controls</label>
+    </text>
+    <empty><stretch>1</stretch></empty>
+
+    <hrule>
+	<color>
+	    <red>  1.0</red>
+	    <green>0.0</green>
+	    <blue> 1.0</blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Master Avionics Switch -->
+    <group>
+	<layout>hbox</layout>
+
+	<text>
+	    <label>Master Avionics Switch:</label>
+	</text>
+
+	<button>
+	    <pref-height>30</pref-height>
+	    <pref-height>25</pref-height>
+	    <legend>Toggle</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>property-toggle</command>
+		<property>controls/switches/master-avionics</property>
+	    </binding>
+	    <default>true</default>
+	</button>
+
+	<text>
+	    <label>[ ON ]</label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>controls/switches/master-avionics</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <label>[ OFF ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>controls/switches/master-avionics</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	</text>
+
+    </group>
+
+    <empty><stretch>1</stretch></empty>
+
+    <hrule>
+	<color>
+	    <red>  1.0</red>
+	    <green>0.0</green>
+	    <blue> 1.0</blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Start of Equipment Switches -->
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Equipment</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Mode Controls</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <label>Status</label>
+	</text>
+
+	<hrule>
+	    <row>1</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	    <pref-height>2</pref-height>
+	</hrule>
+
+	<!-- CTL 62 ADF Control for ADF-462 receiver -->
+	<text>
+	    <row>2</row>
+	    <col>0</col>
+	    <label>ADF-462 receiver</label>
+	</text>
+
+	<!-- Setting the ADF switch -->
+	<text>
+	    <row>2</row>
+	    <col>1</col>
+	    <valign>bottom</valign>
+	    <label> OFF    ANT    ADF    BFO </label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>2</col>
+	    <label>[ OFF ]</label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <format>[ %4s ]</format>
+	    <property>instrumentation/adf/mode</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<slider>
+	    <row>3</row>
+	    <col>1</col>
+	    <pref-height>30</pref-height>
+	    <pref-width>150</pref-width>
+	    <default-padding>0</default-padding>
+	    <valign>top</valign>
+	    <property>instrumentation/adf/func-knob</property>
+	    <min>0</min>
+	    <max>3</max>
+	    <step>1</step>
+	    <live type="bool">true</live>
+	    <legend>Knob Mode</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</slider>
+
+	<hrule>
+	    <row>4</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	</hrule>
+
+	<!--  CTL 22 communication radio 1 -->
+
+	<text>
+	    <row>5</row>
+	    <col>0</col>
+	    <label>Comm Radio 1</label>
+	</text>
+
+	<checkbox>
+	    <row>5</row>
+	    <col>1</col>
+	    <width>12</width>
+	    <height>12</height>
+	    <label>Power Switch</label>
+	    <property>instrumentation/comm[0]/power-switch</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</checkbox>
+
+	<text>
+	    <row>5</row>
+	    <col>2</col>
+	    <label>[  OFF  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/comm[0]/power-btn</property>
+		    <value type="bool">false</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>5</row>
+	    <col>2</col>
+	    <label>[  ON  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/comm[0]/power-btn</property>
+		    <value type="bool">true</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<hrule>
+	    <row>6</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	</hrule>
+
+	<!--  CTL 22 communication radio 2 -->
+
+	<text>
+	    <row>7</row>
+	    <col>0</col>
+	    <label>Comm Radio 2</label>
+	</text>
+
+	<checkbox>
+	    <row>7</row>
+	    <col>1</col>
+	    <width>12</width>
+	    <height>12</height>
+	    <label>Power Switch</label>
+	    <property>instrumentation/comm[1]/power-switch</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</checkbox>
+
+	<text>
+	    <row>7</row>
+	    <col>2</col>
+	    <label>[  OFF  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/comm[1]/power-btn</property>
+		    <value type="bool">false</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>7</row>
+	    <col>2</col>
+	    <label>[  ON  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/comm[1]/power-btn</property>
+		    <value type="bool">true</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<hrule>
+	    <row>8</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	</hrule>
+
+	<!--  Navigation radio 1 -->
+
+	<text>
+	    <row>9</row>
+	    <col>0</col>
+	    <label>Nav Radio 1</label>
+	</text>
+
+	<checkbox>
+	    <row>9</row>
+	    <col>1</col>
+	    <width>12</width>
+	    <height>12</height>
+	    <label>Power Switch</label>
+	    <property>instrumentation/nav[0]/power-switch</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</checkbox>
+
+	<text>
+	    <row>9</row>
+	    <col>2</col>
+	    <label>[  OFF  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/nav[0]/power-btn</property>
+		    <value type="bool">false</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>9</row>
+	    <col>2</col>
+	    <label>[  ON  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/nav[0]/power-btn</property>
+		    <value type="bool">true</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<hrule>
+	    <row>10</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	</hrule>
+
+	<!--  Navigation radio 2 -->
+
+	<text>
+	    <row>11</row>
+	    <col>0</col>
+	    <label>Nav Radio 2</label>
+	</text>
+
+	<checkbox>
+	    <row>11</row>
+	    <col>1</col>
+	    <width>12</width>
+	    <height>12</height>
+	    <label>Power Switch</label>
+	    <property>instrumentation/nav[1]/power-switch</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</checkbox>
+
+	<text>
+	    <row>11</row>
+	    <col>2</col>
+	    <label>[  OFF  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/nav[1]/power-btn</property>
+		    <value type="bool">false</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>11</row>
+	    <col>2</col>
+	    <label>[  ON  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>instrumentation/nav[1]/power-btn</property>
+		    <value type="bool">true</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<hrule>
+	    <row>12</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	</hrule>
+
+	<!--  KDI 572 Distance-measuring equipment -->
+
+	<text>
+	    <row>14</row>
+	    <col>0</col>
+	    <label>DME Mode</label>
+	</text>
+
+	<!-- Setting the DME switch -->
+	<text>
+	    <row>14</row>
+	    <col>1</col>
+	    <valign>bottom</valign>
+	    <label> OFF   NAV1  HOLD  NAV2 </label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	</text>
+
+	<text>
+	    <row>14</row>
+	    <col>2</col>
+	    <label>[ OFF ]</label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<or>
+		    <equals>
+			<property>instrumentation/dme/switch-position</property>
+			<value>0</value>
+		    </equals>
+		    <equals>
+			<property>instrumentation/dme/power-btn</property>
+			<value type="bool">false</value>
+		    </equals>
+		</or>
+	    </visible>
+	    <live type="bool">true</live>
+	</text>
+	<text>
+	    <row>14</row>
+	    <col>2</col>
+	    <label>[ NAV1 ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>instrumentation/dme/switch-position</property>
+			<value>1</value>
+		    </equals>
+		    <equals>
+			<property>instrumentation/dme/power-btn</property>
+			<value type="bool">true</value>
+		    </equals>
+		</and>
+	    </visible>
+	    <live type="bool">true</live>
+	</text>
+	<text>
+	    <row>14</row>
+	    <col>2</col>
+	    <label>[ HOLD ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>instrumentation/dme/switch-position</property>
+			<value>2</value>
+		    </equals>
+		    <equals>
+			<property>instrumentation/dme/power-btn</property>
+			<value type="bool">true</value>
+		    </equals>
+		</and>
+	    </visible>
+	    <live type="bool">true</live>
+	</text>
+	<text>
+	    <row>14</row>
+	    <col>2</col>
+	    <label>[ NAV2 ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<and>
+		    <equals>
+			<property>instrumentation/dme/switch-position</property>
+			<value>3</value>
+		    </equals>
+		    <equals>
+			<property>instrumentation/dme/power-btn</property>
+			<value type="bool">true</value>
+		    </equals>
+		</and>
+	    </visible>
+	    <live type="bool">true</live>
+	</text>
+
+	<slider>
+	    <row>15</row>
+	    <col>1</col>
+	    <pref-height>30</pref-height>
+	    <pref-width>150</pref-width>
+	    <default-padding>0</default-padding>
+	    <valign>top</valign>
+	    <property>instrumentation/dme/switch-position</property>
+	    <min>0</min>
+	    <max>3</max>
+	    <step>1</step>
+	    <live type="bool">true</live>
+	    <legend>Knob Mode</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</slider>
+
+    </group>
+    <!-- End of equipment -->
+
+    <empty><stretch>1</stretch></empty>
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <!--
+	Additional keyboard mappings mainly for the enhanced autopilot
+	and views.
+    -->
+
+    <!-- Mission setting -->
+    <key n="61">
+	<name>=</name>
+	<desc>Set mission</desc>
+	<repeatable>false</repeatable>
+	<binding n="0">
+	    <command>dialog-show</command>
+	    <dialog-name>mission</dialog-name>
+	</binding>
+    </key>
+
+    <!-- starter -->
+    <key n="33">
+	<name>!</name>
+	<desc>Select first engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.selectEngine(0)</script>
+	</binding>
+    </key>
+
+    <key n="34">
+	<name>\"</name>
+	<desc>Select second engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.selectEngine(1)</script>
+	</binding>
+    </key>
+
+    <key n="35">
+	<name>#</name>
+	<desc>Engine master ON</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.setMasterOn()</script>
+	</binding>
+    </key>
+
+    <key n="123">
+	<name>{</name>
+	<desc>Engine master OFF</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.setMasterOff()</script>
+	</binding>
+    </key>
+
+    <key n="64">
+	<name>@</name>
+	<desc>Select third engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.selectEngine(2)</script>
+	</binding>
+    </key>
+
+    <key n="36">
+	<name>$</name>
+	<desc>Select fourth engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.selectEngine(3)</script>
+	</binding>
+    </key>
+
+    <key n="40">
+	<name>(</name>
+	<desc>Switch off on Selected Engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.stopEngine();</script>
+	</binding>
+    </key>
+
+    <key n="41">
+	<name>)</name>
+	<desc>Fire Starter on Selected Engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.startEngine();</script>
+	</binding>
+    </key>
+
+    <key n="125">
+	<name>}</name>
+	<desc>Toggle master electric switch</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/electric/master-switch</property>
+	</binding>
+    </key>
+
+    <key n="5">
+	<name>Ctrl-E</name>
+	<desc>Toggle external power on/off</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.toggle_gndPower();</script>
+	</binding>
+    </key>
+
+    <key n="6">
+	<name>Ctrl-F</name>
+	<desc>Toggle APU on/off</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.toggle_apu();</script>
+	</binding>
+    </key>
+
+    <key n="100">
+	<name>d</name>
+	<desc>Toggle Entrance Hatch</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_cockpit_door();</script>
+	</binding>
+    </key>
+
+    <key n="74">
+	<name>J</name>
+	<desc>Recover Chute</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.operate_chute(-1)</script>
+	</binding>
+    </key>
+
+    <key n="75">
+	<name>K</name>
+	<desc>Deploy Chute</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.operate_chute(1);</script>
+	</binding>
+    </key>
+
+    <key n="106">
+	<name>j</name>
+	<desc>Decrease speedbrake</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.stepSpeedbrake(-1)</script>
+	</binding>
+    </key>
+
+    <key n="107">
+	<name>k</name>
+	<desc>Increase speedbrake</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.stepSpeedbrake(1)</script>
+	</binding>
+    </key>
+
+    <!-- Toggle between classic and ALS lights -->
+    <key n="76">
+	<name>L</name>
+	<desc>Toggle ALS Lights</desc>
+	<binding n="0">
+	    <command>property-toggle</command>
+	    <property>sim/rendering/als-lights</property>
+	</binding>
+    </key>
+
+    <key n="108">
+	<name>l</name>
+	<desc>Toggle Landing Lights</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggleNoseLights()</script>
+	</binding>
+    </key>
+
+    <key n="110">
+	<name>n</name>
+	<desc>Toggle Navigation Lights</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/lighting/nav-lights</property>
+	</binding>
+    </key>
+
+    <key n="78">
+	<name>N</name>
+	<desc>Toggle Beacon Lights</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/lighting/beacon</property>
+	</binding>
+    </key>
+
+    <key n="81">
+	<name>Q</name>
+	<desc>Toggle Strobe Lights</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/lighting/strobe</property>
+	</binding>
+    </key>
+
+    <key n="101">
+	<name>e</name>
+	<desc>Toggle Refuelling Switch</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/switches/refuel</property>
+	</binding>
+    </key>
+
+    <key n="69">
+	<name>E</name>
+	<desc>Toggle Refuelling Drogues</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_refuelling_drogues()</script>
+	</binding>
+    </key>
+
+    <!-- Armament -->
+    <key n="94">
+	<name>^</name>
+	<desc>Toggle Master Arm</desc>
+	<binding n="0">
+	    <command>switch-toggle</command>
+	    <property>/controls/armament/master-arm</property>
+	</binding>
+    </key>
+
+    <key n="68">
+	<name>D</name>
+	<desc>Toggle Bomb Bay Doors</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_bb_doors()</script>
+	</binding>
+    </key>
+
+    <key n="102">
+	<name>f</name>
+	<desc>Fire weaponry</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.fireWeapon();</script>
+	</binding>
+    </key>
+
+    <key n="111">
+	<name>o</name>
+	<desc>Arm/disarm current station</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggleArmed();</script>
+	</binding>
+    </key>
+
+    <key n="114">
+	<name>r</name>
+	<desc>Change selected station forwards</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.changeStation(1);</script>
+	</binding>
+    </key>
+
+    <key n="82">
+	<name>R</name>
+	<desc>Change selected station backwards</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.changeStation(-1);</script>
+	</binding>
+    </key>
+
+    <!-- Autopilot keys -->
+    <key n="1">
+	<name>Ctrl-A</name>
+	<desc>Toggle autopilot on/off</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_autopilot();</script>
+	</binding>
+    </key>
+
+    <key n="4">
+	<name>Ctrl-D</name>
+	<desc>Toggle passive flight director on/off</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_fd();</script>
+	</binding>
+    </key>
+
+    <key n="7">
+	<name>Ctrl-G</name>
+	<desc>Toggle autopilot glide slope lock</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_appr();</script>
+	</binding>
+    </key>
+
+    <key n="8">
+	<name>Ctrl-H</name>
+	<desc>Cycle through autopilot heading locks</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.cycle_heading();</script>
+	</binding>
+    </key>
+
+    <key n="14">
+	<name>Ctrl-N</name>
+	<desc>Arm autopilot VOR/LOC lock</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_loc();</script>
+	</binding>
+    </key>
+
+    <key n="16">
+	<name>Ctrl-P</name>
+	<desc>Toggle pitch hold</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_ptch();</script>
+	</binding>
+    </key>
+
+    <key n="19">
+	<name>Ctrl-S</name>
+	<desc>Toggle auto-throttle lock</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_athr()</script>
+	</binding>
+    </key>
+
+    <key n="20">
+	<name>Ctrl-T</name>
+	<desc>Toggle autopilot terrain lock</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_alt();</script>
+	</binding>
+    </key>
+
+    <key n="23">
+	<name>Ctrl-W</name>
+	<desc>Toggle autopilot wing leveler</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>victor.toggle_wing_level()</script>
+	</binding>
+    </key>
+
+    <key n="77">
+	<name>M</name>
+	<desc>Speed in knots</desc>
+	<binding n="0">
+	    <command>property-assign</command>
+	    <property>/instrumentation/flightdirector/mach-mode</property>
+	    <value>0</value>
+	</binding>
+    </key>
+
+    <key n="109">
+	<name>m</name>
+	<desc>Speed in mach</desc>
+	<binding n="0">
+	    <command>property-assign</command>
+	    <property>/instrumentation/flightdirector/mach-mode</property>
+	    <value>1</value>
+	</binding>
+    </key>
+
+    <key n="126">
+	<name>~</name>
+	<desc>Autostart</desc>
+	<condition>
+	    <property>/instrumentation/fmc/flight-control-ground-mode</property>
+	</condition>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.autoStart()</script>
+	</binding>
+    </key>
+
+    <!-- New views -->
+    <key n="113">
+	<name>q</name>
+	<desc>Panel View</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>
+		<![CDATA[
+		    setprop ("/sim/current-view/view-number", view.indexof ("Panel View"));
+		    ]]>
+	    </script>
+	</binding>
+    </key>
+
+    <key n="119">
+	<name>w</name>
+	<desc>Co-pilot View</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>
+		<![CDATA[
+		    setprop ("/sim/current-view/view-number", view.indexof ("Co-pilot View"));
+		    ]]>
+	    </script>
+	</binding>
+    </key>
+
+</PropertyList>

@@ -1,0 +1,999 @@
+<?xml version="1.0"?>
+
+<system name="Propulsion">
+
+    <!-- ====================== Engine Operations ====================== -->
+
+    <!-- This channel runs continously -->
+    <channel name="Engines" execrate="8">
+
+	<!-- Switch off master switch if no power is available -->
+	<switch name="/controls/engines/master">
+	    <description>
+		Engine master switch off on loss of power or crash
+	    </description>
+	    <default value="/controls/engines/master"/>
+	    <test logic="AND" value="0">
+		systems/electrical/ac-power EQ 0
+		systems/electrical/dc-power EQ 0
+	    </test>
+	    <!-- Off in the event of a crash -->
+	    <test value="0">
+		/sim/crashed EQ 1
+	    </test>
+	</switch>
+
+	<!-- control switch -->
+	<switch name="/controls/APU/off-start-run">
+	    <description> APU control switch </description>
+	    <default value="1"/>	<!-- START is the default mode -->
+	    <!-- OFF when the run mode changes to OFF -->
+	    <test logic="AND" value="0">
+		/controls/APU/run EQ 0
+	    </test>
+	    <!-- RUN when the APU is fully running -->
+	    <test logic="AND" value="2">
+		/engines/engine[4]/running EQ 1
+	    </test>
+	</switch>
+
+	<!-- Switch OFF APU engine master if master switch is OFF or above 30,000 ft -->
+	<switch name="/controls/engines/engine[4]/master">
+	    <description> Disengage APU Engine Master Switch </description>
+	    <default value="/controls/APU/run"/>
+	    <test logic="OR" value="0">
+		<!-- set it to OFF -->
+		/controls/engines/master EQ 0
+		position/h-sl-ft GT 30000
+		/controls/APU/off-start-run EQ 0
+	    </test>
+	</switch>
+
+	<!-- Seize the engine to stop it starting up when master is off -->
+	<switch name="propulsion/engine[4]/seized">
+	    <description>
+		APU engine disable command
+	    </description>
+	    <default value="propulsion/engine[4]/seized"/>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[4]/master EQ 0
+		propulsion/engine[4]/n1 LT 1
+	    </test>
+	    <!-- On engine failure -->
+	    <test logic="AND" value="1">
+		/damage/engines/engine[4]/engine-condition LT 0.5
+	    </test>
+	    <!-- unlock it if the starter is pressed -->
+	    <test logic="AND" value="0">
+		/controls/APU/run EQ 1
+		/controls/APU/off-start-run EQ 1
+		/controls/engines/engine[4]/master EQ 1
+	    </test>
+	</switch>
+
+	<!-- Set the APU engine throttle level 0 when it is seized -->
+	<switch name="/controls/engines/engine[4]/throttle">
+	    <description>
+		APU engine throttle command
+	    </description>
+	    <default value="/controls/engines/engine[4]/throttle"/>
+	    <test logic="AND" value="0.0">
+		propulsion/engine[4]/seized EQ 1
+	    </test>
+	</switch>
+
+	<!-- APU start / stop trigger -->
+	<switch name="/controls/APU/trigger-switch">
+	    <description> APU start trigger </description>
+	    <default value="/controls/APU/trigger-switch"/>
+	    <!-- trigger start -->
+	    <test logic="AND" value="1">
+		<!-- power is available -->
+		<test logic="OR" value="1">
+		    /systems/electrical/bus/main-ac-bus GT 100
+		    /systems/electrical/bus/main-dc-bus GT 20
+		</test>
+		<!-- master switch is "ON" -->
+		/controls/engines/master EQ 1
+		<!-- switch is "start" -->
+		/controls/APU/off-start-run EQ 1
+		<!-- the starter is available -->
+		/controls/engines/starter-engaged EQ 0
+	    </test>
+	    <!-- trigger stop -->
+	    <test logic="AND" value="-1">
+		<!-- switch is "off" -->
+		/controls/APU/off-start-run EQ 0
+		<!-- there is no engine hogging the cutoff_cmd -->
+		<test logic="OR" value="1">
+		    propulsion/active_engine LT 0
+		    propulsion/active_engine EQ 4
+		</test>
+	    </test>
+	    <!-- neutral if APU has started: must be last test -->
+	    <test logic="OR" value="0">
+		/controls/APU/off-start-run EQ 2
+	    </test>
+	</switch>
+
+	<!-- Engines cutoff at 15% Max N2 (100) and 5% Max N1 (100 )-->
+
+	<switch name="systems/propulsion/engine[0]/cutoff-switch">
+	    <description> Engine 1 Cutoff </description>
+	    <default value="systems/propulsion/engine[0]/cutoff-switch"/>
+	    <test  logic="AND" value="0">       <!-- reset required -->
+		/controls/engines/engine[0]/reset-cmd EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		propulsion/engine[0]/n1 GT 5.0
+		propulsion/engine[0]/n2 GT 20.0
+		/controls/engines/engine[0]/starter EQ 1
+		propulsion/engine[0]/set-running EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[1]/cutoff-switch">
+	    <description> Engine 2 Cutoff </description>
+	    <default value="systems/propulsion/engine[1]/cutoff-switch"/>
+	    <test  logic="AND" value="0">       <!-- reset required -->
+		/controls/engines/engine[1]/reset-cmd EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		propulsion/engine[1]/n1 GT 5.0
+		propulsion/engine[1]/n2 GT 20.0
+		/controls/engines/engine[1]/starter EQ 1
+		propulsion/engine[1]/set-running EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[2]/cutoff-switch">
+	    <description> Engine 3 Cutoff </description>
+	    <default value="systems/propulsion/engine[2]/cutoff-switch"/>
+	    <test  logic="AND" value="0">       <!-- reset required -->
+		/controls/engines/engine[2]/reset-cmd EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		propulsion/engine[2]/n1 GT 5.0
+		propulsion/engine[2]/n2 GT 20.0
+		/controls/engines/engine[2]/starter EQ 1
+		propulsion/engine[2]/set-running EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[3]/cutoff-switch">
+	    <description> Engine 4 Cutoff </description>
+	    <default value="systems/propulsion/engine[3]/cutoff-switch"/>
+	    <test  logic="AND" value="0">       <!-- reset required -->
+		/controls/engines/engine[3]/reset-cmd EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		propulsion/engine[3]/n1 GT 5.0
+		propulsion/engine[3]/n2 GT 20.0
+		/controls/engines/engine[3]/starter EQ 1
+		propulsion/engine[3]/set-running EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/APU/cutoff-switch">
+	    <description> APU Cutoff </description>
+	    <default value="systems/propulsion/APU/cutoff-switch"/>
+	    <test  logic="AND" value="0">       <!-- reset required -->
+		/controls/engines/engine[4]/reset-cmd EQ 1
+	    </test>
+	    <test logic="AND" value="1">
+		propulsion/engine[4]/n1 GT 5.0
+		propulsion/engine[4]/n2 GT 20.0
+		/controls/engines/engine[4]/starter EQ 1
+		propulsion/engine[4]/set-running EQ 0
+	    </test>
+	</switch>
+
+	<!--Engines cutoff delays: engines need to stablise for 2 sec -->
+
+	<kinematic name="systems/propulsion/engine[0]/cutoff-switch-delay">
+	    <description> Engine 1 Cutoff Switch Delay </description>
+	    <input>systems/propulsion/engine[0]/cutoff-switch</input>
+	    <traverse>
+		<setting>
+		    <position>0.0</position>
+		    <time>0.00</time>
+		</setting>
+		<setting>
+		    <position>1.0</position>
+		    <time>2.00</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="systems/propulsion/engine[1]/cutoff-switch-delay">
+	    <description> Engine 2 Cutoff Switch Delay </description>
+	    <input>systems/propulsion/engine[1]/cutoff-switch</input>
+	    <traverse>
+		<setting>
+		    <position>0.0</position>
+		    <time>0.00</time>
+		</setting>
+		<setting>
+		    <position>1.0</position>
+		    <time>2.00</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="systems/propulsion/engine[2]/cutoff-switch-delay">
+	    <description> Engine 3 Cutoff Switch Delay </description>
+	    <input>systems/propulsion/engine[2]/cutoff-switch</input>
+	    <traverse>
+		<setting>
+		    <position>0.0</position>
+		    <time>0.00</time>
+		</setting>
+		<setting>
+		    <position>1.0</position>
+		    <time>2.00</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="systems/propulsion/engine[3]/cutoff-switch-delay">
+	    <description> Engine 4 Cutoff Switch Delay </description>
+	    <input>systems/propulsion/engine[3]/cutoff-switch</input>
+	    <traverse>
+		<setting>
+		    <position>0.0</position>
+		    <time>0.00</time>
+		</setting>
+		<setting>
+		    <position>1.0</position>
+		    <time>2.00</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="systems/propulsion/APU/cutoff-switch-delay">
+	    <description> APU Cutoff Switch Delay </description>
+	    <input>systems/propulsion/APU/cutoff-switch</input>
+	    <traverse>
+		<setting>
+		    <position>0.0</position>
+		    <time>0.00</time>
+		</setting>
+		<setting>
+		    <position>1.0</position>
+		    <time>2.00</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- Use the delayed cutoff switch to issue the cutoff command -->
+
+	<switch name="systems/propulsion/engine[0]/cutoff-cmd">
+	    <description> Switch on engine 1 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/propulsion/engine[0]/cutoff-switch-delay GT 0.98
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[1]/cutoff-cmd">
+	    <description> Switch on engine 2 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/propulsion/engine[1]/cutoff-switch-delay GT 0.98
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[2]/cutoff-cmd">
+	    <description> Switch on engine 3 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/propulsion/engine[2]/cutoff-switch-delay GT 0.98
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/engine[3]/cutoff-cmd">
+	    <description> Switch on engine 4 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/propulsion/engine[3]/cutoff-switch-delay GT 0.98
+	    </test>
+	</switch>
+
+	<switch name="systems/propulsion/APU/cutoff-cmd">
+	    <description> Switch on APU </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		systems/propulsion/APU/cutoff-switch-delay GT 0.98
+	    </test>
+	</switch>
+
+	<!-- Fuel Pumps Cutoff -->
+
+	<switch name="systems/propulsion/engine[0]/fuel-pump-cmd">
+	    <description> Engine 1 Fuel Pump Command </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/propulsion/engine[0]/cutoff-switch EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/controls/engines/engine[0]/fuel-pump">
+	    <description> Engine 1 Fuel Pump </description>
+	    <input>systems/propulsion/engine[0]/fuel-pump-cmd</input>
+	    <gain>/controls/engines/engine[0]/master</gain>
+	</pure_gain>
+
+	<switch name="systems/propulsion/engine[1]/fuel-pump-cmd">
+	    <description> Engine 2 Fuel Pump Command </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/propulsion/engine[1]/cutoff-switch EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/controls/engines/engine[1]/fuel-pump">
+	    <description> Engine 2 Fuel Pump </description>
+	    <input>systems/propulsion/engine[1]/fuel-pump-cmd</input>
+	    <gain>/controls/engines/engine[1]/master</gain>
+	</pure_gain>
+
+	<switch name="systems/propulsion/engine[2]/fuel-pump-cmd">
+	    <description> Engine 3 Fuel Pump Command </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/propulsion/engine[2]/cutoff-switch EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/controls/engines/engine[2]/fuel-pump">
+	    <description> Engine 3 Fuel Pump </description>
+	    <input>systems/propulsion/engine[2]/fuel-pump-cmd</input>
+	    <gain>/controls/engines/engine[2]/master</gain>
+	</pure_gain>
+
+	<switch name="systems/propulsion/engine[3]/fuel-pump-cmd">
+	    <description> Engine 4 Fuel Pump Command </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/propulsion/engine[3]/cutoff-switch EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/controls/engines/engine[3]/fuel-pump">
+	    <description> Engine 4 Fuel Pump </description>
+	    <input>systems/propulsion/engine[3]/fuel-pump-cmd</input>
+	    <gain>/controls/engines/engine[3]/master</gain>
+	</pure_gain>
+
+	<switch name="systems/propulsion/APU/fuel-pump-cmd">
+	    <description> APU Fuel Pump Command </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/propulsion/APU/cutoff-switch EQ 1
+	    </test>
+	</switch>
+
+	<pure_gain name="/controls/engines/engine[4]/fuel-pump">
+	    <description> APU Fuel Pump </description>
+	    <input>systems/propulsion/APU/fuel-pump-cmd</input>
+	    <gain>/controls/engines/engine[4]/master</gain>
+	</pure_gain>
+
+	<!-- Change the active engine once the engine is ready -->
+	<switch name="propulsion/active_engine">
+	    <description> Change active engine </description>
+	    <default value="propulsion/active_engine"/>
+	    <test  logic="AND" value="-1">
+		<!-- engine 1 was selected but is now ready -->
+		propulsion/active_engine EQ 0
+		systems/propulsion/engine[0]/cutoff-switch EQ 1
+	    </test>
+	    <!-- engine 2 was selected but is now ready -->
+	    <test  logic="AND" value="-1">
+		propulsion/active_engine EQ 1
+		systems/propulsion/engine[1]/cutoff-switch EQ 1
+	    </test>
+	    <!-- engine 3 was selected but is now ready -->
+	    <test  logic="AND" value="-1">
+		propulsion/active_engine EQ 2
+		systems/propulsion/engine[2]/cutoff-switch EQ 1
+	    </test>
+	    <!-- engine 4 was selected but is now ready -->
+	    <test  logic="AND" value="-1">
+		propulsion/active_engine EQ 3
+		systems/propulsion/engine[3]/cutoff-switch EQ 1
+	    </test>
+	    <!-- APU engine was selected but has now started -->
+	    <test  logic="AND" value="-1">
+		propulsion/active_engine EQ 4
+		systems/propulsion/APU/cutoff-switch EQ 1
+	    </test>
+	    <!-- APU engine was selected but is now seized -->
+	    <test  logic="AND" value="-1">
+		propulsion/active_engine EQ 4
+		propulsion/engine[4]/seized EQ 1
+	    </test>
+	</switch>
+
+	<!-- switch for grabing and locking the starter -->
+	<switch name="systems/propulsion/starter-trigger">
+	    <description>
+		Acquire the starter for an engine or APU
+	    </description>
+	    <default value="systems/propulsion/starter-trigger"/>
+	    <test value="1">
+		propulsion/active_engine GT -1
+		/systems/electrical/bus/main-ac-bus GT 100
+	    </test>
+	    <!--
+		this test introduces a deadzone between [0 and 99]% of the delay time
+		when the lock is winding its way up or down
+	    -->
+	    <test value="systems/propulsion/starter-trigger">
+		systems/propulsion/lock-starter LT 0.99
+	    </test>
+	    <!-- at the top, reset is allowed -->
+	    <test value="0">
+		systems/propulsion/lock-starter GT 0.99
+		propulsion/active_engine EQ -1
+	    </test>
+	</switch>
+
+	<!--
+	    Once the starter is engaged then released, we want to allow around 2 x 7 secs
+	    before it can be re-engaged. This should give the active engine time to fully
+	    start with N2 > 45%.
+	-->
+	<kinematic name="systems/propulsion/lock-starter">
+	    <input> systems/propulsion/starter-trigger</input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>7</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- Release the starter if no engine is no longer actively using it -->
+	<switch name="/controls/engines/starter-engaged">
+	    <description>
+		Automatically release the engine starter switch
+	    </description>
+	    <default value="0"/>
+	    <!-- Engaged when the trigger is ON while winding down -->
+	    <test logic="OR" value="1">
+		systems/propulsion/starter-trigger EQ 1
+		<test logic="AND" value="1">
+		    systems/propulsion/starter-trigger EQ 0
+		    systems/propulsion/lock-starter GT 0
+		</test>
+		/controls/engines/shutdown EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    The cutoff command is "true (1)" if the master switch is OFF.
+	    This means that issuing specific engines cutoff always cuts off
+	    whatever engine is active regardless of the input, i.e. toggles have
+	    only one outcome.
+	    We also force it to cutoff the APU as long as "/controls/APU/off-start-run"
+	    is OFF.
+	-->
+	<switch name="propulsion/cutoff_cmd">
+	    <description>
+		Engages / disengages cutoff command
+	    </description>
+	    <default value="propulsion/cutoff_cmd"/>
+	    <!-- TRUE if the engines master is OFF -->
+	    <test value="1">
+		/controls/engines/master EQ 0
+	    </test>
+	    <!-- do not change if some engines is active -->
+	    <test value="propulsion/cutoff_cmd">
+		propulsion/active_engine GE 0
+	    </test>
+	    <!--
+		When any "cutoff-cmd" is "true (1)", the relevant engines tries to grab
+		"propulsion/active_engine" and then set "propulsion/cutoff_cmd" to 1.
+		A subsequent "/controls/engines/engine[*]/cutoff" command will then reset
+		"propulsion/cutoff_cmd" to either 0 or 1. It maintains its value until
+		some other command sets it to something else. Here we disable it if all
+		engines have completed the startup phase.
+	    -->
+	    <test  logic="AND" value="0">
+		systems/propulsion/engine[0]/cutoff-cmd EQ 1
+		systems/propulsion/engine[1]/cutoff-cmd EQ 1
+		systems/propulsion/engine[2]/cutoff-cmd EQ 1
+		systems/propulsion/engine[3]/cutoff-cmd EQ 1
+		systems/propulsion/engine[0]/fuel-pump-cmd EQ 1
+		systems/propulsion/engine[1]/fuel-pump-cmd EQ 1
+		systems/propulsion/engine[2]/fuel-pump-cmd EQ 1
+		systems/propulsion/engine[3]/fuel-pump-cmd EQ 1
+	    </test>
+	</switch>
+
+	<!-- Seize the engines to stop them starting up when they fail -->
+
+	<switch name="propulsion/engine[0]/seized">
+	    <description>
+		Engine 1 disable command
+	    </description>
+	    <default value="propulsion/engine[0]/seized"/>
+	    <!-- On engine failure -->
+	    <test logic="AND" value="1">
+		/damage/engines/engine[0]/engine-condition LT 0.5
+	    </test>
+	    <!-- Reset on repair -->
+	    <test logic="AND" value="0">
+		/damage/engines/engine[0]/engine-condition GT 0.6
+		propulsion/engine[0]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="propulsion/engine[1]/seized">
+	    <description>
+		Engine 2 disable command
+	    </description>
+	    <default value="propulsion/engine[1]/seized"/>
+	    <!-- On engine failure -->
+	    <test logic="AND" value="1">
+		/damage/engines/engine[1]/engine-condition LT 0.5
+	    </test>
+	    <!-- Reset on repair -->
+	    <test logic="AND" value="0">
+		/damage/engines/engine[1]/engine-condition GT 0.6
+		propulsion/engine[1]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="propulsion/engine[2]/seized">
+	    <description>
+		Engine 3 disable command
+	    </description>
+	    <default value="propulsion/engine[2]/seized"/>
+	    <!-- On engine failure -->
+	    <test logic="AND" value="1">
+		/damage/engines/engine[2]/engine-condition LT 0.5
+	    </test>
+	    <!-- Reset on repair -->
+	    <test logic="AND" value="0">
+		/damage/engines/engine[2]/engine-condition GT 0.6
+		propulsion/engine[2]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="propulsion/engine[3]/seized">
+	    <description>
+		Engine 4 disable command
+	    </description>
+	    <default value="propulsion/engine[3]/seized"/>
+	    <!-- On engine failure -->
+	    <test logic="AND" value="1">
+		/damage/engines/engine[3]/engine-condition LT 0.5
+	    </test>
+	    <!-- Reset on repair -->
+	    <test logic="AND" value="0">
+		/damage/engines/engine[3]/engine-condition GT 0.6
+		propulsion/engine[3]/seized EQ 1
+	    </test>
+	</switch>
+
+	<!-- Cutoff engines if master is off or engine fails -->
+
+	<switch name="/controls/engines/engine[0]/master">
+	    <description>
+		Disengage engine 1 master command
+	    </description>
+	    <default value="/controls/engines/engine[0]/master"/>
+	    <test logic="OR" value="0">
+		/controls/engines/master EQ 0
+		<!-- engine failure -->
+		propulsion/engine[0]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[0]/cutoff">
+	    <description>
+		Engages engine 1 cutoff command
+	    </description>
+	    <default value="/controls/engines/engine[0]/cutoff"/>
+	    <test logic="AND" value="1">
+		/controls/engines/master EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[1]/master">
+	    <description>
+		Disengage engine 2 master command
+	    </description>
+	    <default value="/controls/engines/engine[1]/master"/>
+	    <test logic="OR" value="0">
+		/controls/engines/master EQ 0
+		<!-- engine failure -->
+		propulsion/engine[1]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[1]/cutoff">
+	    <description>
+		Engages engine 2 cutoff command
+	    </description>
+	    <default value="/controls/engines/engine[1]/cutoff"/>
+	    <test logic="AND" value="1">
+		/controls/engines/master EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[2]/master">
+	    <description>
+		Disengage engine 3 master command
+	    </description>
+	    <default value="/controls/engines/engine[2]/master"/>
+	    <test logic="OR" value="0">
+		/controls/engines/master EQ 0
+		<!-- engine failure -->
+		propulsion/engine[2]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[2]/cutoff">
+	    <description>
+		Engages engine 3 cutoff command
+	    </description>
+	    <default value="/controls/engines/engine[2]/cutoff"/>
+	    <test logic="AND" value="1">
+		/controls/engines/master EQ 0
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[3]/master">
+	    <description>
+		Disengage engine 4 master command
+	    </description>
+	    <default value="/controls/engines/engine[3]/master"/>
+	    <test logic="OR" value="0">
+		/controls/engines/master EQ 0
+		<!-- engine failure -->
+		propulsion/engine[3]/seized EQ 1
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[3]/cutoff">
+	    <description>
+		Engages engine 4 cutoff command
+	    </description>
+	    <default value="/controls/engines/engine[3]/cutoff"/>
+	    <test logic="AND" value="1">
+		/controls/engines/master EQ 0
+	    </test>
+	</switch>
+
+	<!-- Utility indicator of how many engines are active -->
+	<summer name="systems/propulsion/active-engines">
+	    <description> Number of active engines </description>
+	    <input> /engines/engine[0]/running </input>
+	    <input> /engines/engine[1]/running </input>
+	    <input> /engines/engine[2]/running </input>
+	    <input> /engines/engine[3]/running </input>
+	    <clipto>
+		<min> 0 </min>
+		<max> 4 </max>
+	    </clipto>
+	</summer>
+
+	<!--
+	    This switch indicates that we still have some engines waiting to be
+	    started. When the value is "false", some channels may be closed safely.
+	-->
+	<switch name="systems/propulsion/engine-pending">
+	    <description>
+		Some engine is waiting to start
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/engines/master EQ 1
+		systems/propulsion/active-engines LT 4
+	    </test>
+	</switch>
+
+	<!--
+	    The switch indicates that the pilot has actually requested for some
+	    engine is start, but some are still pendding
+	-->
+	<switch name="/controls/engines/start-required">
+	    <description>
+		Some engine is waiting to start
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="0">
+		<!-- all engines are active or the master switches are off -->
+		systems/propulsion/engine-pending EQ 0
+	    </test>
+	    <!-- now check each engine individually -->
+	    <test logic="AND" value="1">
+		/controls/engines/engine[0]/master EQ 1
+		/engines/engine[0]/running EQ 0
+	    </test>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[1]/master EQ 1
+		/engines/engine[1]/running EQ 0
+	    </test>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[2]/master EQ 1
+		/engines/engine[2]/running EQ 0
+	    </test>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[3]/master EQ 1
+		/engines/engine[3]/running EQ 0
+	    </test>
+	</switch>
+
+	<!-- Utility indicator of total condition of engines -->
+	<summer name="systems/propulsion/engines-condition">
+	    <description>
+		Total value of the conditions of all main engines
+	    </description>
+	    <input> /damage/engines/engine[0]/engine-condition </input>
+	    <input> /damage/engines/engine[1]/engine-condition </input>
+	    <input> /damage/engines/engine[2]/engine-condition </input>
+	    <input> /damage/engines/engine[3]/engine-condition </input>
+	    <clipto>
+		<min> 0 </min>
+		<max> 4 </max>
+	    </clipto>
+	</summer>
+
+	<!-- Set thrust on for engine blast animation -->
+
+	<switch name="/engines/engine[0]/set-thrust">
+	    <description>
+		Set engine 1 blast on
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[0]/thrust_lb GT 3000
+	    </test>
+	</switch>
+
+	<switch name="/engines/engine[1]/set-thrust">
+	    <description>
+		Set engine 2 blast on
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[1]/thrust_lb GT 3000
+	    </test>
+	</switch>
+
+	<switch name="/engines/engine[2]/set-thrust">
+	    <description>
+		Set engine 3 blast on
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[2]/thrust_lb GT 3000
+	    </test>
+	</switch>
+
+	<switch name="/engines/engine[3]/set-thrust">
+	    <description>
+		Set engine 4 blast on
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[3]/thrust_lb GT 3000
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- ====================== Engines Startup ====================== -->
+
+    <!-- This channel only runs when engine starts are required -->
+    <channel name="Engine Startup" execute="systems/propulsion/engine-pending" execrate="8">
+
+    <!-- Engine ignition -->
+
+	<switch name="/controls/engines/engine[0]/ignition">
+	    <description> Engine 1 ignition toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[0]/master EQ 1
+		/controls/engines/engine[0]/starter EQ 1
+		/engines/engine[0]/n2 GT 26
+		/engines/engine[0]/n2 LT 50
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[1]/ignition">
+	    <description> Engine 2 ignition toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[1]/master EQ 1
+		/controls/engines/engine[1]/starter EQ 1
+		/engines/engine[1]/n2 GT 26
+		/engines/engine[1]/n2 LT 50
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[2]/ignition">
+	    <description> Engine 3 ignition toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[2]/master EQ 1
+		/controls/engines/engine[2]/starter EQ 1
+		/engines/engine[2]/n2 GT 26
+		/engines/engine[2]/n2 LT 50
+	    </test>
+	</switch>
+
+	<switch name="/controls/engines/engine[3]/ignition">
+	    <description> Engine 4 ignition toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/engines/engine[3]/master EQ 1
+		/controls/engines/engine[3]/starter EQ 1
+		/engines/engine[3]/n2 GT 26
+		/engines/engine[3]/n2 LT 50
+	    </test>
+	</switch>
+
+	<!-- engine bleeds -->
+
+	<switch name="/controls/pneumatic/engine[0]/bleed">
+	    <description> Engine 1 bleed toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[0]/n2 GT 55
+	    </test>
+	</switch>
+
+	<switch name="/controls/pneumatic/engine[1]/bleed">
+	    <description> Engine 2 bleed toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[1]/n2 GT 55
+	    </test>
+	</switch>
+
+	<switch name="/controls/pneumatic/engine[2]/bleed">
+	    <description> Engine 3 bleed toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[2]/n2 GT 55
+	    </test>
+	</switch>
+
+	<switch name="/controls/pneumatic/engine[3]/bleed">
+	    <description> Engine 4 bleed toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[3]/n2 GT 55
+	    </test>
+	</switch>
+
+	<!-- Sounds of starting engines -->
+
+	<scheduled_gain name="/controls/engines/engine[0]/starter-sound">
+	    <description> Engine 1 start sound volume control </description>
+	    <input> /controls/engines/engine[0]/starter  </input>
+	    <gain> 1.0 </gain>
+	    <table>
+		<independentVar> /engines/engine[0]/n2 </independentVar>
+		<tableData>
+		    0   0.0
+		    5   0.6
+		    40  1.0
+		    65  0.0
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<scheduled_gain name="/controls/engines/engine[1]/starter-sound">
+	    <description> Engine 2 start sound volume control </description>
+	    <input> /controls/engines/engine[1]/starter  </input>
+	    <gain> 1.0 </gain>
+	    <table>
+		<independentVar> /engines/engine[1]/n2 </independentVar>
+		<tableData>
+		    0   0.0
+		    5   0.6
+		    40  1.0
+		    65  0.0
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<scheduled_gain name="/controls/engines/engine[2]/starter-sound">
+	    <description> Engine 3 start sound volume control </description>
+	    <input> /controls/engines/engine[2]/starter  </input>
+	    <gain> 1.0 </gain>
+	    <table>
+		<independentVar> /engines/engine[2]/n2 </independentVar>
+		<tableData>
+		    0   0.0
+		    5   0.6
+		    40  1.0
+		    65  0.0
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<scheduled_gain name="/controls/engines/engine[3]/starter-sound">
+	    <description> Engine 4 start sound volume control </description>
+	    <input> /controls/engines/engine[3]/starter  </input>
+	    <gain> 1.0 </gain>
+	    <table>
+		<independentVar> /engines/engine[3]/n2 </independentVar>
+		<tableData>
+		    0   0.0
+		    5   0.6
+		    40  1.0
+		    65  0.0
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<!-- apu -->
+	<scheduled_gain name="/controls/engines/engine[4]/starter-sound">
+	    <description> APU  start sound volume control </description>
+	    <input> /controls/engines/engine[4]/starter  </input>
+	    <gain> 1.0 </gain>
+	    <table>
+		<independentVar> /engines/engine[4]/n2 </independentVar>
+		<tableData>
+		    0   0.0
+		    5   0.6
+		    40  1.0
+		    65  0.0
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+    </channel>
+
+    <!-- ====================== APU Specific ====================== -->
+
+    <!-- This channel only runs when the APU is running "/controls/APU/run" -->
+    <channel name="APU" execute="/controls/APU/run" execrate="8">
+
+    <!-- engine ignition -->
+	<switch name="/controls/engines/engine[4]/ignition">
+	    <description> APU ignition toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/APU/off-start-run EQ 1
+		/controls/engines/engine[4]/starter EQ 1
+		/engines/engine[4]/n2 GT 26
+		/engines/engine[4]/n2 LT 50
+	    </test>
+	</switch>
+
+	<!-- engine bleed -->
+	<switch name="/controls/pneumatic/APU-bleed">
+	    <description> APU bleed toggle </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/engines/engine[4]/n2 GT 50
+	    </test>
+	</switch>
+
+	<!-- Pass on the APU electrical generation to its engine -->
+	<switch name="/controls/electric/APU-generator">
+	    <description> APU engine electrical state </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		<!-- APU is running -->
+		/controls/APU/off-start-run EQ 2
+	    </test>
+	    <output> /controls/electric/engine[4]/bus-tie </output>
+	    <output> /controls/electric/engine[4]/generator </output>
+	</switch>
+
+    </channel>
+
+</system>

@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>chronometer</name>
+    <path>chronometer.ac</path>
+    <texture-path>Textures</texture-path>
+
+    <animation>
+	<type>select</type>
+	<object-name>mask</object-name>
+	<condition>
+	    <less-than>
+		<property>systems/electrical/outputs/leds</property>
+		<value>24</value>
+	    </less-than>
+	</condition>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>h10</object-name>
+	<property>instrumentation/clock/indicated-hour</property>
+	<factor>0.01</factor>
+	<offset>0</offset>
+	<step>10</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>h1</object-name>
+	<property>instrumentation/clock/indicated-hour</property>
+	<factor>0.1</factor>
+	<offset>0</offset>
+	<step>1</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>m10</object-name>
+	<property>instrumentation/clock/indicated-min</property>
+	<factor>0.01</factor>
+	<offset>0</offset>
+	<step>10</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>m1</object-name>
+	<property>instrumentation/clock/indicated-min</property>
+	<factor>0.1</factor>
+	<offset>0</offset>
+	<step>1</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>s10</object-name>
+	<property>sim/time/utc/second</property>
+	<factor>0.01</factor>
+	<offset>0</offset>
+	<step>10</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>s1</object-name>
+	<property>sim/time/utc/second</property>
+	<factor>0.1</factor>
+	<offset>0</offset>
+	<step>1</step>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- buttons -->
+    <animation>
+	<type>knob</type>
+	<object-name>buttons</object-name>
+	<value>0</value>
+	<axis>
+	    <x> -1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/clock/offset-sec</property>
+		<factor>60</factor>
+		<min>0</min>
+		<max>43200</max>
+		<wrap>true</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/clock/offset-sec</property>
+		<factor>900</factor>
+		<min>0</min>
+		<max>43200</max>
+		<wrap>true</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Clock offset</label>
+		<tooltip-id>clock-offset</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- lighting -->
+
+    <animation include="Lighting/base-dull.xml">
+	<object-name>mount</object-name>
+	<object-name>buttons</object-name>
+    </animation>
+
+    <animation include="Lighting/gauge-bg-green.xml">
+	<object-name>background</object-name>
+	<object-name>leds</object-name>
+    </animation>
+
+    <!-- illuminate the knobs -->
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.6</lightmap-factor>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.4</ambient-correction>
+	</parameters>
+	<object-name>buttons</object-name>
+    </effect>
+
+    <!-- ** LoD ** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

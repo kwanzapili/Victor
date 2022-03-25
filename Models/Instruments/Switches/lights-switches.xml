@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<!-- Lights Switches -->
+
+<PropertyList>
+
+    <!-- Nose Wheel Lights -->
+    <model>
+	<path>Models/Instruments/Switches/nose-light-switch.xml</path>
+	<offsets>
+	    <x-m> 0.0302</x-m>
+	    <y-m>-0.2150</y-m>
+	    <z-m> 0.3200</z-m>
+	</offsets>
+    </model>
+
+    <!-- Navigation Lights -->
+    <model>
+	<path>Models/Instruments/Switches/nav-light-switch.xml</path>
+	<offsets>
+	    <x-m> 0.0302</x-m>
+	    <y-m>-0.1950</y-m>
+	    <z-m> 0.3200</z-m>
+	</offsets>
+    </model>
+
+    <!-- Strobe Light -->
+    <model>
+        <path>Models/Instruments/Switches/strobe-switch.xml</path>
+        <offsets>
+            <x-m> 0.0302</x-m>
+            <y-m>-0.2150</y-m>
+            <z-m> 0.2900</z-m>
+        </offsets>
+    </model>
+
+    <!-- Beacon Lights -->
+    <model>
+	<path>Models/Instruments/Switches/beacon-switch.xml</path>
+	<offsets>
+	    <x-m> 0.0302</x-m>
+	    <y-m>-0.1950</y-m>
+	    <z-m> 0.2900</z-m>
+	</offsets>
+    </model>
+
+    <!-- Panel Lights -->
+    <model>
+	<path>Models/Instruments/Switches/panel-light-switch.xml</path>
+	<offsets>
+	    <x-m>0.0302</x-m>
+	    <y-m>0.2100</y-m>
+	    <z-m>0.3200</z-m>
+	</offsets>
+    </model>
+
+    <!-- Instrument Lights -->
+    <model>
+	<path>Models/Instruments/Switches/instrument-light-switch.xml</path>
+	<offsets>
+	    <x-m>0.0302</x-m>
+	    <y-m>0.1900</y-m>
+	    <z-m>0.3200</z-m>
+	</offsets>
+    </model>
+
+    <!-- Dimmer for interior lights  -->
+    <model>
+	<path>Models/Instruments/Switches/dimmer.xml</path>
+	<offsets>
+	    <x-m>0.0305</x-m>
+	    <y-m>0.2000</y-m>
+	    <z-m>0.2900</z-m>
+	</offsets>
+    </model>
+
+</PropertyList>

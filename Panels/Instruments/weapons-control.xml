@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Armament control</name>
+    <w-base>350</w-base>
+    <h-base>50</h-base>
+
+    <layers>
+
+	<layer>
+	    <name>background</name>
+	    <texture>
+		<path>Panels/Instruments/Textures/trans-dgrey-bg.rgb</path>
+		<x1>0.6</x1>
+		<y1>0.2</y1>
+		<x2>0.9</x2>
+		<y2>0.3</y2>
+	    </texture>
+	    <w>350</w>
+	    <h>50</h>
+	</layer>
+
+	<!-- Top row -->
+
+	<layer>
+	    <name>Station Title</name>
+	    <type>text</type>
+	    <point-size>14</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>Station </text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-170</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>5</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Status Title</name>
+	    <type>text</type>
+	    <point-size>14</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>Status</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-85</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>5</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Change Title</name>
+	    <type>text</type>
+	    <point-size>14</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>Change</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>20</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>5</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Arm Button</name>
+	    <name>Arm-Disarm</name>
+	    <type>text</type>
+	    <point-size>14</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>0.3 </green>
+		<blue> 0.4 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>(Dis)Arm</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>95</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>5</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<!-- Bottom row -->
+
+	<layer>
+	    <name>Station Ammunition display</name>
+	    <type>text</type>
+	    <font>accid</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  0.6 </red>
+		<green>0.8 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>text-value</type>
+		    <property>/controls/armament/current-weapon</property>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-165</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-15</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Station status display</name>
+	    <type>text</type>
+	    <font>accid</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  0.6 </red>
+		<green>1.0 </green>
+		<blue> 0.6 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>text-value</type>
+		    <property>/controls/armament/status</property>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-80</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-15</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Change down</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>9</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>30</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-18</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Change up</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>9</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>60</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-18</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Trigger</name>
+	    <type>text</type>
+	    <point-size>14</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>0.2 </green>
+		<blue> 0.2 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>Trigger</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>100</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-18</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+    </layers>
+
+    <actions>
+
+	<action>
+	    <name>Minus Station Select</name>
+	    <button>0</button>
+	    <x>27</x>
+	    <y>-20</y>
+	    <w>20</w>
+	    <h>20</h>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>/controls/armament/station-select</property>
+		<step>-1</step>
+		<min>0</min>
+		<max>12</max>
+		<wrap>0</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.selectedStnStatus();</script>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus Station Select</name>
+	    <button>0</button>
+	    <x>57</x>
+	    <y>-20</y>
+	    <w>20</w>
+	    <h>20</h>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>/controls/armament/station-select</property>
+		<step>1</step>
+		<min>0</min>
+		<max>12</max>
+		<wrap>0</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.selectedStnStatus();</script>
+	    </binding>
+	</action>
+
+	<!-- Toggle armed ststus -->
+	<action>
+	    <name>Toggle Armed</name>
+	    <button>0</button>
+	    <x>95</x>
+	    <y>2</y>
+	    <w>75</w>
+	    <h>20</h>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleArmed();</script>
+	    </binding>
+	</action>
+
+	<!-- Fire weapon -->
+	<action>
+	    <name>Fire</name>
+	    <button>0</button>
+	    <x>95</x>
+	    <y>-20</y>
+	    <w>75</w>
+	    <h>20</h>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.fireWeapon();</script>
+	    </binding>
+	</action>
+
+    </actions>
+
+</PropertyList>

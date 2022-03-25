@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<!-- Conditional test for emissions from a LED -->
+<PropertyList>
+    <!-- We must have enough electrical power -->
+    <greater-than>
+	<property>/systems/electrical/outputs/leds</property>
+	<value> 10 </value>
+    </greater-than>
+</PropertyList>

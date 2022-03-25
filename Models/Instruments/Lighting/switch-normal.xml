@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<!-- Handles, knobs, dials and switches : normal lighting -->
+
+<PropertyList>
+
+    <type>material</type>
+    <condition>
+	<property>controls/lighting/panel-lights</property>
+	<!-- We must have enough electrical power -->
+	<greater-than>
+	    <property>systems/electrical/outputs/panel-lights</property>
+	    <value> 100 </value>
+	</greater-than>
+    </condition>
+    <emission>
+	<factor-prop>controls/lighting/panel-norm</factor-prop>
+	<red>   0.60 </red>
+	<green> 0.30 </green>
+	<blue>  0.20 </blue>
+    </emission>
+    <diffuse>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </diffuse>
+    <ambient>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </ambient>
+    <specular>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </specular>
+    <shininess> 32</shininess>
+
+</PropertyList>

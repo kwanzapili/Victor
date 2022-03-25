@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+
+<system name="Drag Chute">
+
+    <channel name="Drag Chute" execrate="8">
+
+	<!-- 
+	    If the chute is deployed with the air speed too high, it will be detached.
+	-->
+	<switch name="systems/chute/chute-released">
+	    <description>
+		Drag Chute Detached from Plane
+	    </description>
+	    <default value="systems/chute/chute-released"/>
+	    <test logic="AND" value="1">
+		/controls/flight/chute-pos-norm GT 0.1
+		<!-- the airspeed is too high -->
+		velocities/vc-kts GT /instrumentation/fmc/vspeeds/V-dragchute-kt
+	    </test>
+	</switch>
+
+	<!-- Map the three level chute switch into a binary retraction decision -->
+	<switch name="systems/chute/chute-switch-cmd">
+	    <description>
+		Chute Switch Command Normalization
+	    </description>
+	    <default value="0"/>
+	    <test value="1">
+		/controls/switches/chute GE 0
+	    </test>
+	</switch>
+
+	<!-- 
+	    Chute door command has three possible values:
+	    Close	= -1	(switch is not open and drag chute is in)
+	    Wait	=  0	(switch is not open but drag chute is out)
+	    Open	=  1	(switch is open)
+	-->
+	<switch name="systems/chute/chute-door-cmd">
+	    <description>
+		Chute Door Command
+	    </description>
+	    <!-- wait by default -->
+	    <default value="0"/>
+	    <!-- close when the switch is moved to -1 or 0 -->
+	    <test logic="AND" value="-1">
+		<!-- switch is on LOCK or STANDBY -->
+		/controls/switches/chute LT 1
+		<!-- drag chute is not in use -->
+		/controls/flight/drag-chute EQ 0
+	    </test>
+	    <!-- open when the switch is fully open -->
+	    <test logic="AND" value="1">
+		<!-- switch is fully open -->
+		/controls/doors/chute-switch/position-norm EQ 1
+		<!-- switch is on RELEASE -->
+		/controls/switches/chute EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    Deploy the drag chute when the main gear is on the ground and
+	    the angle of attack is 10 degrees or less.
+	-->
+	<switch name="systems/chute/chute-cmd-norm">
+	    <description>
+		Chute Command Normalization
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/switches/chute EQ 1
+		/controls/doors/chute-door/position-norm EQ 1
+		<!-- the airspeed is low enough -->
+		velocities/vc-kts LT /instrumentation/fmc/vspeeds/V-dragchute-kt
+		<!-- On ground -->
+		gear/main-gear-grounded EQ 1
+		<!-- Chute not released -->
+		systems/chute/chute-not-released EQ 1
+		<!-- alpha above 150 can be ignored -->
+		<test logic="OR" value="1">
+		    aero/alpha-deg LT 10
+		    aero/alpha-deg GT 150
+		</test>
+	    </test>
+	</switch>
+
+	<!--
+	    the drag chute requires 4 to 5 seconds to deploy after drag chute control
+	    control actuation
+	-->
+	<kinematic name="systems/chute/chute-reef-pos-norm">
+	    <description>
+		Drag Chute Control
+	    </description>
+	    <input>systems/chute/chute-cmd-norm</input>
+	    <traverse>
+		<setting>
+		    <position> 0 </position>
+		    <time>     0 </time>
+		</setting>
+		<setting>
+		    <position> 1 </position>
+		    <time>     4 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<switch name="systems/chute/chute-available">
+	    <description>
+		Drag Chute Availability
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		<test logic="AND" value="1">
+		    systems/chute/chute-available EQ 1
+		    systems/chute/chute-reef-pos-norm LT 1
+		    systems/chute/chute-cmd-norm EQ 1
+		</test>
+		<test logic="AND" value="1">
+		    systems/chute/chute-released EQ 0
+		    systems/chute/chute-reef-pos-norm EQ 1
+		</test>
+	    </test>
+	</switch>
+
+	<switch name="systems/chute/chute-not-released">
+	    <description>
+		Drag Chute Released Inverted
+	    </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		systems/chute/chute-released EQ 1
+	    </test>
+	</switch>
+
+	<switch name="systems/chute/drogue-chute-deployed">
+	    <description>
+		Drogue Drag Chute Deployed
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		<test logic="AND" value="1">
+		    gear/unit[1]/WOW EQ 1
+		    gear/unit[2]/WOW EQ 1
+		    gear/unit[3]/WOW EQ 1
+		    gear/unit[4]/WOW EQ 1
+		    systems/chute/chute-available EQ 1
+		</test>
+		<test logic="AND" value="1">
+		    systems/chute/drogue-chute-deployed EQ 1
+		    systems/chute/chute-reef-pos-norm GT 0.1
+		</test>
+	    </test>
+	</switch>
+
+	<switch name="systems/chute/drag-chute-deployed">
+	    <description>
+		Drag Chute Deployed
+	    </description>
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		<test logic="AND" value="1">
+		    gear/unit[0]/WOW EQ 1
+		    systems/chute/drogue-chute-deployed EQ 1
+		</test>
+		<test logic="AND" value="1">
+		    systems/chute/drag-chute-deployed EQ 1
+		    systems/chute/chute-reef-pos-norm GT 0.1
+		</test>
+	    </test>
+	</switch>
+
+	<summer name="systems/chute/drag-chute-offset">
+	    <description>
+		Drag Chute Position
+	    </description>
+	    <input>systems/chute/drag-chute-deployed</input>
+	    <bias>0.111111111</bias>
+	</summer>
+
+	<fcs_function name="systems/chute/drag-chute-pos-norm">
+	    <description>
+		Drag Chute Scaling
+	    </description>
+	    <function>
+		<product>
+		    <property>systems/chute/drag-chute-offset</property>
+		    <property>systems/chute/chute-not-released</property>
+		    <value>0.9</value>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<kinematic name="systems/chute/chute-size-factor">
+	    <description>
+		Drogue Drag Chute Control
+	    </description>
+	    <input>systems/chute/drag-chute-pos-norm</input>
+	    <traverse>
+		<setting>
+		    <position> 0 </position>
+		    <time>     0 </time>
+		</setting>
+		<setting>
+		    <position> 1 </position>
+		    <time>     3 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- Effective proportional area of tail chute -->
+	<pure_gain name="/controls/flight/chute-pos-norm">
+	    <input> systems/chute/chute-size-factor </input>
+	    <gain> systems/chute/chute-reef-pos-norm </gain>
+	    <clipto>
+		<min> 0.0 </min>
+		<max> 1.0 </max>
+	    </clipto>
+	</pure_gain>
+
+	<!-- 
+	    Tell the nasal code that the chute door can be closed if the drag chute
+	    is no longer deployed or has been released
+	-->
+	<switch name="/controls/flight/drag-chute">
+	    <description>
+		Drag Chute In Use
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/controls/flight/chute-pos-norm GT 0.1
+		systems/chute/chute-not-released EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel only runs when the chute is deployed. It computes the
+	drag force induced by the chute.
+    -->
+    <channel name="Chute Braking" execute="/controls/flight/drag-chute" execrate="8">
+
+	<scheduled_gain name="systems/chute/drag-force">
+	    <description>
+		Deceleration force due to drag chute
+	    </description>
+	    <input> inertia/weight-lbs </input>
+	    <table>
+		<!-- Borrowed from the SR-71 manual -->
+		<independentVar lookup="row"> inertia/weight-lbs </independentVar>
+		<independentVar lookup="column"> velocities/vc-kts </independentVar>
+		<tableData>
+				10      100     120     140     160     180     200     210
+		    85000       0       0.25    0.35    0.48    0.64    0.80    0.99    1.10
+		    100000      0       0.22    0.30    0.42    0.55    0.70    0.87    0.95    
+		    115000      0       0.19    0.27    0.37    0.48    0.62    0.76    0.83    
+		    130000      0       0.17    0.24    0.33    0.43    0.55    0.68    0.75
+		    145000      0       0.16    0.22    0.30    0.39    0.50    0.62    0.68
+		    160000      0       0.14    0.20    0.27    0.36    0.45    0.56    0.62
+		    175000      0       0.13    0.18    0.24    0.31    0.40    0.50    0.55
+		    190000      0       0.12    0.16    0.22    0.29    0.37    0.46    0.51
+		</tableData>
+	    </table>
+	    <gain> systems/chute/chute-reef-pos-norm </gain>
+	    <output> external_reactions/chute/magnitude </output>
+	</scheduled_gain>
+
+    </channel>
+
+</system>

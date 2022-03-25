@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<system name="Hydraulic system">
+
+    <!--
+	Hydraulic Generation
+	~~~~~~~~~~~~~~~~~~~~
+	The Victor was a rather unique aircraft for its era in that the hydraulic
+	systems supply pumps were not engine driven like the majority of the aircraft
+	in service at that time.
+
+	This aircraft did not need a separate hydraulic supply system external to the
+	aircraft; it had two substantial electrically driven pumps Operating on 
+	200V AC for the Mk 2 aircraft providing the 4000 psi required to operate all
+	the services. 
+    -->
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!-- This channel is for the electric-driven pumps. -->
+    <channel name="Hydraulic Generation" execrate="8">
+
+	<!-- Turn off the pumps when the engines are not running -->
+
+	<switch name="/controls/hydraulic/system[0]/electric-pump">
+	    <description>
+		Pump switch for hydraulic system 1
+	    </description>
+	    <default value="/engines/engine[0]/running"/>
+	    <!-- OFF on when engine 1 is off -->
+	</switch>
+
+	<switch name="/controls/hydraulic/system[1]/electric-pump">
+	    <description>
+		Pump switch for hydraulic system 2
+	    </description>
+	    <default value="/engines/engine[1]/running"/>
+	    <!-- OFF on when engine 2 is off -->
+	</switch>
+
+	<switch name="/controls/hydraulic/system[2]/electric-pump">
+	    <description>
+		Pump switch for hydraulic system 3
+	    </description>
+	    <default value="/engines/engine[2]/running"/>
+	    <!-- OFF on when engine 3 is off -->
+	</switch>
+
+	<switch name="/controls/hydraulic/system[3]/electric-pump">
+	    <description>
+		Pump switch for hydraulic system 4
+	    </description>
+	    <default value="/engines/engine[3]/running"/>
+	    <!-- OFF on when engine 4 is off -->
+	</switch>
+
+	<!-- Engine hydraulic pressure activation -->
+
+	<kinematic name="/controls/hydraulic/system[0]/electric-pressure-norm">
+	    <input>/controls/hydraulic/system[0]/electric-pump</input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>2.5</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="/controls/hydraulic/system[1]/electric-pressure-norm">
+	    <input>/controls/hydraulic/system[1]/electric-pump</input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>2.5</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="/controls/hydraulic/system[2]/electric-pressure-norm">
+	    <input>/controls/hydraulic/system[2]/electric-pump</input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>2.5</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<kinematic name="/controls/hydraulic/system[3]/electric-pressure-norm">
+	    <input>/controls/hydraulic/system[3]/electric-pump</input>
+	    <traverse>
+		<setting>
+		    <position>0</position>
+		    <time>0</time>
+		</setting>
+		<setting>
+		    <position>1</position>
+		    <time>2.5</time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- Electric pressure sources -->
+
+	<pure_gain name="/controls/hydraulic/system[0]/electric-pressure-psi">
+	    <description> Hydraulic pressure from system 1 </description>
+	    <input> /controls/hydraulic/system[0]/electric-pressure-norm </input>
+	    <gain> 4000 </gain>
+	    <output> /systems/hydraulic/pump-psi[0] </output>
+	</pure_gain>
+
+	<pure_gain name="/controls/hydraulic/system[1]/electric-pressure-psi">
+	    <description> Hydraulic pressure from system 2 </description>
+	    <input> /controls/hydraulic/system[1]/electric-pressure-norm </input>
+	    <gain> 4000 </gain>
+	    <output> /systems/hydraulic/pump-psi[1] </output>
+	</pure_gain>
+
+	<pure_gain name="/controls/hydraulic/system[2]/electric-pressure-psi">
+	    <description> Hydraulic pressure from system 3 </description>
+	    <input> /controls/hydraulic/system[2]/electric-pressure-norm </input>
+	    <gain> 4000 </gain>
+	    <output> /systems/hydraulic/pump-psi[2] </output>
+	</pure_gain>
+
+	<pure_gain name="/controls/hydraulic/system[3]/electric-pressure-psi">
+	    <description> Hydraulic pressure from system 4 </description>
+	    <input> /controls/hydraulic/system[3]/electric-pressure-norm </input>
+	    <gain> 4000 </gain>
+	    <output> /systems/hydraulic/pump-psi[3] </output>
+	</pure_gain>
+
+	<!-- maximum pressure across left and right systems -->
+	<fcs_function name="/controls/hydraulic/pressure-psi">
+	    <function>
+		<description> Average hydraulic presssure psi </description>
+		<max>
+		    <property> /systems/hydraulic/pump-psi[0] </property>
+		    <property> /systems/hydraulic/pump-psi[1] </property>
+		    <property> /systems/hydraulic/pump-psi[2] </property>
+		    <property> /systems/hydraulic/pump-psi[3] </property>
+		</max >
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+</system>

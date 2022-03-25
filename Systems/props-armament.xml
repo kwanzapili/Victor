@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <master-arm type="bool">false</master-arm>
+    <release-agl-ft type="int">500</release-agl-ft>
+    <safe-to-release type="bool">false</safe-to-release>
+    <trigger-guard type="bool">false</trigger-guard>
+
+    <station n="0">
+	<armed type="bool">false</armed>
+	<id type="int">1</id>
+	<load-norm type="float">0.0</load-norm>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[0]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="1">
+	<armed type="bool">false</armed>
+	<id type="int">2</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[1]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="2">
+	<armed type="bool">false</armed>
+	<id type="int">3</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[2]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="3">
+	<armed type="bool">false</armed>
+	<id type="int">4</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[3]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="4">
+	<armed type="bool">false</armed>
+	<id type="int">5</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[4]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="5">
+	<armed type="bool">false</armed>
+	<id type="int">6</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[5]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="6">
+	<armed type="bool">false</armed>
+	<id type="int">7</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[6]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="7">
+	<armed type="bool">false</armed>
+	<id type="int">8</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[7]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="8">
+	<armed type="bool">false</armed>
+	<id type="int">9</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[8]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="9">
+	<armed type="bool">false</armed>
+	<id type="int">10</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[9]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="10">
+	<armed type="bool">false</armed>
+	<id type="int">11</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[10]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="11">
+	<armed type="bool">false</armed>
+	<id type="int">12</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[11]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+    <station n="12">
+	<armed type="bool">false</armed>
+	<id type="int">13</id>
+	<trigger type="bool">false</trigger>
+	<units alias="/ai/submodels/submodel[12]/count"/>
+	<unit-weight-lbs type="int">0</unit-weight-lbs>
+    </station>
+
+    <bombs-weight-lbs type="int">0</bombs-weight-lbs>
+    <current-weapon type="string">What Bomb</current-weapon>
+    <main-weapon type="string">What Bomb</main-weapon>
+    <status type="string">Empty</status>
+    <shrikes type="bool">true</shrikes>
+    <units type="int">0</units>
+
+</PropertyList>

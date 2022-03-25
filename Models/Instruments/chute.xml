@@ -1,0 +1,57 @@
+<?xml version = '1.0' ?>
+
+<PropertyList>
+    <path>chute.ac</path>
+
+    <!-- Braking Chute -->
+    <animation>
+	<type>knob</type>
+	<object-name>switch</object-name>
+	<property>controls/switches/chute</property>
+	<axis>
+	    <x>0</x>
+	    <y>-1</y>
+	    <z>0</z>
+	</axis>
+	<interpolation>
+	    <entry><ind>-1</ind><dep>-45</dep></entry>
+	    <entry><ind> 0</ind><dep> 0 </dep></entry>
+	    <entry><ind> 1</ind><dep> 45</dep></entry>
+	</interpolation>
+	<action>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>controls/switches/chute</property>
+		<min>-1</min>
+		<max> 1</max>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Operate Tail Chute</label>
+		<tooltip-id>chute_switch</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>        
+
+    <!-- Panel Lighting -->
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>switch</object-name>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.4</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.4</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.4</lightmap-factor>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.05</ambient-correction>
+	</parameters>
+	<object-name>Cube</object-name>
+	<object-name>switch</object-name>
+    </effect>
+
+</PropertyList>

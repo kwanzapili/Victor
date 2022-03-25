@@ -1,0 +1,474 @@
+<?xml version="1.0"?>
+
+<!--  Submodels are objects which can be dropped or launched from the user aircraft.
+      The trigger is a boolean property, which you define, which when "true" causes
+      the submodel to be released/launched.
+      A submodel will create an AIBallistic object which will follow a ballistic path.
+      By default one submodel will be released when the corresponding trigger is "true".
+      The initial conditions (IC) define the object's starting point (relative to the
+      user aircraft's "reported position"), and its initial speed and direction
+      (relative to the user aircraft).  If you want to release many similar objects
+      with similar IC, then you may use the <repeat>, <delay> and <count> properties
+      to define this.  The allowed properties are:
+
+      <name>         The name of the submodel.
+      <model>        The path to the visual model.
+      <trigger>      The property which will act as the trigger.
+      <speed>        Initial speed, in feet/sec, relative to user aircraft.
+      <repeat>       Set "true" if you want multiple releases of this submodel.
+      <delay>        Time, in seconds, between repeated releases.
+      <count>        Number of submodels available for multiple release.
+      <slaved>       Not used yet.
+      <x-offset>     Submodel's initial fore/aft position relative to user aircraft.
+                     Fore is positive.
+      <y-offset>     Submodel's initial left/right position relative to user aircraft.
+                     Right is positive.
+      <z-offset>     Submodel's initial up/down position relative to user aircraft.
+                     Up is positive.
+      <yaw-offset>   Submodel's initial azimuth, in degrees, relative to user aircraft's
+                     nose.  Right is positive.
+      <pitch-offset> Submodel's initial elevation, in degrees, relative to user aircraft's
+                     pitch.  Up is positive.
+      <eda>          Equivalent Drag Area in ft squared.  The object is assumed to have a
+                     mass of 0.03 slugs and a drag coefficient of 0.295, and sea-level air
+                     density is assumed.  Adjust the EDA to give the model the ballistics you need.
+                     The default value is 0.007.
+      <life>         Life span in seconds.  Default is 900.0.
+      <buoyancy>     In ft/sec/sec.  Works opposite acceleration of gravity.  For example, if
+                     set to 32 the submodel will feel no gravity. If greater than 32 the object
+                     will rise. Default is 0.
+      <wind>         Set to true if you want the submodel to react to the wind.  Default is "false".
+
+    The <x-m>, <y-m>, and <z-m> use metric units and have the same coordinate system as the main model.
+    This is unlike the old <x-offset>, <y-offset>, and <z-offset> tags which use imperial units and have
+    the x-axis reversed.
+    <x-m>	Submodel's initial fore/aft position in metres relative to user aircraft. Aft is positive.
+    <y-m>	Submodel's initial left/right position in metres relative to user aircraft. Right is positive.
+    <z-m>	Submodel's initial up/down position in metres relative to user aircraft. Up is positive.
+    <heading-deg>   Submodel's initial azimuth in degrees relative to user aircraft's nose. Right is positive.
+    <pitch-deg>	    Submodel's initial elevation in degrees relative to user aircraft's pitch. Up is positive.
+-->
+
+    <PropertyList>
+
+	<!-- Weapon submodel: the established order is aligned with the nasal code, which gives:
+	    Iron bomb: 0, Shrike Missiles: 1-4, Blue Danube: 5, Blue Steel: 6, Red Beard: 7,
+	    WE177A: 8, WE177B: 9, Yellow Sun: 10, Grand Slam: 11, Tallboy: 12.
+	    The submodel names MUST align perfectly with those defined in the nasal script
+	    so that we can identify which submodel causes an impact report.
+	-->
+
+	<!-- ~~~~~~~~~~~~~~~ Base weapons models ~~~~~~~~~~~~~ -->
+
+	<!-- Conventional bomb -->
+	<nn-bomb>
+	    <name>Conventional Bomb</name>
+	    <model>Aircraft/victor/Models/bomb-released.xml</model>
+	    <speed>0</speed>
+	    <repeat>true</repeat>
+	    <delay>0.5</delay>
+	    <eda>3.0</eda>
+	    <cd>0.1</cd>
+	    <weight>1000</weight>
+	    <life>120</life>
+	    <buoyancy>0</buoyancy>
+	    <aero-stabilise>true</aero-stabilise>
+	    <wind>false</wind>
+	    <collision>true</collision>
+	    <impact>true</impact>
+	    <impact-reports>/sim/ai/aircraft/impact/bomb</impact-reports>
+	</nn-bomb>
+
+	<!-- Nuclear bomb -->
+	<nuke>
+	    <name>Nuclear Gravity Bomb</name>
+	    <speed>0</speed>
+	    <repeat>false</repeat>
+	    <eda>9.0</eda>
+	    <cd>0.07</cd>
+	    <life>60</life>
+	    <buoyancy>0</buoyancy>
+	    <aero-stabilise>true</aero-stabilise>
+	    <wind>false</wind>
+	    <collision>true</collision>
+	    <impact>true</impact>
+	    <impact-reports>/sim/ai/aircraft/impact/bomb</impact-reports>
+	</nuke>
+
+	<!-- AGM-45A Shrike anti-radiation missile -->
+
+	<shrike>
+	    <name>Shrike</name>
+	    <model>Aircraft/victor/Models/shrike-released.xml</model>
+	    <!-- Max speed is Mach 1.5 (1688 fps), but we'll start at Mach 0.5 -->
+	    <speed>563</speed>
+	    <repeat>false</repeat>
+	    <count>0</count>
+	    <eda>0.0</eda>
+	    <cd>0.0</cd>
+	    <weight>395</weight>
+	    <life>60</life>
+	    <buoyancy>15</buoyancy>
+	    <wind>false</wind>
+	    <aero-stabilised>true</aero-stabilised>
+	    <collision>true</collision>
+	    <impact>true</impact>
+	    <impact-reports>/sim/ai/aircraft/impact/missile</impact-reports>
+	</shrike>
+
+	<!-- ~~~~~~~~~~~~~~~ Specific weapons models ~~~~~~~~~~~~~ -->
+
+	<!-- Iron bombs: index = 0 -->
+	<submodel n="0">
+	    <name>Iron Bomb</name>
+	    <model alias="/nn-bomb/model"/>
+	    <trigger>controls/armament/station[0]/trigger</trigger>
+	    <speed alias="/nn-bomb/speed"/>
+	    <repeat alias="/nn-bomb/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.29</x-m>		<!-- 60ft from nose -->
+		<y-m> 0.0 </y-m>
+		<z-m>-0.15</z-m>		<!-- 0.5ft inside -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nn-bomb/eda"/>
+	    <cd alias="/nn-bomb/cd"/>
+	    <weight alias="/nn-bomb/weight"/>
+	    <life alias="/nn-bomb/life"/>
+	    <buoyancy alias="/nn-bomb/buoyancy"/>
+	    <aero-stabilise alias="/nn-bomb/aero-stabilise"/>
+	    <wind alias="/nn-bomb/wind"/>
+	    <collision alias="/nn-bomb/collision"/>
+	    <impact alias="/nn-bomb/impact"/>
+	    <impact-reports alias="/nn-bomb/impact-reports"/>
+	</submodel>
+
+	<!-- Shrike missiles x 4: indices 1 - 4 -->
+	<submodel n="1">
+	    <name>Shrike 1</name>
+	    <model alias="/shrike/model"/>
+	    <trigger>controls/armament/station[1]/trigger</trigger>
+	    <speed alias="/shrike/speed"/>
+	    <repeat alias="/shrike/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m> 19.5</x-m>
+		<y-m>-11.4</y-m>
+		<z-m>-0.75</z-m>
+		<heading-deg>0</heading-deg>
+		<pitch-deg>0.0</pitch-deg>
+	    </offsets>
+	    <eda alias="/shrike/eda"/>
+	    <cd alias="/shrike/cd"/>
+	    <weight alias="/shrike/weight"/>
+	    <life alias="/shrike/life"/>
+	    <buoyancy alias="/shrike/buoyancy"/>
+	    <aero-stabilise alias="/shrike/aero-stabilise"/>
+	    <wind alias="/shrike/wind"/>
+	    <collision alias="/shrike/collision"/>
+	    <impact alias="/shrike/impact"/>
+	    <impact-reports alias="/shrike/impact-reports"/>
+	</submodel>
+
+	<submodel n="2">
+	    <name>Shrike 2</name>
+	    <model alias="/shrike/model"/>
+	    <trigger>controls/armament/station[2]/trigger</trigger>
+	    <speed alias="/shrike/speed"/>
+	    <repeat alias="/shrike/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m> 19.0</x-m>
+		<y-m>-10.6</y-m>
+		<z-m>-0.75</z-m>
+		<heading-deg>0</heading-deg>
+		<pitch-deg>0.0</pitch-deg>
+	    </offsets>
+	    <eda alias="/shrike/eda"/>
+	    <cd alias="/shrike/cd"/>
+	    <weight alias="/shrike/weight"/>
+	    <life alias="/shrike/life"/>
+	    <buoyancy alias="/shrike/buoyancy"/>
+	    <aero-stabilise alias="/shrike/aero-stabilise"/>
+	    <wind alias="/shrike/wind"/>
+	    <collision alias="/shrike/collision"/>
+	    <impact alias="/shrike/impact"/>
+	    <impact-reports alias="/shrike/impact-reports"/>
+	</submodel>
+
+	<submodel n="3">
+	    <name>Shrike 3</name>
+	    <model alias="/shrike/model"/>
+	    <trigger>controls/armament/station[3]/trigger</trigger>
+	    <speed alias="/shrike/speed"/>
+	    <repeat alias="/shrike/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m> 19.0</x-m>
+		<y-m> 10.6</y-m>
+		<z-m>-0.75</z-m>
+		<heading-deg>0</heading-deg>
+		<pitch-deg>0.0</pitch-deg>
+	    </offsets>
+	    <eda alias="/shrike/eda"/>
+	    <cd alias="/shrike/cd"/>
+	    <weight alias="/shrike/weight"/>
+	    <life alias="/shrike/life"/>
+	    <buoyancy alias="/shrike/buoyancy"/>
+	    <aero-stabilise alias="/shrike/aero-stabilise"/>
+	    <wind alias="/shrike/wind"/>
+	    <collision alias="/shrike/collision"/>
+	    <impact alias="/shrike/impact"/>
+	    <impact-reports alias="/shrike/impact-reports"/>
+	</submodel>
+
+	<submodel n="4">
+	    <name>Shrike 4</name>
+	    <model alias="/shrike/model"/>
+	    <trigger>controls/armament/station[4]/trigger</trigger>
+	    <speed alias="/shrike/speed"/>
+	    <repeat alias="/shrike/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m> 19.5</x-m>
+		<y-m> 11.4</y-m>
+		<z-m>-0.75</z-m>
+		<heading-deg>0</heading-deg>
+		<pitch-deg>0.0</pitch-deg>
+	    </offsets>
+	    <eda alias="/shrike/eda"/>
+	    <cd alias="/shrike/cd"/>
+	    <weight alias="/shrike/weight"/>
+	    <life alias="/shrike/life"/>
+	    <buoyancy alias="/shrike/buoyancy"/>
+	    <aero-stabilise alias="/shrike/aero-stabilise"/>
+	    <wind alias="/shrike/wind"/>
+	    <collision alias="/shrike/collision"/>
+	    <impact alias="/shrike/impact"/>
+	    <impact-reports alias="/shrike/impact-reports"/>
+	</submodel>
+
+	<!-- Blue Danube nuclear gravity bomb: index = 5 -->
+	<submodel n="5">
+	    <name>Blue Danube</name>
+	    <model>Aircraft/victor/Models/RedBeard.ac</model>
+	    <trigger>controls/armament/station[5]/trigger</trigger>
+	    <speed alias="/nuke/speed"/>
+	    <repeat alias="/nuke/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.29</x-m>		<!-- 60ft from nose -->
+		<y-m> 0.0 </y-m>
+		<z-m>0.0305</z-m>		<!-- 0.1ft above centre -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nuke/eda"/>
+	    <cd alias="/nuke/cd"/>
+	    <weight>10000</weight>
+	    <life alias="/nuke/life"/>
+	    <buoyancy alias="/nuke/buoyancy"/>
+	    <aero-stabilise alias="/nuke/aero-stabilise"/>
+	    <wind alias="/nuke/wind"/>
+	    <collision alias="/nuke/collision"/>
+	    <impact alias="/nuke/impact"/>
+	    <impact-reports alias="/nuke/impact-reports"/>
+	</submodel>
+
+	<!-- Blue Steel nuclear missile: index = 6 -->
+	<submodel n="6">
+	    <name>Blue Steel</name>
+	    <model>Aircraft/victor/Models/BlueSteel-released.xml</model>
+	    <trigger>controls/armament/station[6]/trigger</trigger>
+	    <!-- While this is a missile, it falls clear of the aircraft -->
+	    <!-- before igniting. Unfortunately we cannot model this so  -->
+	    <!-- it just drops 2.5m before speeding of at ~ Mach 0.8     -->
+	    <!-- Maximum speed is Mach 3 (Mach 1 = 1125 fps).		 -->
+	    <speed>900</speed>
+	    <repeat>false</repeat>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.5</x-m>
+		<y-m> 0.0 </y-m>
+		<z-m>-3.0</z-m>
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-1.00</pitch-deg>
+	    </offsets>
+	    <yaw-offset>0.0</yaw-offset>
+	    <eda>3.0</eda>
+	    <cd>0.045</cd>
+	    <weight>17000</weight>
+	    <life>600</life>
+	    <buoyancy>25</buoyancy>
+	    <wind>false</wind>
+	    <aero-stabilised>true</aero-stabilised>
+	    <collision>true</collision>
+	    <impact>true</impact>
+	    <impact-reports>/sim/ai/aircraft/impact/missile</impact-reports>
+	</submodel>
+
+	<!-- Red Beard nuclear bomb: index = 7 -->
+	<submodel n="7">
+	    <name>Red Beard</name>
+	    <model>Aircraft/victor/Models/RedBeard.ac</model>
+	    <trigger>controls/armament/station[7]/trigger</trigger>
+	    <speed alias="/nuke/speed"/>
+	    <repeat alias="/nuke/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.9</x-m>
+		<y-m> 0.0 </y-m>
+		<z-m>0.0305</z-m>		<!-- 0.1ft above centre -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nuke/eda"/>
+	    <cd alias="/nuke/cd"/>
+	    <weight>1750</weight>
+	    <life alias="/nuke/life"/>
+	    <buoyancy alias="/nuke/buoyancy"/>
+	    <aero-stabilise alias="/nuke/aero-stabilise"/>
+	    <wind alias="/nuke/wind"/>
+	    <collision alias="/nuke/collision"/>
+	    <impact alias="/nuke/impact"/>
+	    <impact-reports alias="/nuke/impact-reports"/>
+	</submodel>
+
+	<!-- WE177A nuclear bomb: index = 8 -->
+	<submodel n="8">
+	    <name>WE177A</name>
+	    <model>Aircraft/victor/Models/WE177A.ac</model>
+	    <trigger>controls/armament/station[8]/trigger</trigger>
+	    <speed alias="/nuke/speed"/>
+	    <repeat alias="/nuke/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.9</x-m>
+		<y-m> 0.0 </y-m>
+		<z-m>0.0305</z-m>		<!-- 0.1ft above centre -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda>3.00</eda>
+	    <cd alias="/nuke/cd"/>
+	    <weight>622</weight>
+	    <life>600</life>
+	    <buoyancy>10</buoyancy>	<!-- parachute retarded -->
+	    <aero-stabilise alias="/nuke/aero-stabilise"/>
+	    <wind alias="/nuke/wind"/>
+	    <collision alias="/nuke/collision"/>
+	    <impact alias="/nuke/impact"/>
+	    <impact-reports alias="/nuke/impact-reports"/>
+	</submodel>
+
+	<!-- WE177B nuclear bomb: index = 9 -->
+	<submodel n="9">
+	    <name>WE177B</name>
+	    <model>Aircraft/victor/Models/WE177B.ac</model>
+	    <trigger>controls/armament/station[9]/trigger</trigger>
+	    <speed alias="/nuke/speed"/>
+	    <repeat alias="/nuke/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.9</x-m>
+		<y-m> 0.0 </y-m>
+		<z-m>0.0305</z-m>		<!-- 0.1ft above centre -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda>6.00</eda>
+	    <cd alias="/nuke/cd"/>
+	    <weight>1008</weight>
+	    <life alias="/nuke//life"/>
+	    <buoyancy>10</buoyancy>	<!-- parachute retarded -->
+	    <aero-stabilise alias="/nuke/aero-stabilise"/>
+	    <wind alias="/nuke/wind"/>
+	    <collision alias="/nuke/collision"/>
+	    <impact alias="/nuke/impact"/>
+	    <impact-reports alias="/nuke/impact-reports"/>
+	</submodel>
+
+	<!-- Yellow Sun nuclear gravity bomb: index = 10 -->
+	<submodel n="10">
+	    <name>Yellow Sun</name>
+	    <model>Aircraft/victor/Models/RedBeard.ac</model>
+	    <trigger>controls/armament/station[10]/trigger</trigger>
+	    <speed alias="/nuke/speed"/>
+	    <repeat alias="/nuke/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.29</x-m>		<!-- 60ft from nose -->
+		<y-m> 0.0 </y-m>
+		<z-m>0.0305</z-m>		<!-- 0.1ft above centre -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nuke/eda"/>
+	    <cd alias="/nuke/cd"/>
+	    <weight>7250</weight>
+	    <life alias="/nuke/life"/>
+	    <buoyancy alias="/nuke/buoyancy"/>
+	    <aero-stabilise alias="/nuke/aero-stabilise"/>
+	    <wind alias="/nuke/wind"/>
+	    <collision alias="/nuke/collision"/>
+	    <impact alias="/nuke/impact"/>
+	    <impact-reports alias="/nuke/impact-reports"/>
+	</submodel>
+
+	<!-- Grand Slam conventional bomb: index = 11 -->
+	<submodel n="11">
+	    <name>Grand Slam</name>
+	    <model alias="/nn-bomb/model"/>
+	    <trigger>controls/armament/station[11]/trigger</trigger>
+	    <speed alias="/nn-bomb/speed"/>
+	    <repeat alias="/nn-bomb/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.29</x-m>		<!-- 60ft from nose -->
+		<y-m> 0.0 </y-m>
+		<z-m>-0.15</z-m>		<!-- 0.5ft inside -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nn-bomb/eda"/>
+	    <cd alias="/nn-bomb/cd"/>
+	    <weight>22000</weight>
+	    <life alias="/nn-bomb/life"/>
+	    <buoyancy alias="/nn-bomb/buoyancy"/>
+	    <aero-stabilise alias="/nn-bomb/aero-stabilise"/>
+	    <wind alias="/nn-bomb/wind"/>
+	    <collision alias="/nn-bomb/collision"/>
+	    <impact alias="/nn-bomb/impact"/>
+	    <impact-reports alias="/nn-bomb/impact-reports"/>
+	</submodel>
+
+	<!-- Tallboy earthquake bombs: index = 12 -->
+	<submodel n="12">
+	    <name>Tallboy</name>
+	    <model alias="/nn-bomb/model"/>
+	    <trigger>controls/armament/station[12]/trigger</trigger>
+	    <speed alias="/nn-bomb/speed"/>
+	    <repeat alias="/nn-bomb/repeat"/>
+	    <count>0</count>
+	    <offsets>
+		<x-m>18.29</x-m>		<!-- 60ft from nose -->
+		<y-m> 0.0 </y-m>
+		<z-m>-0.15</z-m>		<!-- 0.5ft inside -->
+		<heading-deg>0</heading-deg>
+		<pitch-deg>-3.35</pitch-deg>
+	    </offsets>
+	    <eda alias="/nn-bomb/eda"/>
+	    <cd alias="/nn-bomb/cd"/>
+	    <weight>12000</weight>
+	    <life alias="/nn-bomb/life"/>
+	    <buoyancy alias="/nn-bomb/buoyancy"/>
+	    <aero-stabilise alias="/nn-bomb/aero-stabilise"/>
+	    <wind alias="/nn-bomb/wind"/>
+	    <collision alias="/nn-bomb/collision"/>
+	    <impact alias="/nn-bomb/impact"/>
+	    <impact-reports alias="/nn-bomb/impact-reports"/>
+	</submodel>
+
+    </PropertyList>

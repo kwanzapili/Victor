@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <path>armament-panel.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <!-- number of units -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>rip-qty-x1</object-name>
+	<property>controls/armament/units</property>
+	<factor>0.1</factor>
+	<axis><y>-1</y></axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>rip-qty-x10</object-name>
+	<property>controls/armament/units</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<axis><y>-1</y></axis>
+    </animation>
+
+    <!-- station number -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>rip-intvl-x1</object-name>
+	<property>controls/armament/station-select</property>
+	<factor>0.1</factor>
+	<axis><y>-1</y></axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>rip-intvl-x10</object-name>
+	<property>controls/armament/station-select</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<axis><y>-1</y></axis>
+    </animation>
+
+    <!-- lighting -->
+    <animation include="Models/Instruments/Lighting/panel-low.xml">
+	<object-name>rip-qty</object-name>
+    </animation>
+
+    <!--LOD-->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>
+

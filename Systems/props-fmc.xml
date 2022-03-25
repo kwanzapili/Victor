@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <aar-state type="int">0</aar-state>
+    <altitude-ft type="int">30000</altitude-ft>
+    <AoA>
+	<active type="bool">false</active>
+	<alpha-deg type="float">0.0</alpha-deg>
+	<indexer>
+	    <too-slow-deg type="float">0.0</too-slow-deg>
+	    <slow-deg type="float">0.0</slow-deg>
+	    <fast-deg type="float">-0.0</fast-deg>
+	    <too-fast-deg type="float">-0.0</too-fast-deg>
+	</indexer>
+    </AoA>
+    <approach>
+	<descent-rate-fpm type="float">0.0</descent-rate-fpm>
+	<final-alt-ft type="int">4000</final-alt-ft>
+	<final-dist-nm type="float">200.0</final-dist-nm>
+	<final-to-dest-nm type="float">0.0</final-to-dest-nm>
+	<initial-alt-ft type="int">5000</initial-alt-ft>
+	<initial-dist-nm type="float">200.0</initial-dist-nm>
+	<initial-to-dest-nm type="float">0.0</initial-to-dest-nm>
+    </approach>
+    <avg-climb-angle-rad type="float">0.0</avg-climb-angle-rad>
+    <bank-angle>
+	<heading type="float">0.0</heading>
+	<nav type="float">0.0</nav>
+	<tacan type="float">0.0</tacan>
+	<approach type="float">0.0</approach>
+	<limit-min type="float">0.0</limit-min>
+	<limit-max type="float">0.0</limit-max>
+    </bank-angle>
+    <changeover-alt type="int">0</changeover-alt>
+    <changeover-mode type="bool">false</changeover-mode>
+    <climb-alt-ft type="int">0</climb-alt-ft>
+    <climb-keas type="int">0</climb-keas>
+    <climb-mach type="float">0.0</climb-mach>
+    <climb-rate-fpm type="int">0</climb-rate-fpm>
+    <climb-speed type="int">350</climb-speed>
+    <CoG-state type="int">0</CoG-state>
+    <course-deg type="double">0</course-deg>
+    <cruise-alt-ft type="int">0</cruise-alt-ft>
+    <cruise-mach type="float">0.0</cruise-mach>
+    <cruise-speed type="int">0</cruise-speed>
+    <deceleration-alt type="int">0</deceleration-alt>
+    <dep-alt-ft type="int">0</dep-alt-ft>
+    <dep-alt-m type="float">0</dep-alt-m>
+    <descend-keas type="int">0</descend-keas>
+    <descend-mach type="float">0.0</descend-mach>
+    <descend-speed type="int">0</descend-speed>
+    <flight-control-flare-mode type="bool">false</flight-control-flare-mode>
+    <flight-control-flight-mode type="bool">false</flight-control-flight-mode>
+    <flight-control-ground-mode type="bool">true</flight-control-ground-mode>
+    <flight-control-retard-mode type="bool">false</flight-control-retard-mode>
+    <flight-control-rollout-mode type="bool">false</flight-control-rollout-mode>
+    <flight-mode type="int">0</flight-mode>
+    <landing>
+	<commit type="bool">false</commit>
+	<est-weight-lbs type="int">150000</est-weight-lbs>
+	<descent-rate-est type="float">0.0</descent-rate-est>
+	<descent-rate-ratio type="float">0.0</descent-rate-ratio>
+	<descent-rate-target type="float">0.0</descent-rate-target>
+	<go-around type="bool">false</go-around>
+	<monitor type="bool">false</monitor>
+	<under-weight type="bool">false</under-weight>
+    </landing>
+    <limit-pitch-deg-max type="float">0.0</limit-pitch-deg-max>
+    <limit-pitch-deg-min type="float">0.0</limit-pitch-deg-min>
+    <limit-vs-fps-max type="float">100</limit-vs-fps-max>
+    <limit-vs-fps-min type="float">-80</limit-vs-fps-min>
+    <next-heading-diff-deg type="float">0</next-heading-diff-deg>
+    <roc-lock type="bool">false</roc-lock>
+    <speed-min-keas type="int">0</speed-min-keas>
+    <speed-min-kias type="int">0</speed-min-kias>
+    <tacan-mins type="int">0</tacan-mins>
+    <tacan-secs type="int">0</tacan-secs>
+    <TAS-kt alias="/fdm/jsbsim/velocities/vtrue-kts"/>
+    <throttle-lock type="bool">false</throttle-lock>
+    <top-of-climb-dist-nm type="float">0.0</top-of-climb-dist-nm>
+    <top-of-climb-eta-sec type="float">10000</top-of-climb-eta-sec>
+    <top-of-descent-dist-nm type="float">0.0</top-of-descent-dist-nm>
+    <top-of-descent-eta-sec type="float">10000</top-of-descent-eta-sec>
+    <transition-ft type="int">0</transition-ft>
+    <turn-distance-nm type="float">0</turn-distance-nm>
+    <turn-radius-nm type="float">0.0</turn-radius-nm>
+    <vspeeds>
+	<!-- The speed beyond which takeoff should no longer be aborted. -->
+	<V1 type="int">0</V1>
+	<!-- Takeoff safety speed. -->
+	<V2 type="int">0</V2>
+	<!-- Final approach speed -->
+	<Vapp type="int">150</Vapp>
+	<!-- Lowest Selectable Speed -->
+	<Vls type="int">0</Vls>
+	<!-- Rotation speed. -->
+	<VR type="int">0</VR>
+	<!-- Landing reference speed or threshold crossing speed. -->
+	<Vref type="int">138</Vref>
+	<!-- Stall speed or minimum steady flight speed -->
+	<Vso type="int">120</Vso>
+	<!-- Minimum touchdown speed is usually 1.15 x Vstall -->
+	<Vtd type="int">135</Vtd>
+
+	<!-- The following attributes are constants unlike the ones above -->
+	<!-- Maximum speed when brakes can be used  -->
+	<V-brakes-kt type="int">200</V-brakes-kt>
+	<!-- Maximum speed at which the drag chute can be deployed (unrestricted). -->
+	<V-dragchute-kt type="int">235</V-dragchute-kt>
+    </vspeeds>
+    <wp-turn-on type="bool">false</wp-turn-on>
+
+    <!-- The following attributes are constants unlike the ones above -->
+    <parameters>
+	<!-- if the signal is lost above these heights, then go around -->
+	<gs-agl type="int">150</gs-agl>
+	<loc-agl type="int">125</loc-agl>
+    </parameters>
+
+</PropertyList>

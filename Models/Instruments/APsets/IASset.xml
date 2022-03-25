@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<PropertyList>
+
+    <path>IASset.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>IASSetFrame2</object-name>
+	<object-name>Button11</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>SetIAS-H</object-name>
+	<object-name>SetIAS-D</object-name>
+	<object-name>SetIASFix</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection3</name>
+	<object-name>IASSETPLUS</object-name>
+	<object-name>IASSETMINUS</object-name>
+    </animation>
+
+    <!-- objects we do not need -->
+    <animation>
+	<type>select</type>
+	<object-name>Collection3</object-name>
+    </animation>   
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection2</object-name>
+    </animation>
+
+    <animation>
+	<type>material</type>
+	<object-name>IASSETON</object-name>
+	<emission>
+	    <red>  0.0</red>
+	    <green>0.9</green>
+	    <blue> 0.0</blue>
+	</emission>
+	<ambient>
+	    <red>  0.0</red>
+	    <green>1.0</green>
+	    <blue> 0.0</blue>
+	</ambient>
+    </animation>
+
+    <!-- Check if AP IAS is set on and light on the green led-->
+    <animation>
+	<type>select</type>
+	<object-name>IASSETON</object-name>
+	<condition>
+	    <equals>
+		<property>/controls/switches/autothrottle</property>
+		<value type="bool">true</value>
+	    </equals>
+	</condition>
+    </animation> 
+
+    <!-- IAS set indicator Singles digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetIASFix</object-name>
+	<property>/instrumentation/flightdirector/speed-select</property>
+	<factor> 0.1 </factor>
+	<step> 1 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- IAS set indicator Deca digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetIAS-D</object-name>
+	<property>/instrumentation/flightdirector/speed-select</property>
+	<factor> 0.01 </factor>
+	<step> 10 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- IAS set indicator Hundreds digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetIAS-H</object-name>
+	<property>/instrumentation/flightdirector/speed-select</property>
+	<factor> 0.001 </factor>
+	<step> 100 </step>
+	<scroll> 1 </scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- IAS knob -->
+    <animation>
+	<type>knob</type>
+	<object-name>Button11</object-name>
+	<value>0.0</value>
+	<center>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 0 </z-m>
+	</center>
+	<axis>
+	    <x> -1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>600</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<factor>10</factor>
+		<min>0</min>
+		<max>600</max>
+		<wrap>false</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Airspeed %3d kt</label>
+		<property>/instrumentation/flightdirector/speed-select</property>
+		<tooltip-id>speed-select</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- End IAS setting -->
+
+    <!-- *** LoD for the whole model *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

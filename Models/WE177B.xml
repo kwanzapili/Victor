@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <path>WE177B.ac</path>
+
+    <animation>
+	<type>select</type>
+	<object-name>WE177B</object-name>
+	<condition>
+	    <and>
+		<greater-than>
+		    <property>controls/doors/bomb-bay/position-norm</property>
+		    <value>0.05</value>
+		</greater-than>
+		<greater-than>
+		    <property>controls/armament/station[9]/units</property>
+		    <value>0</value>
+		</greater-than>
+	    </and>
+	</condition>
+    </animation>
+
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>10000</max-m>
+    </animation>
+
+</PropertyList>

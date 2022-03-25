@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>mission</name>
+    <layout>vbox</layout>
+    <pref-width>540</pref-width>
+
+    <group>
+	<layout>hbox</layout>
+	<empty><stretch type="bool">true</stretch></empty>
+
+	<text>
+	    <label>Victor</label>
+	</text>
+
+	<empty><stretch type="bool">true</stretch></empty>
+
+	<button>
+	    <halign>right</halign>
+	    <pref-width>20</pref-width>
+	    <pref-height>20</pref-height>
+	    <legend>X</legend>
+	    <key>Esc</key>
+	    <binding>
+		<command>dialog-close</command>
+	    </binding>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</button>
+    </group>
+
+    <hrule>
+	<color>
+	    <red>  1.0</red>
+	    <green>0.0</green>
+	    <blue> 1.0</blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <!-- Start of Aircraft Types and Payload -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Aircraft and Payload</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+	<enable>
+	    <and>
+		<property>/instrumentation/fmc/flight-control-ground-mode</property>
+		<less-than>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>3</value>    <!-- TAXI -->
+		</less-than>
+	    </and>
+	</enable>
+
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Variant</label>
+	</text>
+	<combo>
+	    <row>1</row>
+	    <col>0</col>
+	    <property>/sim/variant/name</property>
+	    <value>B1</value>
+	    <value>B1A</value>
+	    <value>B2</value>
+	    <value>B2RS</value>
+	    <value>BSR2</value>
+	    <value>K2</value>
+	    <value>K2P</value>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</combo>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Mission</label>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>100</pref-width>
+	    <color>
+		<red>0.0</red>
+		<green>1.0</green>
+		<blue>1.0</blue>
+	    </color>
+	    <property>/sim/armament/mission</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <label>Main Weapon</label>
+	</text>
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>1.0</red>
+		<green>0.0</green>
+		<blue>1.0</blue>
+	    </color>
+	    <label>main weapon</label> <!-- placeholder for width -->
+	    <property>/controls/armament/main-weapon</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>3</col>
+	    <color>
+		<red>0.0</red>
+		<green>1.0</green>
+		<blue>0.8</blue>
+	    </color>
+	    <label>[ Shrikes Loaded ]</label>
+	    <visible>
+		<property>/controls/armament/shrikes</property>
+	    </visible>
+	</text>
+	<text>
+	    <row>0</row>
+	    <col>3</col>
+	    <color>
+		<red>0.0</red>
+		<green>0.5</green>
+		<blue>1.0</blue>
+	    </color>
+	    <label>[ No Shrikes ]</label>
+	    <visible>
+		<not>
+		    <property>/controls/armament/shrikes</property>
+		</not>
+	    </visible>
+	</text>
+
+	<button>
+	    <row>1</row>
+	    <col>3</col>
+	    <enable>
+		<and>
+		    <property>/sim/variant/shrikes</property>
+		    <not-equals>
+			<property>/sim/armament/mission</property>
+			<value>Clean</value>
+		    </not-equals>
+		    <not-equals>
+			<property>/sim/armament/mission</property>
+			<value>Black Buck One</value>
+		    </not-equals>
+		    <not-equals>
+			<property>/sim/armament/mission</property>
+			<value>Black Buck Six</value>
+		    </not-equals>
+		    <not-equals>
+			<property>/sim/armament/mission</property>
+			<value>Full Works</value>
+		    </not-equals>
+		</and>
+	    </enable>
+	    <legend>Toggle Shrikes</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_shrikes()</script>
+	    </binding>
+	</button>
+
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <!-- Start of Mission Selection -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Mission Selection</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+	<enable>
+	    <and>
+		<property>/instrumentation/fmc/flight-control-ground-mode</property>
+		<less-than>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>3</value>    <!-- TAXI -->
+		</less-than>
+	    </and>
+	</enable>
+
+	<!-- row 1 -->
+	<button>
+	    <row>0</row>
+	    <col>0</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/shrikes</property>
+	    </enable>
+	    <legend>Black Buck 6</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Black Buck Six")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/bomber</property>
+	    </enable>
+	    <legend>Black Buck 1</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Black Buck One")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nmissile</property>
+	    </enable>
+	    <legend>Blue Steel</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Blue Steel")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>0</row>
+	    <col>3</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nbomber</property>
+	    </enable>
+	    <legend>Blue Danube</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Blue Danube")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>0</row>
+	    <col>4</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nbomber</property>
+	    </enable>
+	    <legend>Red Beard</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Red Beard")</script>
+	    </binding>
+	</button>
+
+	<!-- row 2 -->
+	<button>
+	    <row>1</row>
+	    <col>0</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nbomber</property>
+	    </enable>
+	    <legend>WE177A</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("WE177A")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nbomber</property>
+	    </enable>
+	    <legend>WE177B</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("WE177B")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/nbomber</property>
+	    </enable>
+	    <legend>Yellow Sun</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Yellow Sun")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>1</row>
+	    <col>3</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/bomber</property>
+	    </enable>
+	    <legend>Grand Slam</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Grand Slam")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>1</row>
+	    <col>4</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/bomber</property>
+	    </enable>
+	    <legend>Tallboy</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Tallboy")</script>
+	    </binding>
+	</button>
+
+	<!-- row 3 -->
+	<button>
+	    <row>2</row>
+	    <col>0</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/bomber</property>
+		<property>/sim/variant/shrikes</property>
+	    </enable>
+	    <legend>Full Works</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Full Works")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>2</row>
+	    <col>1</col>
+	    <pref-width>95</pref-width>
+	    <legend>Clean</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Clean")</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>2</row>
+	    <col>3</col>
+	    <pref-width>95</pref-width>
+	    <enable>
+		<property>/sim/variant/tanker</property>
+	    </enable>
+	    <legend>Tanker</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.requestMission("Clean")</script>
+	    </binding>
+	</button>
+
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <!-- Start of Weapons -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Weapons Buttons</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+
+	<!-- row 1 -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Station</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <color>
+		<red>0.4</red>
+		<green>1.0</green>
+		<blue>0.6</blue>
+	    </color>
+	    <label> Blue Danube </label>	<!-- placeholder -->
+	    <format> %s</format>
+	    <halign>center</halign>
+	    <property>/controls/armament/current-weapon</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>1.0</red>
+		<green>0.5</green>
+		<blue>0.0</blue>
+	    </color>
+	    <label>UnArmed / XX</label> <!-- placeholder for width -->
+	    <property>/controls/armament/status</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- row 2 -->
+	<combo>
+	    <row>1</row>
+	    <col>0</col>
+	    <property>/controls/armament/station-select</property>
+	    <value>0</value>
+	    <value>1</value>
+	    <value>2</value>
+	    <value>3</value>
+	    <value>4</value>
+	    <value>5</value>
+	    <value>6</value>
+	    <value>7</value>
+	    <value>8</value>
+	    <value>9</value>
+	    <value>10</value>
+	    <value>11</value>
+	    <value>12</value>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.selectedStnStatus()</script>
+	    </binding>
+	</combo>
+
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <enable>
+		<and>
+		    <property>/controls/armament/safe-to-release</property>
+		    <not-equals>
+			<property>/controls/armament/status</property>
+			<value>Empty</value>
+		    </not-equals>
+		</and>
+	    </enable>
+	    <legend>Fire Weapon</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.fireWeapon()</script>
+	    </binding>
+	</button>
+
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <legend>Toggle Armed</legend>
+	    <enable>
+		<property>/controls/armament/master-arm</property>
+		<not-equals>
+		    <property>/controls/armament/status</property>
+		    <value>Empty</value>
+		</not-equals>
+	    </enable>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleArmed()</script>
+	    </binding>
+	</button>
+
+    </group>
+
+    <empty><stretch type="bool">true</stretch></empty>
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

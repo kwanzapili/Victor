@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <!-- =============================================================== -->
+    <!-- 		Logic-controlled properties			 -->
+    <!-- =============================================================== -->
+
+    <!-- Lateral modes -->
+    <logic>
+	<name>Lateral mode on</name>
+	<input>
+	    <property>/instrumentation/flightdirector/autopilot-engage</property>
+	    <or>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>dg-heading-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>true-heading-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>nav1-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>wing-leveler</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>tacan-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/heading</property>
+		    <value>runway-heading</value>
+		</equals>
+	    </or>
+	</input>
+	<output>/autopilot/internal/lateral-mode-engaged</output>
+    </logic>
+
+    <!-- Vertical modes in which throttle may be used -->
+    <logic>
+	<name>Vertical modes using throttle</name>
+	<input>
+	    <or>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>altitude-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>agl-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>vertical-speed-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>gs1-hold</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>aoa-hold</value>
+		</equals>
+	    </or>
+	</input>
+	<output>/autopilot/internal/vertical-throttle-mode</output>
+    </logic>
+
+    <!-- Vertical modes in which pitch trim is used -->
+    <logic>
+	<name>Vertical modes using pitch or throttle</name>
+	<input>
+	    <or>
+		<equals>
+		    <property>/autopilot/locks/altitude</property>
+		    <value>pitch-hold</value>
+		</equals>
+		<!-- and the above modes too -->
+		<property>/autopilot/internal/vertical-throttle-mode</property>
+	    </or>
+	</input>
+	<output>/autopilot/internal/vertical-pitch-mode</output>
+    </logic>
+
+    <!-- Speed modes in which pitch trim is used -->
+    <logic>
+	<name>Speed modes using pitch</name>
+	<input>
+	    <or>
+		<equals>
+		    <property>/autopilot/locks/speed</property>
+		    <value>speed-with-pitch-trim</value>
+		</equals>
+		<equals>
+		    <property>/autopilot/locks/speed</property>
+		    <value>mach-with-pitch-trim</value>
+		</equals>
+	    </or>
+	</input>
+	<output>/autopilot/internal/speed-pitch-mode</output>
+    </logic>
+
+    <!-- All modes using pitch will lock RoC -->
+    <logic>
+	<name>RoC Lock</name>
+	<input>
+	    <property>/instrumentation/flightdirector/autopilot-engage</property>
+	    <or>
+		<property>/autopilot/internal/vertical-pitch-mode</property>
+		<property>/autopilot/internal/speed-pitch-mode</property>
+	    </or>
+	</input>
+	<output>/instrumentation/fmc/roc-lock</output>
+    </logic>
+
+    <!-- All modes using throttle will lock it -->
+    <logic>
+	<name>Throttle Lock</name>
+	<input>
+	    <or>
+		<and>
+		    <!-- autothrottle is set manually -->
+		    <property>/instrumentation/flightdirector/autothrottle-engage</property>
+		    <not-equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>0</value>        <!-- OFF -->
+		    </not-equals>
+		    <or>
+			<!-- but not in speed-pitch mode -->
+			<not>
+			    <property>/autopilot/internal/speed-pitch-mode</property>
+			</not>
+			<!-- in speed-pitch mode with a vertical mode using throttle -->
+			<and>
+			    <property>/autopilot/internal/speed-pitch-mode</property>
+			    <property>/autopilot/internal/vertical-throttle-mode</property>
+			</and>
+		    </or>
+		</and>
+		<!-- throttle idle needs to lock the throttle lever at zero -->
+		<equals>
+		    <property>/instrumentation/flightdirector/spd</property>
+		    <value>5</value>        <!-- THR IDLE -->
+		</equals>
+	    </or>
+	</input>
+	<output>/instrumentation/fmc/throttle-lock</output>
+    </logic>
+
+
+    <!-- ~~~~~~~~~ Flight Modes ~~~~~~~~~ -->
+
+    <!-- Ground mode -->
+    <logic>
+	<name>ground mode</name>
+	<input>
+	    <and>
+		<!-- a wing and body wheel is on the ground -->
+		<or>
+		    <property>/gear/gear[1]/wow</property>
+		    <property>/gear/gear[4]/wow</property>
+		</or>
+		<or>
+		    <property>/gear/gear[2]/wow</property>
+		    <property>/gear/gear[3]/wow</property>
+		</or>
+	    </and>
+	</input>
+	<output>
+	    <property>/instrumentation/fmc/flight-control-ground-mode</property>
+	</output>
+    </logic>
+
+    <!-- Flare mode -->
+    <logic>
+	<name>flare mode</name>
+	<input>
+	    <and>
+		<equals>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>9</value>
+		</equals>
+		<less-than>
+		    <property>/position/gear-agl-ft</property>
+		    <value>100</value>
+		</less-than>
+	    </and>
+	</input>
+	<output>
+	    <property>/instrumentation/fmc/flight-control-flare-mode</property>
+	</output>
+    </logic>
+
+    <!-- General flight -->
+    <logic>
+	<name>flight mode</name>
+	<input>
+	    <and>
+		<not>
+		    <property>/instrumentation/fmc/flight-control-ground-mode</property>
+		</not>
+		<greater-than>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>5</value>
+		</greater-than>
+		<less-than>
+		    <property>/instrumentation/fmc/flight-mode</property>
+		    <value>10</value>
+		</less-than>
+	    </and>
+	</input>
+	<output>
+	    <property>/instrumentation/fmc/flight-control-flight-mode</property>
+	</output>
+    </logic>
+
+
+    <!-- =============================================================== -->
+    <!-- 			Lateral helpers				 -->
+    <!-- =============================================================== -->
+
+    <!--
+	Transfer the heading bug value from the internal repository to the
+	autopilot/settings> We do not use a limiter here because the values
+	move in either +ve or -ve directions.
+    -->
+    <filter>
+	<name>Synchronise heading bug</name>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<enable>
+	    <condition>
+		<property>/autopilot/internal/lateral-mode-engaged</property>
+	    </condition>
+	</enable>
+	<input>
+	    <property>/autopilot/internal/settings/heading-bug-deg</property>
+	</input>
+	<output>/autopilot/settings/heading-bug-deg</output>
+	<period>
+	    <min> 0 </min>
+	    <max>360</max>
+	</period>
+    </filter>
+
+    <!--
+	We need to sample the current roll in order minimise control transients
+	when a lateral mode is engaged.
+    -->
+    <filter>
+	<name>Synchronise roll degree</name>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<enable>
+	    <condition>
+		<not>
+		    <property>/autopilot/internal/lateral-mode-engaged</property>
+		</not>
+	    </condition>
+	</enable>
+	<input>
+	    <property>/instrumentation/master-reference-gyro/indicated-roll-deg</property>
+	</input>
+	<output>/autopilot/internal/target-roll-deg</output>
+    </filter>
+
+
+    <!-- =============================================================== -->
+    <!-- 			Altitude helpers			 -->
+    <!-- =============================================================== -->
+
+    <!--
+	Transfer the altitude value from the internal repository to the
+	autopilot/settings using a limiter to prevent execessive fluctuations.
+	This replaces a listener to altitude settings changes and automatically deals
+	with mode changes (e.g. cruise altitude).
+    -->
+    <filter>
+	<name>Synchronise altitude setting</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autopilot-engage</property>
+		<property>/instrumentation/fmc/roc-lock</property>
+	    </condition>
+	</enable>
+	<type>noise-spike</type>
+	<max-rate-of-change>3000</max-rate-of-change>	<!-- 3000 ft per sec -->
+	<input>/autopilot/internal/settings/target-altitude-ft</input>
+	<output>/autopilot/settings/target-altitude-ft</output>
+    </filter>
+
+    <!-- =============================================================== -->
+    <!-- 		Vertical Speed helpers				 -->
+    <!-- =============================================================== -->
+
+    <!--
+	Transfer the vertical speed value from the internal repository to the
+	autopilot/settings using a limiter to prevent execessive fluctuations.
+	This replaces a listener to VFPM settings changes and automatically deals
+	with mode changes (e.g. managed/selected climb/descend).
+	Since the pitch is limited to 3 deg/s, the change in VS is defined by
+	3 / Kp ~ 43 fps/s or 2,500 fpm.
+    -->
+    <filter>
+	<name>Synchronise VFPM setting</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autopilot-engage</property>
+	    </condition>
+	</enable>
+	<type>noise-spike</type>
+	<max-rate-of-change>2500</max-rate-of-change>	<!-- 2500 fpm per sec -->
+	<input>/autopilot/internal/settings/vertical-speed-fpm</input>
+	<output>/autopilot/settings/vertical-speed-fpm</output>
+    </filter>
+
+
+    <!-- =============================================================== -->
+    <!-- 			Speed helpers				 -->
+    <!-- =============================================================== -->
+
+    <!--
+	We use these rate limiters to limit the rate of change of the speed
+	setting for "speed-with-pitch-trim" or "mach-with-pitch-trim".
+	Without them, the pitch would oscillate wildly as it tries to match
+	the new targets.
+    -->
+    <filter>
+	<name>Pitch mode speed knots</name>
+	<type>noise-spike</type>
+	<max-rate-of-change>5.0</max-rate-of-change>	<!-- 3.0 knot/sec -->
+	<!-- true source -->
+	<input>
+	    <condition>
+		<property>/autopilot/internal/speed-pitch-mode</property>
+	    </condition>
+	    <property>/instrumentation/flightdirector/speed-select</property>
+	</input>
+	<!-- sample speed in order to avoid control transients when engaged -->
+	<input>
+	    <property>/instrumentation/airspeed-indicator[0]/indicated-speed-kt</property>
+	</input>
+	<output>/autopilot/internal/speed-with-pitch-kt</output>
+    </filter>
+
+    <filter>
+	<name>Pitch mode speed mach</name>
+	<type>noise-spike</type>
+	<max-rate-of-change>0.01</max-rate-of-change>	<!-- 0.01 Mach/sec -->
+	<!-- true source -->
+	<input>
+	    <condition>
+		<property>/autopilot/internal/speed-pitch-mode</property>
+	    </condition>
+	    <property>/instrumentation/flightdirector/mach-select</property>
+	</input>
+	<!-- sample speed in order to avoid control transients when engaged -->
+	<input>
+	    <property>/instrumentation/airspeed-indicator[0]/indicated-mach</property>
+	</input>
+	<output>/autopilot/internal/speed-with-pitch-mach</output>
+    </filter>
+
+    <!--
+	Transfer the speed values from the internal repository to the
+	autopilot/settings using a limiter to prevent execessive fluctuations.
+	This replaces a listener to speed/mach settings changes and automatically deals
+	with mode changes (e.g. managed/selected speed), including the above filer's
+	output.
+    -->
+
+    <filter>
+	<name>Synchronise speed knots setting</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autothrottle-engage</property>
+	    </condition>
+	</enable>
+	<type>noise-spike</type>
+	<max-rate-of-change>50</max-rate-of-change>	<!-- 50 knots per sec -->
+	<input>/autopilot/internal/settings/target-speed-kt</input>
+	<output>/autopilot/settings/target-speed-kt</output>
+    </filter>
+
+    <filter>
+	<name>Synchronise Mach setting</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autothrottle-engage</property>
+	    </condition>
+	</enable>
+	<type>noise-spike</type>
+	<max-rate-of-change>0.1</max-rate-of-change>	<!-- 0.1 mach per sec -->
+	<input>/autopilot/internal/settings/target-speed-mach</input>
+	<output>/autopilot/settings/target-speed-mach</output>
+    </filter>
+
+    <!--
+	Adjust the throttle lever in speed-pitch mode so that the speed
+	error remains within some limit. If the error exceeds an upper
+	bound, then reduce the throttle gently. If it is below a lower bound,
+	then increase the throttle gently.
+    -->
+
+    <!-- First work out the necessary adjustment factor. -->
+    <filter>
+	<name>Speed with pitch adjustment</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autothrottle-engage</property>
+		<property>/autopilot/internal/speed-pitch-mode</property>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<!-- Mach mode -->
+	<input>
+	    <condition>
+		<property>/instrumentation/flightdirector/mach-mode</property>
+	    </condition>
+	    <expression>
+		<table>
+		    <property>/autopilot/internal/speed-error-mach-x10</property>
+		    <entry>
+			<ind> -0.5 </ind><dep> 1.002</dep>
+		    </entry>
+		    <entry>
+			<ind> -0.2 </ind><dep> 1.00 </dep>
+		    </entry>
+		    <entry>
+			<ind> 0.3 </ind><dep> 1.00 </dep>
+		    </entry>
+		    <entry>
+			<ind> 0.5 </ind><dep> 0.998 </dep>
+		    </entry>
+		</table>
+	    </expression>
+	</input>
+	<!-- Mach mode -->
+	<input>
+	    <expression>
+		<table>
+		    <property>/autopilot/internal/speed-error-kt</property>
+		    <entry>
+			<ind> -30 </ind><dep> 1.002</dep>
+		    </entry>
+		    <entry>
+			<ind> -10 </ind><dep> 1.00 </dep>
+		    </entry>
+		    <entry>
+			<ind> 20 </ind><dep> 1.00 </dep>
+		    </entry>
+		    <entry>
+			<ind> 30 </ind><dep> 0.998 </dep>
+		    </entry>
+		</table>
+	    </expression>
+	</input>
+	<output>/autopilot/internal/speed-pitch-adj-factor</output>
+    </filter>
+
+    <!-- Then apply this factor to the throttle lever -->
+    <filter>
+	<name>Throttle lever</name>
+	<debug>false</debug>
+	<type>gain</type>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/autothrottle-engage</property>
+		<property>/autopilot/internal/speed-pitch-mode</property>
+	    </condition>
+	</enable>
+	<gain>
+	    <property>/autopilot/internal/speed-pitch-adj-factor</property>
+	</gain>
+	<input>
+	    <property>/controls/engines/engine[0]/throttle</property>
+	</input>
+	<output>
+	    <property>/autopilot/internal/throttle-lever</property>
+	</output>
+	<u_min>0.01</u_min>
+	<u_max>0.99</u_max>
+    </filter>
+
+    <!--
+	Sample and hold the current throttle positions. This is necessary
+	in order minimise control transients when autothrottle is engaged.
+    -->
+    <filter>
+	<name>Throttle Servo Sampling</name>
+	<debug>false</debug>
+	<type>gain</type>
+	<enable>
+	    <condition>
+		<not>
+		    <property>/instrumentation/flightdirector/autothrottle-engage</property>
+		</not>
+	    </condition>
+	</enable>
+	<gain> 1.0 </gain>
+	<input>
+	    <property>/controls/engines/engine[0]/throttle</property>
+	</input>
+	<output>
+	    <property>/autopilot/internal/throttle-servo</property>
+	</output>
+	<!-- also to the throttle lever -->
+	<output>
+	    <property>/autopilot/internal/throttle-lever</property>
+	</output>
+    </filter>
+
+
+    <!-- =============================================================== -->
+    <!-- 			Autoland helpers			 -->
+    <!-- =============================================================== -->
+
+    <!--
+	Save the radial heading in the heading bug for later use in the runway mode.
+	This stops updating once the LOCaliser signal is lost. So it hold the last
+	best estimate of the runway's direction.
+    -->
+    <filter>
+	<name>Save runway heading</name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/flightdirector/loc-arm</property>
+		<!-- managed lateral mode -->
+		<equals>
+		    <property>/instrumentation/flightdirector/lateral-managed-mode</property>
+		    <value>-1</value>
+		</equals>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<!-- use the LOCaliser radials when we have a lock -->
+	<input>
+	    <condition>
+		<property>/instrumentation/flightdirector/loc-enable</property>
+	    </condition>
+	    <property>/instrumentation/nav[0]/radials/target-radial-deg</property>
+	</input>
+	<!-- Source from the GPS if available -->
+	<input>
+	    <condition>
+		<property>/instrumentation/gps/wp/wp[1]/valid</property>
+	    </condition>
+	    <property>/instrumentation/gps/wp/wp[1]/bearing-true-deg</property>
+	</input>
+	<!-- otherwise, use the current heading -->
+	<input>
+	    <property>/orientation/heading-deg</property>
+	</input>
+	<output>/instrumentation/heading-indicator/heading-bug-deg</output>
+	<period>
+	    <min>  0</min>
+	    <max>360</max>
+	</period>
+    </filter>
+
+    <!--
+	When landing, 3 nm of travel should be allowed for every 1,000 feet descent.
+	We evaluate the necessary descent rate to the runway from the current position.
+	The actual rate varies as we approach the landing zone, starting from about -350 ft/nm
+	to about -600 ft/nm at flare.
+    -->
+    <filter>
+	<name>Landing descent rate estimate </name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/fmc/landing/monitor</property>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+		<not>
+		    <property>/instrumentation/fmc/landing/go-around</property>
+		</not>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>-1.0</gain>	<!-- descending -->
+	<!-- use the route-manager values when available -->
+	<input>
+	    <condition>
+		<property>/autopilot/route-manager/active</property>
+		<greater-than>
+		    <property>/autopilot/route-manager/wp-last/dist</property>
+		    <value>0.18</value>	<!-- ignore the last 0.18 nm (~150 ft) -->
+		</greater-than>
+	    </condition>
+	    <expression>
+		<div>
+		    <property>/position/gear-agl-ft</property>
+		    <property>/autopilot/route-manager/wp-last/dist</property>
+		</div>
+	    </expression>
+	</input>
+	<!-- otherwise, use the standard rate -->
+	<input>
+	    <property>/instrumentation/fmc/landing/descent-rate-target</property>
+	</input>
+	<output>/instrumentation/fmc/landing/descent-rate-est</output>
+	<u_min>-1000</u_min>
+	<u_max>  0  </u_max>
+    </filter>
+
+    <filter>
+	<name>Landing descent rate estimate vs target </name>
+	<enable>
+	    <condition>
+		<property>/instrumentation/fmc/landing/monitor</property>
+		<property>/instrumentation/fmc/flight-control-flight-mode</property>
+		<not>
+		    <property>/instrumentation/fmc/landing/go-around</property>
+		</not>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<input>
+	    <expression>
+		<div>
+		    <property>/instrumentation/fmc/landing/descent-rate-est</property>
+		    <property>/instrumentation/fmc/landing/descent-rate-target</property>
+		</div>
+	    </expression>
+	</input>
+	<output>/instrumentation/fmc/landing/descent-rate-ratio</output>
+    </filter>
+
+
+    <!-- =============================================================== -->
+    <!-- 			Calculator filters			 -->
+    <!-- =============================================================== -->
+
+    <!-- ~~~~~~~~ Estimate Fuel Consumption ~~~~~~~~ -->
+
+    <filter>
+	<name>Fuel Consumption Trend Rate Computer</name>
+	<debug>false</debug>
+	<update-interval-secs type="double">10.0</update-interval-secs>
+	<type>derivative</type>
+	<input>consumables/fuel/total-used-lbs</input>
+	<output>consumables/fuel/total-use-lbs-per-min</output>
+	<filter-time>60.0</filter-time>
+    </filter>
+
+    <filter>
+	<name>Fuel use to end</name>
+	<debug>false</debug>
+	<update-interval-secs type="double">10.0</update-interval-secs>
+	<enable>
+	    <condition>
+		<property>autopilot/route-manager/airborne</property>
+	    </condition>
+	</enable>
+	<type>gain</type>
+	<gain>
+	    <property>consumables/fuel/total-use-lbs-per-min</property>
+	</gain>
+	<input>
+	    <!-- Use the route manager time if available -->
+	    <condition>
+		<property>autopilot/route-manager/active</property>
+		<greater-than>
+		    <property>autopilot/route-manager/ete</property>
+		    <value> 0 </value>
+		</greater-than>
+	    </condition>
+	    <property>autopilot/route-manager/ete</property>
+	    <scale>0.016666667</scale>	<!-- to mins -->
+	</input>
+	<input>
+	    <!-- fallback assume a 5 hour flight -->
+	    <value> 300 </value>
+	</input>
+	<output>consumables/fuel/projected-use-lbs</output>
+	<u_min> 0 </u_min>
+	<u_max>consumables/fuel/total-fuel-lbs</u_max>
+    </filter>
+
+
+    <!-- =============================================================== -->
+    <!-- 		Environmental Control system			 -->
+    <!-- =============================================================== -->
+
+    <!-- adjust the cockpit temperature based on the pilot's selection -->
+    <filter>
+	<name>set cockpit temperature</name>
+	<debug>false</debug>
+	<type>noise-spike</type>
+	<input>
+	    <property>instrumentation/pressurisation/target-cabin-temperature-degc</property>
+	</input>
+	<output>
+	    <property>instrumentation/pressurisation/cabin-temperature-degc</property>
+	</output>
+	<!-- the cockpit temperature control valve requires up to 10 sec to open or close -->
+	<max-rate-of-change>0.5</max-rate-of-change>
+    </filter>
+
+    <!-- adjust the window/windshield temperature based on the heating available -->
+    <filter>
+	<name>set window temperature</name>
+	<debug>false</debug>
+	<type>noise-spike</type>
+	<input>
+	    <property>controls/anti-ice/window-heat-degc</property>
+	</input>
+	<output>
+	    <property>controls/anti-ice/window-temperature-degc</property>
+	</output>
+	<!-- the coxkpit temperature control valve requires up to 10 sec to open or close -->
+	<max-rate-of-change>0.5</max-rate-of-change>
+    </filter>
+
+    <!-- the cockpit altitude rate of change is limited to 5,000 fpm -->
+    <filter>
+	<name>adjust cockpit pressure</name>
+	<type>noise-spike</type>
+	<debug>false</debug>
+	<input>instrumentation/pressurisation/target-cabin-pressure-psi</input>
+	<output>
+	    <property>instrumentation/pressurisation/cabin-pressure-psi</property>
+	</output>
+	<max-rate-of-change>
+	    <property>controls/pressurization/cabin-pressure-rate-sec</property>
+	</max-rate-of-change>
+    </filter>
+
+    <!-- ================================================================== -->
+    <!-- Climate effects                                                    -->
+    <!-- ================================================================== -->
+
+    <filter>
+	<name>Aircraft Effect Fog Level</name>
+	<type>noise-spike</type>
+	<max-rate-of-change>0.1</max-rate-of-change>
+	<enable>
+	    <condition>
+		<not>
+		    <property>/sim/freeze/replay-state</property>
+		</not>
+	    </condition>
+	</enable>
+	<input>
+	    <property>/fdm/jsbsim/systems/heat/fog-level</property>
+	</input>
+	<output>
+	    <property>/environment/aircraft-effects/fog-level</property>
+	</output>
+    </filter>
+
+    <filter>
+	<name>Aircraft Effect Frost Level</name>
+	<type>noise-spike</type>
+	<max-rate-of-change>0.1</max-rate-of-change>
+	<enable>
+	    <condition>
+		<not>
+		    <property>/sim/freeze/replay-state</property>
+		</not>
+	    </condition>
+	</enable>
+	<input>
+	    <property>/fdm/jsbsim/systems/heat/frost-level</property>
+	</input>
+	<output>
+	    <property>/environment/aircraft-effects/frost-level</property>
+	</output>
+    </filter>
+
+</PropertyList>

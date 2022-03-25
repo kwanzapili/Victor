@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>cabin</name>
+    <modal>false</modal>
+    <layout>vbox</layout>
+    <pref-width>500</pref-width>
+
+    <empty><stretch>1</stretch></empty>
+    <text>
+	<label>Cabin environment</label>
+    </text>
+    <empty><stretch>1</stretch></empty>
+
+    <hrule>
+	<color>
+	    <red>  1.0</red>
+	    <green>0.0</green>
+	    <blue> 1.0</blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Start of Switches -->
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Pressure</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Temperature</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <label>De-icing</label>
+	</text>
+
+	<hrule>
+	    <row>1</row>
+	    <col>0</col>
+	    <colspan>3</colspan>
+	    <pref-height>2</pref-height>
+	</hrule>
+
+	<!-- Cabin Pressure switch -->
+	<text>
+	    <row>2</row>
+	    <col>0</col>
+	    <valign>bottom</valign>
+	    <label>DUMP    OFF    PRESS</label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	</text>
+
+	<!-- Cabin Temperature switch -->
+	<text>
+	    <row>2</row>
+	    <col>1</col>
+	    <valign>bottom</valign>
+	    <label>10C  15C  20C  25C  30C</label>
+	    <color>
+		<red>  0.5</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>2</col>
+	    <label>Windshield</label>
+	</text>
+
+	<!-- Cabin Pressure Mode -->
+	<slider>
+	    <row>3</row>
+	    <col>0</col>
+	    <pref-height>30</pref-height>
+	    <pref-width>150</pref-width>
+	    <default-padding>0</default-padding>
+	    <valign>top</valign>
+	    <property>/controls/switches/cabin-pressure</property>
+	    <min>-1</min>
+	    <max>1</max>
+	    <step>1</step>
+	    <live type="bool">true</live>
+	    <legend>Press Mode</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</slider>
+
+	<!-- Cabin temperature -->
+	<slider>
+	    <row>3</row>
+	    <col>1</col>
+	    <pref-height>30</pref-height>
+	    <pref-width>150</pref-width>
+	    <default-padding>0</default-padding>
+	    <valign>top</valign>
+	    <property>/controls/switches/cabin-temperature-degc</property>
+	    <min>10</min>
+	    <max>30</max>
+	    <step>1</step>
+	    <live type="bool">true</live>
+	    <legend>Temp degC</legend>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</slider>
+
+	<!-- Window heat -->
+	<checkbox>
+	    <row>3</row>
+	    <col>2</col>
+	    <width>12</width>
+	    <height>12</height>
+	    <label>Window Heat</label>
+	    <property>/controls/anti-ice/window-heat</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</checkbox>
+
+	<!-- current values -->
+
+	<text>
+	    <row>4</row>
+	    <col>0</col>
+	    <label>[ DUMP ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.5</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/controls/pressurization/mode</property>
+		    <value>-1</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>4</row>
+	    <col>0</col>
+	    <label>[  OFF  ]</label>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/controls/pressurization/mode</property>
+		    <value>0</value>
+		</equals>
+	    </visible>
+	</text>
+	<text>
+	    <row>4</row>
+	    <col>0</col>
+	    <label>[  ON  ]</label>
+	    <color>
+		<red>  0.0</red>
+		<green>1.0</green>
+		<blue> 0.0</blue>
+	    </color>
+	    <visible>
+		<equals>
+		    <property>/controls/pressurization/mode</property>
+		    <value>1</value>
+		</equals>
+	    </visible>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ</label>
+	    <format>%2d C</format>
+	    <property>/controls/switches/cabin-temperature-degc</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ</label>
+	    <format>%2d C</format>
+	    <property>/controls/anti-ice/window-temperature-degc</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+    <!-- End of switches -->
+
+    <empty><stretch>1</stretch></empty>
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

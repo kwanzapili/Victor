@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <!-- Master Caution light -->
+    <path>master-caution.ac</path>
+    <texture-path>Textures</texture-path>
+
+    <animation>
+	<type>select</type>
+	<object-name>master-caution-on</object-name>
+	<condition>
+	    <property>/instrumentation/annunciator/master-caution</property>
+	    <greater-than>
+		<property>/systems/electrical/outputs/leds</property>
+		<value>23</value>
+	    </greater-than>
+	</condition>  
+    </animation>
+
+    <!-- lighting -->
+    <animation> 
+	<object-name>master-caution-on</object-name>
+	<type>material</type>
+	<emission>
+	    <red>   1.0 </red>
+	    <green> 1.0 </green>
+	    <blue>  1.0 </blue>
+	</emission>
+    </animation>
+
+    <animation>
+	<type>pick</type>
+	<object-name>master-caution-on</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>property-toggle</command>
+		<property>/instrumentation/annunciator/master-caution</property>
+	    </binding>
+	</action>
+    </animation>
+
+</PropertyList>

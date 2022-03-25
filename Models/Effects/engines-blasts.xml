@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- Engine blasts -->
+    <model>
+	<name>Engine1 Puff</name>
+	<path>Aircraft/victor/Models/Effects/engblast1.xml</path>
+	<offsets>
+	    <x-m>18.90</x-m>
+	    <y-m>-2.34</y-m>
+	    <z-m> 2.43</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Engine2 Puff</name>
+	<path>Aircraft/victor/Models/Effects/engblast2.xml</path>
+	<offsets>
+	    <x-m>18.90</x-m>
+	    <y-m>-3.48</y-m>
+	    <z-m> 2.43</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Engine3 Puff</name>
+	<path>Aircraft/victor/Models/Effects/engblast3.xml</path>
+	<offsets>
+	    <x-m>18.90</x-m>
+	    <y-m> 2.34</y-m>
+	    <z-m> 2.43</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Engine4 Puff</name>
+	<path>Aircraft/victor/Models/Effects/engblast4.xml</path>
+	<offsets>
+	    <x-m>18.90</x-m>
+	    <y-m> 3.48</y-m>
+	    <z-m> 2.43</z-m>
+	</offsets>
+    </model>
+
+</PropertyList>

@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>fuel</name>
+    <layout>vbox</layout>
+    <pref-width>500</pref-width>
+
+    <!-- Fuel -->
+
+    <text>
+	<label>Fuel Management</label>
+    </text>
+
+    <hrule>
+	<color>
+	    <red>   1.0 </red>
+	    <green> 0.0 </green>
+	    <blue>  1.0 </blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Transfer</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Aft</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <label>Forward</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>3</col>
+	    <label>Cross-feed</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <label>Net (pps)</label>
+	</text>
+
+	<hrule>
+	    <row>1</row>
+	    <col>0</col>
+	    <colspan>5</colspan>
+	    <pref-height>2</pref-height>
+	</hrule>
+
+	<!-- =========== Tank 1 =========== -->
+
+	<text>
+	    <row>2</row>
+	    <col>0</col>
+	    <label>Tank 1</label>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[0]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[0]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[0]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>2</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[0]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 2 =========== -->
+
+	<text>
+	    <row>3</row>
+	    <col>0</col>
+	    <label>Tank 2</label>
+	</text>
+
+	<text>
+	    <row>3</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[1]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>3</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[1]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>3</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[1]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>3</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[1]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 3 =========== -->
+
+	<text>
+	    <row>4</row>
+	    <col>0</col>
+	    <label>Tank 3</label>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[0]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[2]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[2]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>4</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[2]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 4 =========== -->
+
+	<text>
+	    <row>5</row>
+	    <col>0</col>
+	    <label>Tank 4</label>
+	</text>
+
+	<text>
+	    <row>5</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[1]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>5</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[3]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>5</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[3]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>5</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[3]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 5 =========== -->
+
+	<text>
+	    <row>6</row>
+	    <col>0</col>
+	    <label>Tank 5</label>
+	</text>
+
+	<text>
+	    <row>6</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[4]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>6</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[4]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>6</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[4]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 6 =========== -->
+
+	<text>
+	    <row>7</row>
+	    <col>0</col>
+	    <label>Tank 6</label>
+	</text>
+
+	<text>
+	    <row>7</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[5]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>7</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[5]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>7</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[5]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>7</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[5]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 7 =========== -->
+
+	<text>
+	    <row>8</row>
+	    <col>0</col>
+	    <label>Tank 7</label>
+	</text>
+
+	<text>
+	    <row>8</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[6]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>8</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[6]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>8</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[6]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>8</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[6]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 8 =========== -->
+
+	<text>
+	    <row>9</row>
+	    <col>0</col>
+	    <label>Tank 8</label>
+	</text>
+
+	<text>
+	    <row>9</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[5]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>9</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[7]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>9</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[7]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>9</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[7]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 9 =========== -->
+
+	<text>
+	    <row>10</row>
+	    <col>0</col>
+	    <label>Tank 9</label>
+	</text>
+
+	<text>
+	    <row>10</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[6]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>10</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[8]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>10</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[8]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>10</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[8]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 10 =========== -->
+
+	<text>
+	    <row>11</row>
+	    <col>0</col>
+	    <label>Tank 10</label>
+	</text>
+
+	<text>
+	    <row>11</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[9]/fwd-inflow-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>11</row>
+	    <col>3</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[9]/cross-feed-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>11</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[9]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 11 =========== -->
+
+	<text>
+	    <row>12</row>
+	    <col>0</col>
+	    <label>Tank 11</label>
+	</text>
+
+	<text>
+	    <row>12</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[10]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>12</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[12]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>12</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[10]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 12 =========== -->
+
+	<text>
+	    <row>13</row>
+	    <col>0</col>
+	    <label>Tank 12</label>
+	</text>
+
+	<text>
+	    <row>13</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[11]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>13</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[13]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>13</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[11]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 13 =========== -->
+
+	<text>
+	    <row>14</row>
+	    <col>0</col>
+	    <label>Tank 13</label>
+	</text>
+
+	<text>
+	    <row>14</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[10]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>14</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[12]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>14</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[12]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 14 =========== -->
+
+	<text>
+	    <row>15</row>
+	    <col>0</col>
+	    <label>Tank 14</label>
+	</text>
+
+	<text>
+	    <row>15</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[11]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>15</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[13]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>15</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[13]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 15 =========== -->
+
+	<text>
+	    <row>16</row>
+	    <col>0</col>
+	    <label>Tank 15</label>
+	</text>
+
+	<text>
+	    <row>16</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[14]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>16</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[14]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- =========== Tank 16 =========== -->
+
+	<text>
+	    <row>17</row>
+	    <col>0</col>
+	    <label>Tank 16</label>
+	</text>
+
+	<text>
+	    <row>17</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[14]/aft-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>17</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 1.0 </green>
+		<blue>  0.0 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>-%2.3f</format>
+	    <property>/fdm/jsbsim/systems/fuel/tank[15]/fwd-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>17</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZ.ZZZ</label>
+	    <format>%2.3f</format>
+	    <property>/fdm/jsbsim/propulsion/tank[15]/external-flow-rate-pps</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Tank Groups</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+	<default-padding>4</default-padding>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Group 1</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <label>Group 2</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>3</col>
+	    <label>Group 3</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>4</col>
+	    <label>Group 4</label>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>Contents</label>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>1</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZZZZ</label>
+	    <format>%6d</format>
+	    <property>/consumables/fuel/group1-lbs</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZZZZ</label>
+	    <format>%6d</format>
+	    <property>/consumables/fuel/group2-lbs</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>3</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZZZZ</label>
+	    <format>%6d</format>
+	    <property>/consumables/fuel/group3-lbs</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>4</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZZZZZ</label>
+	    <format>%6d</format>
+	    <property>/consumables/fuel/group4-lbs</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+
+    <!-- Switches -->
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Transfer Modes</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>hbox</layout>
+
+	<text>
+	    <halign>right</halign>
+	    <label>CoG % MAC</label>
+	</text>
+	<text>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.7 </green>
+		<blue>  0.1 </blue>
+	    </color>
+	    <label>ZZ.ZZ</label> <!-- placeholder for width -->
+	    <format>%2.1f</format>
+	    <property>/fdm/jsbsim/aero/function/CoG-MAC-pct</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<text>
+	    <halign>right</halign>
+	    <label>Faction</label>
+	</text>
+	<text>
+	    <color>
+		<red>   0.2 </red>
+		<green> 1.0 </green>
+		<blue>  0.2 </blue>
+	    </color>
+	    <label>ZZ.ZZ</label> <!-- placeholder for width -->
+	    <format>%0.3f</format>
+	    <property>/consumables/fuel/total-fuel-norm</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+
+
+    <group>
+	<layout>hbox</layout>
+
+	<text>
+	    <halign>right</halign>
+	    <label>AFT transfer</label>
+	</text>
+	<checkbox>
+	    <halign>left</halign>
+	    <pref-width>12</pref-width>
+	    <pref-height>12</pref-height>
+	    <property>/controls/fuel/aft-transfer</property>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <live type="bool">true</live>
+	</checkbox>
+
+	<text>
+	    <halign>right</halign>
+	    <label>FWD transfer</label>
+	</text>
+	<checkbox>
+	    <halign>left</halign>
+	    <pref-width>12</pref-width>
+	    <pref-height>12</pref-height>
+	    <property>/controls/fuel/fwd-transfer</property>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <live type="bool">true</live>
+	</checkbox>
+
+	<text>
+	    <halign>right</halign>
+	    <label>Cross-feed</label>
+	</text>
+	<checkbox>
+	    <halign>left</halign>
+	    <pref-width>12</pref-width>
+	    <pref-height>12</pref-height>
+	    <property>/controls/fuel/cross-feed</property>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <live type="bool">true</live>
+	</checkbox>
+
+    </group>
+
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

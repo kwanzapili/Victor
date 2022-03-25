@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<system name="cockpit">
+
+    <channel name="Cockpit" execrate="8">
+
+	<!-- Lock cockpit door when not at standstill -->
+	<switch name="/controls/doors/cockpit-lock">
+	    <description>
+		Cockpit Door Control
+	    </description>
+	    <default value="0"/>
+	    <test  logic="OR" value="1">
+		velocities/vc-kts GT 30
+		position/h-agl-ft GT 40
+		/controls/doors/cockpit-door/position-norm EQ 0
+	    </test>
+	</switch>
+
+	<!--
+	    Cockpit Unsafe Warning Light: Illuminates if the door is not locked.
+	-->
+	<switch name="/instrumentation/annunciator/cockpit-unsafe">
+	    <description> Cockpit Unsafe Warning </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		/controls/doors/cockpit-door/position-norm GT 0
+		velocities/vc-kts GT 25
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

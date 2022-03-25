@@ -1,0 +1,73 @@
+<PropertyList>
+
+    <default>
+	<menu n="10">
+	    <label>Victor</label>
+	    <enabled type="bool">true</enabled>
+	    <item n="0">
+		<label>Mission</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>mission</dialog-name>
+		</binding>
+	    </item>
+	    <item n="1">
+		<label>Doors</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>doors</dialog-name>
+		</binding>
+	    </item>
+	    <item n="2">
+		<label>Altimeters</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>altimeter</dialog-name>
+		</binding>
+	    </item>
+	    <item n="3">
+		<label>Autoflight</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>flightdirector</dialog-name>
+		</binding>
+	    </item>
+	    <item n="4">
+		<label>Navigation</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>avionics</dialog-name>
+		</binding>
+	    </item>
+	    <item n="5">
+		<label>Fuel Mgt</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>fuel</dialog-name>
+		</binding>
+	    </item>
+	    <item n="6">
+		<label>Cabin</label>
+		<binding>
+		    <command>dialog-show</command>
+		    <dialog-name>cabin</dialog-name>
+		</binding>
+	    </item>
+	    <item n="7">
+		<label>Autostart</label>
+		<binding>
+		    <command>nasal</command>
+		    <script>starter.autoStart()</script>
+		</binding>
+	    </item>
+	    <item n="8">
+		<label>Select Livery</label>
+		<binding>
+		    <command>nasal</command>
+		    <script>aircraft.livery.dialog.toggle()</script>
+		</binding>
+	    </item>
+	</menu>
+    </default>
+
+</PropertyList>

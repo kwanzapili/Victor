@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<!-- Switches, knobs, dials or handles : very bright and shiny-->
+
+<PropertyList>
+
+    <type>material</type>
+    <condition>
+	<property>controls/lighting/panel-lights</property>
+	<!-- We must have enough electrical power -->
+	<greater-than>
+	    <property>systems/electrical/outputs/panel-lights</property>
+	    <value> 100 </value>
+	</greater-than>
+    </condition>
+    <emission>
+	<factor-prop>controls/lighting/panel-norm</factor-prop>
+	<red>   1.0 </red>
+	<green> 1.0 </green>
+	<blue>  1.0 </blue>
+    </emission>
+    <diffuse>
+	<red>   0.5 </red>
+	<green> 0.5 </green>
+	<blue>  0.6 </blue>
+    </diffuse>
+    <ambient>
+	<red>   0.5 </red>
+	<green> 0.5 </green>
+	<blue>  0.6 </blue>
+    </ambient>
+    <specular>
+	<red>   1 </red>
+	<green> 1 </green>
+	<blue>  1 </blue>
+    </specular>
+    <shininess> 64 </shininess>
+
+</PropertyList>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+    <path>tacan.ac</path>
+
+    <!-- TO-Y, TO-X, TAC-off and TAC-on are junk -->
+    <animation>
+	<type>select</type>
+	<object-name>TAC-off</object-name>
+	<object-name>TO-Y</object-name>
+	<object-name>TO-X</object-name>
+	<object-name>TAC-on</object-name>
+    </animation>
+
+    <animation>
+	<name>Switches</name>
+	<object-name>xy-switch</object-name>
+	<object-name>mode-switch</object-name>
+	<object-name>mode-knob</object-name>
+	<object-name>chan-knob</object-name>
+    </animation>
+
+    <animation>
+	<name>Switches2</name>
+	<object-name>vol-knob</object-name>
+	<object-name>test-button</object-name>
+    </animation>
+
+    <animation>
+	<name>Indicators</name>
+	<object-name>drum-1</object-name>
+	<object-name>drum-2</object-name>
+	<object-name>drum-3</object-name>
+	<object-name>X-sign</object-name>
+	<object-name>Y-sign</object-name>
+    </animation>
+
+    <animation>
+	<name>OffIndicators</name>
+	<object-name>go-lamp-off</object-name>
+	<object-name>nogo-lamp-off</object-name>
+    </animation>
+
+    <!-- Disable the OFF lamps since they simply overlay the ON lamps -->
+    <animation>
+	<type>select</type>
+	<object-name>OffIndicators</object-name>
+    </animation>
+
+    <!-- Select go-lamp when TACAN is enabled -->
+    <animation>
+	<type>select</type>
+	<object-name>go-lamp</object-name>
+	<condition>
+	    <property>/instrumentation/flightdirector/tacan-arm</property>
+	</condition>
+    </animation>
+
+    <!-- Select nogo-lamp when TACAN is out of range -->
+    <animation>
+	<type>select</type>
+	<object-name>nogo-lamp</object-name>
+	<condition>
+	    <not>
+		<property>/instrumentation/tacan/in-range</property>
+	    </not>
+	    <property>/instrumentation/tacan/power-on</property>
+	</condition>
+    </animation>
+
+    <!-- Lighting -->
+
+    <animation>
+	<type>material</type>
+	<object-name>nogo-lamp</object-name>
+	<emission>
+	    <red>   0.60 </red>
+	    <green> 0.40 </green>
+	    <blue>  0.30 </blue>
+	</emission>
+    </animation>
+
+    <animation>
+	<type>material</type>
+	<object-name>go-lamp</object-name>
+	<emission>
+	    <red>   0.30 </red>
+	    <green> 0.60 </green>
+	    <blue>  0.40 </blue>
+	</emission>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>base</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>Switches</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-dull.xml">
+	<object-name>Switches2</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Indicators</object-name>
+    </animation>
+
+    <!-- End lighting -->
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>drum-1</object-name>
+	<property>instrumentation/tacan/frequencies/selected-channel[1]</property>
+	<factor>0.1</factor>
+	<offset>-1</offset>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>drum-2</object-name>
+	<property>instrumentation/tacan/frequencies/selected-channel[2]</property>
+	<factor>0.1</factor>
+	<offset>-1</offset>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>drum-3</object-name>
+	<property>instrumentation/tacan/frequencies/selected-channel[3]</property>
+	<factor>0.1</factor>
+	<offset>-1</offset>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>Y-sign</object-name>
+	<condition>
+	    <equals>
+		<property>instrumentation/tacan/frequencies/selected-channel[4]</property>
+		<value>Y</value>
+	    </equals>
+	</condition>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>X-sign</object-name>
+	<condition>
+	    <equals>
+		<property>instrumentation/tacan/frequencies/selected-channel[4]</property>
+		<value>X</value>
+	    </equals>
+	</condition>
+    </animation>
+
+    <!-- ================ ACTIONS =================== -->
+
+    <!-- Channel Setting -->
+
+    <animation>
+	<type>knob</type>
+	<object-name>mode-knob</object-name>
+	<property>instrumentation/tacan/switch-position</property>
+	<factor>15</factor>
+	<center>
+	    <x-m>  0.0000 </x-m>
+	    <y-m>  0.0440 </y-m>
+	    <z-m> -0.0187 </z-m>
+	</center>
+	<axis>
+	    <x>-1 </x>
+	    <y> 0 </y>
+	    <z> 0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>instrumentation/tacan/switch-position</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>4</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+    </animation>
+
+    <!-- Channel Increase / decrease -->
+
+    <animation>
+	<type>knob</type>
+	<object-name>chan-knob</object-name>
+	<property>instrumentation/tacan/frequencies/selected-channel</property>
+	<interpolation>
+	    <entry><ind>   0 </ind><dep>    0 </dep></entry>
+	    <entry><ind>  63 </ind><dep> -120 </dep></entry>
+	    <entry><ind> 126 </ind><dep> -240 </dep></entry>
+	</interpolation>
+	<center>
+	    <x-m>  0.012 </x-m>
+	    <y-m> -0.037 </y-m>
+	    <z-m> -0.019 </z-m>
+	</center>
+	<axis>
+	    <x> 1 </x>
+	    <y> 0 </y>
+	    <z> 0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/tacan/frequencies/selected-channel</property>
+		<factor> 1 </factor>
+		<min>    0 </min>
+		<max>  126 </max>
+	    </binding>
+	</action>
+	<shiftaction>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/tacan/frequencies/selected-channel</property>
+		<factor> 10 </factor>
+		<min>     0 </min>
+		<max>   126 </max>
+	    </binding>
+	</shiftaction>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>CH-INCR</object-name>
+	<visible>false</visible>
+    </animation>
+
+    <animation>
+	<type>select</type>
+	<object-name>CH-DECR</object-name>
+	<visible>false</visible>
+    </animation>
+
+    <!-- Channel [4] selection ( X or Y) -->
+
+    <animation>
+	<type>knob</type>
+	<object-name>xy-switch</object-name>
+	<property>/instrumentation/tacan/tacan-xy</property>
+	<factor> 30 </factor>
+	<offset-deg>-10</offset-deg>
+	<center>
+	    <x-m>  0.001 </x-m>
+	    <y-m>  0.010 </y-m>
+	    <z-m> -0.015 </z-m>
+	</center>
+	<axis>
+	    <x> 0 </x>
+	    <y> 1 </y>
+	    <z> 0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/instrumentation/tacan/tacan-xy</property>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>
+		    if ( getprop("/instrumentation/tacan/tacan-xy") ) {
+		    setprop("instrumentation/tacan/frequencies/selected-channel[4]", "X");
+		    } else {
+		    setprop("instrumentation/tacan/frequencies/selected-channel[4]", "Y");
+		    };
+		</script>
+	    </binding>
+	</action>
+    </animation>
+
+</PropertyList>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <!-- Starboard console with nothing on it at the moment -->  
+    <path>console-starboard.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <animation>
+	<name>Switches</name>
+	<object-name>InstrumentLights</object-name>
+	<object-name>CabinLights</object-name>
+	<object-name>PanelLights</object-name>
+    </animation>
+
+    <animation>
+	<name>Surround</name>
+	<object-name>InstrumentLightsSurround</object-name>
+	<object-name>CabinLightsSurround</object-name>
+	<object-name>PanelLightsSurround</object-name>
+    </animation>
+
+    <!-- deselect all items -->
+    <animation>
+	<type>select</type>
+	<object-name>Surround</object-name>
+	<object-name>Switches</object-name>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+
+<!-- Altimeter: pilot side -->
+
+<PropertyList>
+
+    <path>altimeter.ac</path>
+
+    <!-- Altimeter -->
+    <animation>
+	<name>Collection1</name>
+	<object-name>alt-Needle1</object-name>
+	<object-name>alt-Needle1</object-name>
+	<object-name>inHG1</object-name>
+	<object-name>inHG2</object-name>
+	<object-name>inHG3</object-name>
+	<object-name>inHG4</object-name>
+	<object-name>feet1</object-name>
+	<object-name>feet1.001</object-name>
+	<object-name>feet1.002</object-name>
+	<object-name>feet1.003</object-name>
+	<object-name>feet2</object-name>
+	<object-name>feet3</object-name>
+	<object-name>feet4</object-name>
+	<object-name>feet</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>Face</object-name>
+	<object-name>faceplate</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection3</name>
+	<object-name>bezelinside</object-name>
+	<object-name>bezeloutside</object-name>
+	<object-name>cylinder</object-name>
+	<object-name>sphere</object-name>
+	<object-name>screw_top</object-name>
+    </animation>
+
+    <!-- Altimeter Needle -->
+    <animation>
+	<type>rotate</type>
+	<object-name>alt-Needle1</object-name>
+	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<factor>0.036</factor>
+	<center>
+	    <x-m>0</x-m>
+	    <y-m>0</y-m>
+	    <z-m>0</z-m>
+	</center> 
+	<axis>
+	    <x>-1</x>
+	    <y> 0</y>
+	    <z> 0</z>
+	</axis>
+    </animation>
+
+    <!-- Pressure Digits -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>inHG1</object-name>
+	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+    <animation>
+	<type>textranslate</type>
+	<object-name>inHG2</object-name>
+	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<factor>0.1</factor>
+	<step>1</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+    <animation>
+	<type>textranslate</type>
+	<object-name>inHG3</object-name>
+	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<factor>1.0</factor>
+	<step>0.1</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+    <animation>
+	<type>textranslate</type>
+	<object-name>inHG4</object-name>
+	<property>/instrumentation/altimeter[0]/setting-inhg</property>
+	<factor>10.0</factor>
+	<step>0.01</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <!-- Altitude Digits -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>feet1</object-name>
+	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<factor>0.00001</factor>
+	<step>10000</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>feet2</object-name>
+	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<factor>0.0001</factor>
+	<step>1000</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>feet3</object-name>
+	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<factor>0.001</factor>
+	<step>100</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>textranslate</type>
+	<object-name>feet4</object-name>
+	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<axis>
+	    <x>0</x>
+	    <y>1</y>
+	    <z>0</z>
+	</axis>
+    </animation>
+
+    <animation>
+	<type>knob</type>
+	<object-name>alt-pres-knob</object-name>
+	<visible>true</visible>
+	<center>
+	    <x-m>  0.0 </x-m>
+	    <y-m>  0.0 </y-m>
+	    <z-m>-0.045</z-m>
+	</center>
+	<axis>
+	    <x>-1</x><y>0</y><z>0</z>
+	</axis>
+	<expression>
+	    <product>
+		<value>50.0</value>
+		<difference>
+		    <property>/instrumentation/altimeter[0]/setting-inhg</property>
+		    <value>26.0</value>
+		</difference>
+	    </product>
+	</expression>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>instrumentation/altimeter[0]/setting-inhg</property>
+		<factor>0.01</factor>
+		<min>26.0</min>
+		<max>33.0</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/altimeter[0]/setting-inhg</property>
+		<factor>0.1</factor>
+		<min>26.0</min>
+		<max>33.0</max>
+		<wrap>false</wrap>
+	    </binding>
+	</shift-action>
+        <hovered>
+            <binding>
+                <command>set-tooltip</command>
+                <label>QNH: %2.2f</label>
+                <tooltip-id>qnh1-setting</tooltip-id>
+                <mapping>heading</mapping>
+                <property>/instrumentation/altimeter[0]/setting-inhg</property>
+            </binding>
+        </hovered>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation> 
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-face.xml">
+	<object-name>Face</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>alt-pres-knob</object-name>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.3</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.3</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.3</lightmap-factor>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.05</ambient-correction>
+	</parameters>
+	<object-name>alt-pres-knob</object-name>
+    </effect>
+
+</PropertyList>

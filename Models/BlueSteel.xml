@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <path>BlueSteel.ac</path>  
+
+    <animation>
+	<type>select</type>
+	<object-name>BlueSteel</object-name>
+	<condition>
+	    <greater-than>
+		<property>controls/armament/station[6]/units</property>
+		<value>0</value>
+	    </greater-than>
+	</condition>
+    </animation>
+
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>10000</max-m>
+    </animation>
+
+</PropertyList>

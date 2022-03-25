@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>altimeter</name>
+    <layout>vbox</layout>
+    <pref-width>520</pref-width>
+
+    <group>
+	<layout>hbox</layout>
+	<empty><stretch>1</stretch></empty>
+
+	<text>
+	    <label>Altitude Instrument Settings</label>
+	</text>
+
+	<empty><stretch>1</stretch></empty>
+
+	<button>
+	    <halign>right</halign>
+	    <pref-width>20</pref-width>
+	    <pref-height>20</pref-height>
+	    <legend>X</legend>
+	    <key>Esc</key>
+	    <binding>
+		<command>dialog-close</command>
+	    </binding>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	</button>
+    </group>
+
+    <hrule>
+	<color>
+	    <red>   1.0 </red>
+	    <green> 0.0 </green>
+	    <blue>  1.0 </blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Start of QNH -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>QNH Setting</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+	<default-padding>5</default-padding>
+
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <halign>center</halign>
+	    <label>QNH Setting</label>
+	</text>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <halign>center</halign>
+	    <label>ALT Setting</label>
+	</text>
+
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <legend>Std Pressure</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>vulcanb2.getQNH()</script>
+	    </binding>
+	</button>
+
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>1000 X</label> <!-- placeholder for width -->
+	    <format>%5d</format>
+	    <live>true</live>
+	    <property>/instrumentation/altimeter/setting-hpa</property>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>1</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>1000 X</label> <!-- placeholder for width -->
+	    <format>%2.2f</format>
+	    <live>true</live>
+	    <property>/instrumentation/altimeter/setting-inhg</property>
+	</text>
+
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <legend>SL Pressure</legend>
+	    <binding>
+		<command>nasal</command>
+		<script>vulcanb2.getQNH()</script>
+	    </binding>
+	</button>
+
+    </group>
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Start of Radar Altimeter -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Radar Altimeter Setting</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <empty><stretch>1</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+
+	<!-- radar range -->
+	<checkbox>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>5,000 ft limit</label>
+	    <width>12</width>
+	    <height>12</height>
+	    <property>/controls/radar/altimeter/sensitivity-five-thousand</property>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <live type="bool">true</live>
+	</checkbox>
+
+	<text>
+	    <row>0</row>
+	    <col>1</col>
+	    <label>Enable radar sensitivity up to 5,000 ft</label>
+	</text>
+
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <color>
+		<red>   0.5 </red>
+		<green> 1.0 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>Max radar range</label>
+	</text>
+
+	<group>
+	    <row>1</row>
+	    <col>1</col>
+	    <layout>hbox</layout>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>50</label>
+	    </text>
+
+	    <slider>
+		<pref-width>200</pref-width>
+		<property>/controls/radar/altimeter/limiter-height-units</property>
+		<min>50</min>
+		<max>500</max>
+		<step>50</step>
+		<legend>Units</legend>
+		<live>true</live>
+		<binding>
+		    <command>dialog-apply</command>
+		</binding>
+	    </slider>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>500</label>
+	    </text>
+	</group>
+
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>0000 X</label> <!-- placeholder for width -->
+	    <format>%4.0f ft</format>
+	    <property>/controls/radar/altimeter/limiter-height-ft</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- warning range -->
+	<text>
+	    <row>2</row>
+	    <col>0</col>
+	    <color>
+		<red>   1.0 </red>
+		<green> 0.8 </green>
+		<blue>  0.5 </blue>
+	    </color>
+	    <label>Set warning height</label>
+	</text>
+
+	<group>
+	    <row>2</row>
+	    <col>1</col>
+	    <layout>hbox</layout>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>0.05</label>
+	    </text>
+
+	    <slider>
+		<pref-width>200</pref-width>
+		<property>/controls/radar/altimeter/warning-height-frac</property>
+		<min>0.05</min>
+		<max>0.95</max>
+		<step>0.05</step>
+		<legend>Fraction</legend>
+		<live>true</live>
+		<binding>
+		    <command>dialog-apply</command>
+		</binding>
+	    </slider>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>0.95</label>
+	    </text>
+	</group>
+
+	<text>
+	    <row>2</row>
+	    <col>2</col>
+	    <color>
+		<red>   0.0 </red>
+		<green> 1.0 </green>
+		<blue>  1.0 </blue>
+	    </color>
+	    <label>0000 X</label> <!-- placeholder for width -->
+	    <format>%4.0f ft</format>
+	    <property>instrumentation/radar-altimeter/set-height-ft</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+    <!-- End of Radar Altimeter -->
+
+    <empty><stretch>1</stretch></empty>
+
+    <!-- Start of Air-to-Ground Radar (TW) -->
+    <group>
+	<layout>hbox</layout>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Terrain Warning Radar Settings</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <empty><stretch>1</stretch></empty>
+
+    <group>
+	<layout>table</layout>
+
+	<!-- Minimum terrain avoidance warning distance -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <color>
+		<red>  1.0</red>
+		<green>0.6</green>
+		<blue> 0.4</blue>
+	    </color>
+	    <label>Min warning distance</label>
+	</text>
+
+	<group>
+	    <row>0</row>
+	    <col>1</col>
+	    <layout>hbox</layout>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>0.05</label>
+	    </text>
+
+	    <slider>
+		<pref-width>200</pref-width>
+		<property>/controls/radar/terrain-warning/min-range-nm</property>
+		<min>0.05</min>
+		<max>0.50</max>
+		<step>0.05</step>
+		<legend>nautical miles</legend>
+		<live>true</live>
+		<binding>
+		    <command>dialog-apply</command>
+		</binding>
+		<live type="bool">true</live>
+	    </slider>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>0.50</label>
+	    </text>
+	</group>
+
+	<text>
+	    <row>0</row>
+	    <col>2</col>
+	    <color>
+		<red>  0.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <label>00.00 XX</label> <!-- placeholder for width -->
+	    <format>%2.2f nm</format>
+	    <property>/controls/radar/terrain-warning/min-range-nm</property>
+	    <live type="bool">true</live>
+	</text>
+
+	<!-- Maximum terrain warning distance -->
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <color>
+		<red>  1.0</red>
+		<green>1.0</green>
+		<blue> 0.0</blue>
+	    </color>
+	    <label>Max warning distance</label>
+	</text>
+
+	<group>
+	    <row>1</row>
+	    <col>1</col>
+	    <layout>hbox</layout>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>2.0</label>
+	    </text>
+
+	    <slider>
+		<pref-width>200</pref-width>
+		<property>/controls/radar/terrain-warning/max-range-nm</property>
+		<min>2.0</min>
+		<max>10.0</max>
+		<step>0.5</step>
+		<legend>nautical miles.</legend>
+		<live>true</live>
+		<binding>
+		    <command>dialog-apply</command>
+		</binding>
+		<live type="bool">true</live>
+	    </slider>
+
+	    <text>
+		<pref-width>15</pref-width>
+		<label>10</label>
+	    </text>
+	</group>
+
+	<text>
+	    <row>1</row>
+	    <col>2</col>
+	    <color>
+		<red>  0.0</red>
+		<green>1.0</green>
+		<blue> 1.0</blue>
+	    </color>
+	    <label>00.00 XX</label> <!-- placeholder for width -->
+	    <format>%2.2f nm</format>
+	    <property>/controls/radar/terrain-warning/max-range-nm</property>
+	    <live type="bool">true</live>
+	</text>
+
+    </group>
+
+    <empty><stretch>1</stretch></empty>
+
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

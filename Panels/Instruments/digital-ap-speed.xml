@@ -1,0 +1,798 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Digital AP Speed Controls</name>
+    <w-base>120</w-base>
+    <h-base>60</h-base>
+
+    <params>
+	<kias-disp>/autopilot/settings/target-speed-kt</kias-disp>
+	<kias-ctrl>/instrumentation/flightdirector/speed-select</kias-ctrl>
+	<mach-disp>/autopilot/settings/target-speed-mach</mach-disp>
+	<mach-ctrl>/instrumentation/flightdirector/mach-select</mach-ctrl>
+    </params>
+
+    <layers>
+
+	<layer>
+	    <name>background</name>
+	    <texture>
+		<path>Panels/Instruments/Textures/trans-yellow-bg.rgb</path>
+		<x1>0.6</x1>
+		<y1>0.2</y1>
+		<x2>0.9</x2>
+		<y2>0.3</y2>
+	    </texture>
+	    <w>120</w>
+	    <h>60</h>
+	</layer>
+
+	<!-- Overrall mode -->
+
+	<layer>
+	    <name>A/T Toggle</name>
+	    <type>text</type>
+	    <font>helvetica_bold</font>
+	    <point-size>16</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>0.3 </green>
+		<blue> 0.4 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>A/T: </text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>12</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<!-- Speed display: SPEED; MACH  PITCH, IDLE -->
+	<layer>
+	    <name>Mode Display</name>
+	    <type>switch</type>
+	    <layer>
+		<name>Speed Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>1</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>SPEED</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Mach Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>2</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>MACH</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Climb Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>3</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>CLIMB</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Idle Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>4</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>IDLE</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Pitch Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>5</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>PITCH</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <layer>
+		<name>Off Mode</name>
+		<condition>
+		    <equals>
+			<property>/instrumentation/flightdirector/spd</property>
+			<value>0</value>
+		    </equals>
+		</condition>
+		<type>text</type>
+		<font>accid</font>
+		<point-size>14</point-size>
+		<color>
+		    <red>  1.0 </red>
+		    <green>1.0 </green>
+		    <blue> 1.0 </blue>
+		</color>
+		<chunks>
+		    <chunk>
+			<type>literal</type>
+			<text>OFF</text>
+		    </chunk>
+		</chunks>
+		<transformations>
+		    <transformation>
+			<type>x-shift</type>
+			<offset>-5</offset>
+		    </transformation>
+		    <transformation>
+			<type>y-shift</type>
+			<offset>12</offset>
+		    </transformation>
+		</transformations>
+	    </layer>
+	    <!-- end switch -->
+	</layer>
+
+	<!-- Knots mode -->
+
+	<layer>
+	    <name>Select KIAS</name>
+	    <type>text</type>
+	    <font>arial_black</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>K:</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-6</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 10 KIAS</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-35</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 1 KIAS</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.8 </red>
+		<green>0.8 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-20</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>AP KIAS Speed display</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>6</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>number-value</type>
+		    <property alias="../../../../../params/kias-disp"/>
+		    <format>%4.0f</format>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 1 KIAS</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.8 </red>
+		<green>0.8 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>30</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 10 KIAS</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>45</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-8</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<!-- Mach mode -->
+
+	<layer>
+	    <name>Select Mach</name>
+	    <type>text</type>
+	    <font>arial_black</font>
+	    <point-size>12</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>M:</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-55</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-23</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 0.1 Mach</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-35</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Decr 0.01 Mach</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.8 </green>
+		<blue> 0.8 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>-</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-20</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>AP Mach Speed display</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>6</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>number-value</type>
+		    <property alias="../../../../../params/mach-disp"/>
+		    <format>%1.2f</format>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-5</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 0.01 Mach</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>0.8 </green>
+		<blue> 0.8 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>30</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Incr 0.1 Mach</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  0.0 </red>
+		<green>1.0 </green>
+		<blue> 1.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>+</text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>45</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-25</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+    </layers>
+
+    <actions>
+
+	<!-- Toggle auto-throttle mode -->
+	<action>
+	    <name>Autothrottle</name>
+	    <button>0</button>
+	    <x>-55</x>
+	    <y>10</y>
+	    <w>40</w>
+	    <h>17</h>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/instrumentation/flightdirector/autothrottle-engage</property>
+	    </binding>
+	</action>
+
+	<!-- Select knots speed mode -->
+	<action>
+	    <name>Select KIAS</name>
+	    <button>0</button>
+	    <x>-58</x>
+	    <y>-8</y>
+	    <w>18</w>
+	    <h>15</h>
+	    <binding>
+		<command>property-assign</command>
+		<property>/instrumentation/flightdirector/mach-mode</property>
+		<value type="bool">false</value>
+	    </binding>
+	</action>
+
+	<!-- KIAS adjustments -->
+
+	<action>
+	    <name>Minus 10 KIAS</name>
+	    <button>0</button>
+	    <x>-35</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/kias-ctrl"/>
+		<step>-10</step>
+		<min>140</min>
+		<max>720</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Minus 1 KIAS</name>
+	    <button>0</button>
+	    <x>-20</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/kias-ctrl"/>
+		<step>-1</step>
+		<min>140</min>
+		<max>720</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 1 KIAS</name>
+	    <button>0</button>
+	    <x>30</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/kias-ctrl"/>
+		<step>1</step>
+		<min>140</min>
+		<max>720</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 10 KIAS</name>
+	    <button>0</button>
+	    <x>45</x>
+	    <y>-8</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/kias-ctrl"/>
+		<step>10</step>
+		<min>140</min>
+		<max>720</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<!-- Select Mach speed mode -->
+	<action>
+	    <name>Select Mach</name>
+	    <button>0</button>
+	    <x>-58</x>
+	    <y>-25</y>
+	    <w>18</w>
+	    <h>15</h>
+	    <binding>
+		<command>property-assign</command>
+		<property>/instrumentation/flightdirector/mach-mode</property>
+		<value type="bool">true</value>
+	    </binding>
+	</action>
+
+	<!-- Mach adjustments -->
+
+	<action>
+	    <name>Minus 0.1 Mach</name>
+	    <button>0</button>
+	    <x>-35</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/mach-ctrl"/>
+		<step>-0.1</step>
+		<min>0.50</min>
+		<max>1.25</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Minus 0.01 Mach</name>
+	    <button>0</button>
+	    <x>-20</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/mach-ctrl"/>
+		<step>-0.01</step>
+		<min>0.50</min>
+		<max>1.25</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 0.01 Mach</name>
+	    <button>0</button>
+	    <x>30</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/mach-ctrl"/>
+		<step>0.01</step>
+		<min>0.50</min>
+		<max>1.25</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+	<action>
+	    <name>Plus 0.1 Mach</name>
+	    <button>0</button>
+	    <x>45</x>
+	    <y>-25</y>
+	    <w>12</w>
+	    <h>12</h>
+	    <binding>
+		<command>dial-adjust</command>
+		<property alias="../../../../params/mach-ctrl"/>
+		<step>0.1</step>
+		<min>0.50</min>
+		<max>1.25</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+
+    </actions>
+
+</PropertyList>

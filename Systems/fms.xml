@@ -1,0 +1,1396 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	Handley Page Victor Flight Management.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This file exectute the FMS functions. In particular the
+    evaluation of VNAV, LNAV and SPD modes when these are managed.
+
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-->
+
+<system name="FMS">
+
+    <!-- ====================== General Functions ====================== -->
+
+    <!--
+	This channel evaluates autopilot and autothrottle key properties.
+	It is critical to all other channels in this and other systems.
+	It must be on always and run at a faster rate than the others.
+    -->
+
+    <channel name="Autoflight" execrate="3">
+
+	<!-- ****************** Autopilot Settings ****************** -->
+
+	<switch name="/instrumentation/flightdirector/autopilot-engage">
+	    <description>
+		Engaging the autopilot system
+	    </description>
+	    <default value="/controls/switches/autopilot"/>
+	    <!-- only after liftoff -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode LT 6
+		/instrumentation/fmc/flight-mode GT 11
+		<!-- automatically disengage if the bank angle exceeeds 50 degrees -->
+		/orientation/roll-deg GT 50
+		/orientation/roll-deg LT -50
+	    </test>
+	</switch>
+
+	<switch name="/instrumentation/flightdirector/fd-on">
+	    <description>
+		Engaging the flight director
+	    </description>
+	    <default value="/instrumentation/flightdirector/fd-on"/>
+	    <!-- disabled in certain conditions -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode LT 4
+		/instrumentation/fmc/flight-mode GT 10
+	    </test>
+	</switch>
+
+	<!--
+	    Passive is defined on three levels:
+	    FD is ON -> Passive = ON
+	    Lateral, Vertical and Speed modes are automatic:
+	    Passive = AUTO
+	    One of this modes is not in automatic mode or Speed in in Pitch mode:
+	    Passive = OFF
+	-->
+	<switch name="/autopilot/locks/passive-mode">
+	    <description>
+		Set passive mode based on flightdirector setting
+	    </description>
+	    <default value="-1"/>       <!-- Off -->
+	    <test logic="AND" value="1">    <!-- Active -->
+		<!-- For full passive mode we need both FD and RM to be active -->
+		/instrumentation/flightdirector/fd-on EQ 1
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/autopilot/route-manager/active EQ 1
+		<!-- both lateral anb vertical modes must be managed -->
+		/instrumentation/flightdirector/vertical-managed-mode EQ -1
+		/instrumentation/flightdirector/lateral-managed-mode EQ -1
+	    </test>
+	    <test value="0">    <!-- Auto with or without autopilot -->
+		/instrumentation/flightdirector/fd-on EQ 1
+	    </test>
+	</switch>
+
+	<!-- ****************** Autothrottle Setting ****************** -->
+
+	<!--
+	    Note: Mach hold or KEAS hold may only be engaged after the pitch autopilot
+	    is engaged. Thus, VNAV cannot be OFF.
+	-->
+	<switch name="/instrumentation/flightdirector/autothrottle-engage">
+	    <description>
+		Engaging the auto-throttle system
+	    </description>
+	    <default value="/controls/switches/autothrottle"/>
+	    <!-- only on or after TAXI -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/flight-mode LT 3
+		/instrumentation/fmc/flight-mode GT 11
+		<!-- VNAV is off -->
+		/instrumentation/flightdirector/vnav EQ 0
+		<!-- parking brakes are ON -->
+		/controls/gear/brake-parking EQ 1
+		<!-- ASI failures -->
+		/damage/instrumentation/asi-condition LT 0.3
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates general properties that are used by other functions.
+	It also sets variables that determine if other channels are executed or
+	not. Thus, it must run continuously.
+    -->
+    <channel name="Utility" execrate="6">
+
+	<!-- ******************* Altitude Parameters ******************* -->
+
+	<!-- ~~~~~~~~~~~~~~~~~ Vertical Mode ~~~~~~~~~~~~~~~~~ -->
+
+	<!-- this switch sets the managed vertical status -->
+	<switch name="/instrumentation/flightdirector/vertical-managed-mode">
+	    <description> Managed vertical level mode </description>
+	    <default value="0"/>	<!-- Selected Mode -->
+	    <test  logic="AND" value="-1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<!-- Managed Mode -->
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+		/instrumentation/flightdirector/vertical-vs-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- this switch toggles the managed vertical evaluator on/off -->
+	<switch name="fmc/vnav/run-managed">
+	    <description> Execute managed vertical evaluations </description>
+	    <default value="0"/>	<!-- Off -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<test  logic="AND" value="1">
+		    <!-- Both the vertical modes are managed -->
+		    /instrumentation/flightdirector/vertical-alt-mode EQ -1
+		    /instrumentation/flightdirector/vertical-vs-mode EQ -1
+		</test>
+	    </test>
+	</switch>
+
+	<!-- this switch toggles the selected vertical evaluator on/off -->
+	<switch name="fmc/vnav/run-selected">
+	    <description> Execute selected vertical evaluations </description>
+	    <default value="0"/>	<!-- Off -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<test  logic="OR" value="1">
+		    <!-- One of the vertical modes is selected -->
+		    /instrumentation/flightdirector/vertical-alt-mode EQ 0
+		    /instrumentation/flightdirector/vertical-vs-mode EQ 0
+		</test>
+	    </test>
+	</switch>
+
+	<!-- this switch toggles the ToC calculator on/off -->
+	<switch name="fmc/estimate-climb">
+	    <description> Execute ToC Calculator </description>
+	    <default value="0"/>	<!-- Off -->
+	    <test logic="AND" value="1">
+		/instrumentation/gps/odometer GT 0
+		/autopilot/route-manager/airborne EQ 1
+		<!-- not after ToC  -->
+		/instrumentation/flightdirector/past-tc EQ 0
+	    </test>
+	</switch>
+
+	<!-- this switch toggles the ToD calculator on/off -->
+	<switch name="fmc/estimate-descent">
+	    <description> Execute ToD Calculator </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		/autopilot/route-manager/active EQ 1
+		<!-- not before Climb (2) -->
+		/instrumentation/flightdirector/fd-phase GE 2
+		<!-- not after ToD  -->
+		/instrumentation/flightdirector/past-td EQ 0
+	    </test>
+	</switch>
+
+	<!-- this switch toggles the descent calculator on/off -->
+	<switch name="/autopilot/internal/monitor-descent-on">
+	    <description> Execute Descent Calculator </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		/autopilot/route-manager/active EQ 1
+		<!-- not after Localizer Approach (7) -->
+		/instrumentation/flightdirector/fd-phase LT 7
+		<!-- not before Climb (2) -->
+		/instrumentation/flightdirector/fd-phase GE 2
+	    </test>
+	</switch>
+
+	<!-- difference of current and climb altitude: (climb - current) -->
+	<summer name="fmc/vnav/height-to-climb-alt">
+	    <input> /instrumentation/fmc/climb-alt-ft </input>
+	    <input> -position/h-sl-ft </input>
+	</summer>
+
+	<!-- difference of current and cruise altitude: (cruise - current) -->
+	<summer name="fmc/vnav/height-to-cruise-alt">
+	    <input> /instrumentation/fmc/cruise-alt-ft </input>
+	    <input> -position/h-sl-ft </input>
+	</summer>
+
+	<!-- Cruise altitude and speed acquisition mode -->
+	<switch name="/instrumentation/flightdirector/acquire-cruise">
+	    <description> Set cruise mode for both VNAV and SPD </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<!-- after LIFTOFF and Before FLARE: normal mode (8) -->
+		/instrumentation/fmc/flight-mode EQ 8
+		<!-- managed speed mode and altitude modes -->
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+		<!-- not in cruise speed mode CRZ = 6 -->
+		/instrumentation/flightdirector/spd NE 6
+		<!-- not with descend armed -->
+		/instrumentation/flightdirector/descend-arm EQ 0
+		<!-- already holding altitude (1) -->
+		/instrumentation/flightdirector/vnav EQ 1
+		fmc/vnav/height-to-cruise-alt LT 300
+	    </test>
+	</switch>
+
+	<!-- Altitude acquisition mode -->
+	<switch name="/instrumentation/flightdirector/alt-acquire-mode">
+	    <description> Set altitude acquisition mode according to VNAV </description>
+	    <default value="/instrumentation/flightdirector/alt-acquire-mode"/>
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+	    </test>
+	    <!-- OFF in: off=0, VS=2, FPA=3, GS=9, LEVEL=11 -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/vnav EQ 0
+		/instrumentation/flightdirector/vnav EQ 2
+		/instrumentation/flightdirector/vnav EQ 3
+		/instrumentation/flightdirector/vnav EQ 11
+	    </test>
+	    <!-- ON in OP CLB=4, OP DES=5, CLB=7, DES=8 -->
+	    <test  logic="OR" value="1">
+		/instrumentation/flightdirector/vnav EQ 4
+		/instrumentation/flightdirector/vnav EQ 5
+		/instrumentation/flightdirector/vnav EQ 7
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	</switch>
+
+	<!-- Update VNAV arming -->
+	<switch name="/instrumentation/flightdirector/vnav-arm">
+	    <description> Set VNAV arm </description>
+	    <!-- follow managed VNAV evaluator -->
+	    <default value="fmc/vnav/managed-mode"/>
+	    <!--
+		reset when plain VNAV and arm are the same or if the AP is off
+		or in purely selected mode
+	    -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/vnav-arm EQ /instrumentation/flightdirector/vnav
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		<test  logic="AND" value="1">
+		    /instrumentation/flightdirector/vertical-alt-mode EQ 0
+		    /instrumentation/flightdirector/vertical-vs-mode EQ 0
+		</test>
+	    </test>
+	    <!-- VNAV.OFF when altitude hold is set (1) or ALTCRZ (6) or G/S (9)-->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/vnav EQ 1
+		/instrumentation/flightdirector/vnav EQ 6
+		/instrumentation/flightdirector/vnav EQ 9
+	    </test>
+	    <!-- managed CLB (7) or DES (8), set to ALT (1) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+		<test  logic="OR" value="1">
+		    /instrumentation/flightdirector/vnav EQ 7
+		    /instrumentation/flightdirector/vnav EQ 8
+		</test>
+	    </test>
+	    <!-- set to G/S (9) when APPR is armed but not engaged -->
+	    <test  logic="AND" value="9">
+		/instrumentation/flightdirector/vnav NE 9
+		/instrumentation/flightdirector/appr-arm EQ 1
+	    </test>
+	    <!-- OFF when VNAV and the managed evaluator agree (should be the last test) -->
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/vnav EQ fmc/vnav/managed-mode
+	    </test>
+	</switch>
+
+	<!-- Verify that the VNAV mode makes sense : -1 = descend, 0 = OK, 1 = climb -->
+	<switch name="/instrumentation/flightdirector/vnav-mode-mismatch">
+	    <description> Verify VNAV </description>
+	    <default value="0"/>
+	    <!-- reset when the autopilot is off -->
+	    <test logic="OR" value="0">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+	    </test>
+	    <!-- Climb mode when the descend is required  -->
+	    <test logic="AND" value="-1">
+		<!-- 4 = OP CLB, 7 = CLB -->
+		<test logic="OR" value="1">
+		    /instrumentation/flightdirector/vnav EQ 4
+		    /instrumentation/flightdirector/vnav EQ 7
+		</test>
+		/autopilot/internal/elevation/des-hold-clb EQ -1
+	    </test>
+	    <!-- Descend mode when climb is required -->
+	    <test logic="AND" value="1">
+		<!-- 5 = OP DES, 8 = DES -->
+		<test logic="OR" value="1">
+		    /instrumentation/flightdirector/vnav EQ 5
+		    /instrumentation/flightdirector/vnav EQ 8
+		</test>
+		/autopilot/internal/elevation/des-hold-clb EQ 1
+	    </test>
+	</switch>
+
+	<!-- this switch disables auto-elevator once the AP is OFF -->
+	<switch name="/autopilot/internal/auto-elevator">
+	    <description> Switch off auto elevator </description>
+	    <default value="/autopilot/internal/auto-elevator"/>
+	    <!-- it is enabled in a Nasal script -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		/instrumentation/fmc/roc-lock EQ 0
+	    </test>
+	</switch>
+
+	<!-- ~~~~~~~~~~~~~~~~~ Lateral Mode ~~~~~~~~~~~~~~~~~ -->
+
+	<!-- this switch sets the managed lateral status -->
+	<switch name="/instrumentation/flightdirector/lateral-managed-mode">
+	    <description> Managed lateral mode </description>
+	    <default value="0"/>	<!-- SELECTED_MODE -->
+	    <test  logic="AND" value="-1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		<!-- MANAGED_MODE -->
+		/instrumentation/flightdirector/lateral-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- this switch toggle the managed lateral evaluator on/off -->
+	<switch name="fmc/lnav/run-managed">
+	    <description> Execute managed lateral evaluations </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/lateral-managed-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- this switch toggle the selected lateral evaluator on/off -->
+	<switch name="fmc/lnav/run-selected">
+	    <description> Execute selected lateral evaluations </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/instrumentation/flightdirector/lateral-managed-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- Set LNAV arm mode -->
+	<switch name="/instrumentation/flightdirector/lnav-arm">
+	    <description> Set LNAV arm mode </description>
+	    <!-- follow the managed LNAV evaluator -->
+	    <default value="fmc/lnav/managed-mode"/>
+	    <!--
+		OFF (0) when autopilot is off or plain LNAV and arm match or in selected mode
+	    -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/autopilot-engage EQ 0
+		/instrumentation/flightdirector/lnav-arm EQ /instrumentation/flightdirector/lnav
+		/instrumentation/flightdirector/lateral-managed-mode EQ 0
+	    </test>
+	    <!-- Runway (6) on retard mode: this should supersede flare mode -->
+	    <test  logic="AND" value="6">
+		/instrumentation/fmc/flight-control-retard-mode EQ 1
+		/instrumentation/flightdirector/lnav NE 6
+	    </test>
+	    <!-- Runway (6) on flare flight mode (9) -->
+	    <test  logic="AND" value="6">
+		/instrumentation/fmc/flight-mode EQ 9
+		/instrumentation/flightdirector/lnav NE 6
+	    </test>
+	    <!-- LOC (4) when "loc-arm" is ON (should be an early test) -->
+	    <test  logic="AND" value="4">
+		/instrumentation/flightdirector/loc-arm EQ 1
+		/instrumentation/flightdirector/lnav NE 4
+	    </test>
+	    <!-- OFF when LNAV and the managed evaluator agree (should be the last test) -->
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/lnav EQ fmc/lnav/managed-mode
+	    </test>
+	</switch>
+
+	<!-- ~~~~~~~~~~~~~~~~~ Speed Mode ~~~~~~~~~~~~~~~~~ -->
+
+	<!-- this switch sets the managed speed status -->
+	<switch name="/instrumentation/flightdirector/speed-managed-mode">
+	    <description> Managed speed mode </description>
+	    <default value="0"/>	<!-- SELECTED_MODE -->
+	    <test  logic="AND" value="-1">
+		/instrumentation/flightdirector/autothrottle-engage EQ 1
+		<!-- MANAGED_MODE -->
+		/instrumentation/flightdirector/speed-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- this switch toggle the managed speed evaluator on/off -->
+	<switch name="fmc/speed/run-managed">
+	    <description> Execute managed speed evaluations </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+	    </test>
+	</switch>
+
+	<!-- this switch toggle the selected speed evaluator on/off -->
+	<switch name="fmc/speed/run-selected">
+	    <description> Execute selected speed evaluations </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test logic="AND" value="1">
+		/instrumentation/flightdirector/autothrottle-engage EQ 1
+		/instrumentation/flightdirector/speed-managed-mode EQ 0
+	    </test>
+	</switch>
+
+	<!-- Set speed arm mode -->
+	<switch name="/instrumentation/flightdirector/spd-arm">
+	    <description> Set speed arm mode </description>
+	    <!-- follow the managed speed evaluator -->
+	    <default value="fmc/speed/managed-mode"/>
+	    <!--
+		OFF (0) when autothrottle is off or plain SPD and arm match or in selected mode
+	    -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/autothrottle-engage EQ 0
+		/instrumentation/flightdirector/spd-arm EQ /instrumentation/flightdirector/spd
+		/instrumentation/flightdirector/speed-managed-mode EQ 0
+	    </test>
+	    <!-- OFF when SPD and the managed evaluator agree (should be the last test) -->
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/spd EQ fmc/speed/managed-mode
+	    </test>
+	</switch>
+
+	<!-- This switch sets the changeover mode from knots to Mach -->
+	<switch name="/instrumentation/fmc/changeover-mode">
+	    <description> Switch to Mach mode </description>
+	    <default value="0"/>	<!-- OFF -->
+	    <test  logic="AND" value="1">
+		position/h-sl-ft GT /instrumentation/fmc/changeover-alt
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+		/instrumentation/fmc/flight-control-flight-mode EQ 1
+	    </test>
+	</switch>
+
+	<!-- Test if the VNAV and SPD modes are aligned -->
+	<switch name="/instrumentation/flightdirector/vnav-spd-mismatch">
+	    <description> Misalignment of VNAV and SPD modes </description>
+	    <!-- keep current value until reset in nasal script -->
+	    <default value="/instrumentation/flightdirector/vnav-spd-mismatch"/>
+	    <!-- OPCLB (4) always uses a fixed thrust mode: SPDPTCH (7) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vnav EQ 4
+		/instrumentation/flightdirector/spd NE 7
+	    </test>
+	    <!-- OPDES (5) always uses a fixed thrust mode: SPDPTCH (7) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vnav EQ 5
+		/instrumentation/flightdirector/spd NE 7
+	    </test>
+	    <!-- CLB (7) always uses THRCLB (3) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vnav EQ 7
+		/instrumentation/flightdirector/spd NE 3
+	    </test>
+	    <!-- DES (8) always uses THRDES (4) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vnav EQ 8
+		/instrumentation/flightdirector/spd NE 4
+	    </test>
+	    <!-- When VNAV is OFF (0) we do not allow specialist modes -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/vnav EQ 0
+		<!-- allow OFF (0), SPEED (1), MACH (2) or SPD PITCH (7) -->
+		/instrumentation/flightdirector/spd GT 2
+		/instrumentation/flightdirector/spd LT 7
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- ========================= Evaluators ========================= -->
+
+    <!--
+	This channel evaluates managed VNAV. It is only needed when at least
+	one of the vertical modes is managed.
+    -->
+    <channel name="Managed VNAV" execute="fmc/vnav/run-managed" execrate="8">
+
+    <!-- this switch evaluates the vertical managed mode -->
+	<switch name="fmc/vnav/managed-mode">
+	    <description> Evaluate managed VNAV </description>
+	    <!-- default is unchanged  -->
+	    <default value="/instrumentation/flightdirector/vnav"/>
+	    <!-- On the ground or without AP, we switch off VNAV -->
+	    <test  logic="OR" value="0">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <!-- if either ALT or V/S is NOT managed, default to ALT (1) -->
+	    <test  logic="OR" value="1">
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+		/instrumentation/flightdirector/vertical-vs-mode EQ 0
+	    </test>
+	    <!-- When committed to landing (LAND), use V/S (2) -->
+	    <test  logic="OR" value="2">
+		/instrumentation/fmc/landing/commit EQ 1
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+		/instrumentation/fmc/flight-control-retard-mode EQ 1
+	    </test>
+	    <!-- glideslope (test must come early in the series): 9 = G/S -->
+	    <test  logic="AND" value="9">
+		/instrumentation/flightdirector/appr-arm EQ 1
+		<test  logic="OR" value="1">
+		    /autopilot/internal/gs-intercepted-weak EQ 1
+		    /autopilot/internal/gs-intercepted-good EQ 1
+		</test>
+	    </test>
+	    <!-- AGL when loc-arm is active: 10 = AGL, 4 = NAV1/LOC -->
+	    <test  logic="AND" value="10">
+		/instrumentation/flightdirector/loc-arm EQ 1
+	    </test>
+	    <!-- managed cruise alt: ALTCRZ = 6 -->
+	    <test  logic="AND" value="6">
+		fmc/vnav/height-to-cruise-alt LT 500
+		/instrumentation/flightdirector/past-td EQ 0
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+	    </test>
+	    <!-- managed climb: 7 = CLB -->
+	    <test  logic="AND" value="7">
+		/autopilot/internal/elevation/des-hold-clb EQ 1
+		/instrumentation/flightdirector/past-td EQ 0
+	    </test>
+	    <!-- managed descent: 8 = DES -->
+	    <test  logic="AND" value="8">
+		/autopilot/internal/elevation/des-hold-clb EQ -1
+		/instrumentation/flightdirector/past-tc EQ 1
+	    </test>
+	    <!--
+		managed alt: 1 = ALT:
+		Either in Alt-hold zone or trying to acqure altitude
+	    -->
+	    <test  logic="OR" value="1">
+		/autopilot/internal/elevation/des-hold-clb EQ 0
+		/instrumentation/flightdirector/alt-acquire-mode EQ 1
+		/instrumentation/flightdirector/vnav EQ 0
+	    </test>
+	    <!-- stay level (11) above the target altitude -->
+	    <test  logic="AND" value="11">
+		position/h-sl-ft GT /instrumentation/fmc/altitude-ft
+		/instrumentation/flightdirector/descend-arm EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates selected VNAV. It is only needed when when at
+	least one of the vertical modes is selected.
+    -->
+    <channel name="Selected VNAV" execute="fmc/vnav/run-selected" execrate="8">
+
+    <!-- this switch evaluates the vertical selected mode -->
+	<switch name="fmc/vnav/selected-mode">
+	    <description> Evaluate selected VNAV </description>
+	    <default value="/instrumentation/flightdirector/vnav"/>
+	    <!-- On the ground we switch off vnav -->
+	    <test  logic="AND" value="0">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <!-- ignore managed modes -->
+	    <test  logic="AND" value="/instrumentation/flightdirector/vnav">
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+		/instrumentation/flightdirector/vertical-vs-mode EQ -1
+	    </test>
+	    <!-- When committed to landing (LAND), use V/S (2) -->
+	    <test  logic="OR" value="2">
+		/instrumentation/fmc/landing/commit EQ 1
+		/instrumentation/fmc/flight-control-flare-mode EQ 1
+		/instrumentation/fmc/flight-control-retard-mode EQ 1
+	    </test>
+	    <!-- do not change glideslope or AGL modes: 9 = G/S, 10 = AGL -->
+	    <test  logic="OR" value="/instrumentation/flightdirector/vnav">
+		/instrumentation/flightdirector/vnav EQ 9
+		/instrumentation/flightdirector/vnav EQ 10
+	    </test>
+	    <!-- switch to ALT mode when in range: 1 = ALT -->
+	    <test  logic="AND" value="1">
+		/autopilot/internal/elevation/des-hold-clb EQ 0
+	    </test>
+	    <!-- operator climb: 4 = OP CLB -->
+	    <test  logic="AND" value="4">
+		/autopilot/internal/elevation/des-hold-clb EQ 1
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+	    </test>
+	    <!-- operator descent: 5 = OP DES-->
+	    <test  logic="AND" value="5">
+		/autopilot/internal/elevation/des-hold-clb EQ -1
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+	    </test>
+	    <!-- stay level (11) above the target altitude -->
+	    <test  logic="AND" value="11">
+		position/h-sl-ft GT /autopilot/internal/settings/target-altitude-ft
+	    </test>
+	    <!--
+		The last two modes (VS and FPA) are only used in pure selected modes.
+		So if either VS or ALT is managed, we revert to ALT (1) mode.
+		This is also the fallback from the pure managed modes,
+		CLB (7) and DES (8)
+	    -->
+	    <test  logic="OR" value="1">
+		/instrumentation/flightdirector/vertical-alt-mode EQ -1
+		/instrumentation/flightdirector/vertical-vs-mode EQ -1
+		/instrumentation/flightdirector/vnav EQ 7
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	    <!-- From OFF switch to the default mode: either 2 = V/S or 3 = FPA -->
+	    <test  logic="OR" value="3">
+		/instrumentation/flightdirector/vnav EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates managed LNAV. It is only needed when the lateral
+	mode is managed.
+    -->
+    <channel name="Managed LNAV" execute="fmc/lnav/run-managed" execrate="8">
+
+    <!-- this switch evaluates the lateral managed mode -->
+	<switch name="fmc/lnav/managed-mode">
+	    <description> Evaluate managed LNAV </description>
+	    <!-- default is wing level (1) -->
+	    <default value="1"/>
+	    <!-- ignore selected modes -->
+	    <test  logic="AND" value="/instrumentation/flightdirector/lnav">
+		/instrumentation/flightdirector/lateral-managed-mode EQ 0
+	    </test>
+	    <!-- On runway for takeoff after ENG (2) and before lift off (6): 6 = RWY -->
+	    <test  logic="AND" value="6">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+		/instrumentation/fmc/flight-mode GT 2
+		/instrumentation/fmc/flight-mode LT 6
+	    </test>
+	    <!-- On runway after TD (10) and before rollout (11): 6 = RWY -->
+	    <test  logic="AND" value="6">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+		/instrumentation/fmc/flight-mode EQ 10
+	    </test>
+	    <!-- switch to 4 = NAV1/LOC when localizer is intercepted -->
+	    <test  logic="OR" value="4">
+		/autopilot/internal/vorloc-intercepted-good EQ 1
+		/autopilot/internal/vorloc-intercepted-weak EQ 1
+	    </test>
+	    <!-- TACAN mode (5) when TACAN is active and airborne -->
+	    <test  logic="AND" value="5">
+		/instrumentation/flightdirector/tacan-enable EQ 1
+	    </test>
+	    <!-- NAV mode (3) when route-manager is active and airborne -->
+	    <test  logic="AND" value="3">
+		/autopilot/route-manager/active EQ 1
+		/autopilot/route-manager/airborne EQ 1
+		autopilot/remaining-wpts GT 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates selected LNAV. It is only needed when when the
+	lateral mode is selected.
+    -->
+    <channel name="Selected LNAV" execute="fmc/lnav/run-selected" execrate="8">
+
+    <!-- this switch evaluates the lateral selected mode -->
+	<switch name="fmc/lnav/selected-mode">
+	    <description> Evaluate selected LNAV </description>
+	    <!-- default mode is heading HDG (2) -->
+	    <default value="2"/>
+	    <!-- ignore managed mode -->
+	    <test  logic="AND" value="/instrumentation/flightdirector/lnav">
+		/instrumentation/flightdirector/lateral-managed-mode EQ -1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates managed SPEED. It is only needed when the
+	speed mode is managed.
+    -->
+    <channel name="Managed Speed" execute="fmc/speed/run-managed" execrate="8">
+
+    <!-- this switch evaluates the speed managed mode -->
+	<switch name="fmc/speed/managed-mode">
+	    <description> Evaluate managed SPEED </description>
+	    <!-- default mode is SPEED (1)-->
+	    <default value="1"/>
+	    <!-- ignore selected modes -->
+	    <test  logic="AND" value="/instrumentation/flightdirector/spd">
+		/instrumentation/flightdirector/speed-managed-mode EQ 0
+	    </test>
+	    <!--
+		speed cruise after Top of Climb (ToC) but before Top Of Descent (ToD),
+		altitude must also be ALTCRZ (6): 6 = CRZ
+	    -->
+	    <test  logic="AND" value="6">
+		/instrumentation/flightdirector/past-tc EQ 1
+		/instrumentation/flightdirector/past-td EQ 0
+		/instrumentation/flightdirector/vnav EQ 6
+	    </test>
+	    <!-- speed throttle climb: 3 = THR CLB -->
+	    <test  logic="AND" value="3">
+		position/h-sl-ft LT /instrumentation/fmc/cruise-alt-ft
+		/instrumentation/flightdirector/acquire-cruise EQ 0
+		<!-- vnav must be either CLB (7)-->
+		/instrumentation/flightdirector/vnav EQ 7
+	    </test>
+	    <!-- throttle descent after Top Of Descent (ToD) or in DES (8) mode: 4 = THR DES-->
+	    <test  logic="OR" value="4">
+		/instrumentation/flightdirector/past-td EQ 1
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+	    <!-- change to SPEED (1) when holding altitude below the changeover altitude -->
+	    <test  logic="AND" value="1">
+		/autopilot/internal/switch-to-alt-hold EQ 1
+		/instrumentation/fmc/changeover-mode EQ 0
+	    </test>
+	    <!-- change to MACH (2) when holding altitude above the changeover altitude -->
+	    <test  logic="AND" value="2">
+		/autopilot/internal/switch-to-alt-hold EQ 1
+		/instrumentation/fmc/changeover-mode EQ 1
+	    </test>
+	    <!-- SPD PITCH (7) for VNAV in OP CLB (4) or OP DES (5) -->
+	    <test logic="OR" value="7">
+		/instrumentation/flightdirector/vnav EQ 4
+		/instrumentation/flightdirector/vnav EQ 5
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates selected SPEED. It is only needed when when the
+	speed mode is selected.
+    -->
+    <channel name="Selected Speed" execute="fmc/speed/run-selected" execrate="8">
+
+    <!-- this switch evaluates the speed selected mode -->
+	<switch name="fmc/speed/selected-mode">
+	    <description> Evaluate selected Speed </description>
+	    <!-- default to SPEED (1) -->
+	    <default value="1"/>
+	    <!-- ignore managed mode -->
+	    <test  logic="AND" value="/instrumentation/flightdirector/spd">
+		/instrumentation/flightdirector/speed-managed-mode EQ -1
+	    </test>
+	    <!-- SPD PITCH (7) for VNAV in OP CLB (4) or OP DES (5) -->
+	    <test logic="OR" value="7">
+		/instrumentation/flightdirector/vnav EQ 4
+		/instrumentation/flightdirector/vnav EQ 5
+	    </test>
+	    <!-- mach mode above changeover altitude: MACH (2)-->
+	    <test  logic="AND" value="2">
+		/instrumentation/fmc/changeover-mode EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates FD parameters that are related to the navigation system.
+	It also performs the flight director function of executing a flight plan.
+	When the FD is active, it takes care of	all the flight phases from takeoff to
+	landing.
+	It runs continuously, even without the flight director or autopilot, although
+	the computations might not be used immediately. The flight phase in particular
+	should always been known accurately, hence we keep it alive.
+    -->
+    <channel name="Flight Management" execrate="8">
+
+	<!-- FD phases -->
+	<switch name="/instrumentation/flightdirector/fd-phase">
+	    <description> Evaluate Flight Phase </description>
+	    <!-- default to current value -->
+	    <default value="/instrumentation/flightdirector/fd-phase"/>
+	    <!-- Takeoff (1) -->
+	    <test logic="AND" value="1">
+		/instrumentation/flightdirector/fd-phase EQ 0
+		/instrumentation/fmc/flight-mode GT 5
+		/instrumentation/fmc/flight-mode LT 7
+	    </test>
+
+	    <!-- Climb (2) -->
+	    <test logic="AND" value="2">
+		/instrumentation/flightdirector/fd-phase EQ 1
+		/instrumentation/fmc/flight-mode EQ 8
+	    </test>
+
+	    <!-- Mission (3) -->
+	    <test logic="AND" value="3">
+		/instrumentation/flightdirector/fd-phase EQ 2
+		/instrumentation/flightdirector/past-tc EQ 1
+	    </test>
+
+	    <!-- Descend (4) -->
+	    <test logic="AND" value="4">
+		/instrumentation/flightdirector/fd-phase EQ 3
+		/instrumentation/flightdirector/past-td EQ 1
+	    </test>
+
+	    <!--  Decelerate (5)  -->
+	    <test logic="AND" value="5">
+		/instrumentation/flightdirector/fd-phase EQ 4
+		<!-- capture when within 300 ft of deceleration altitude -->
+		fmc/descend-height-ft LT 300
+	    </test>
+
+	    <!-- initial Approach (6) -->
+	    <test logic="AND" value="6">
+		/instrumentation/flightdirector/fd-phase EQ 5
+		<!-- wait for deceleration leave signal -->
+		/instrumentation/flightdirector/decel-step EQ 1
+	    </test>
+
+	    <!--
+		abort deceleration if within range of LOCalizer or if we go below
+		the deceleration altitude somehow
+	    -->
+	    <test logic="AND" value="6">
+		/instrumentation/flightdirector/fd-phase EQ 5
+		<test logic="OR" value="1">
+		    /instrumentation/flightdirector/loc-nearby EQ 1
+		    fmc/descend-height-ft LT -1000
+		</test>
+	    </test>
+
+	    <!-- Localizer Approach (7) -->
+	    <test logic="AND" value="7">
+		/instrumentation/flightdirector/fd-phase EQ 6
+		/instrumentation/flightdirector/loc-nearby EQ 1
+		position/h-agl-ft LT 8000
+	    </test>
+
+	    <!-- Final Approach (8) -->
+	    <test logic="AND" value="8">
+		/instrumentation/flightdirector/fd-phase EQ 7
+		/instrumentation/flightdirector/loc-nearby EQ 1
+		/instrumentation/nav[0]/gs-in-range EQ 1
+		position/h-agl-ft LT 4000
+	    </test>
+
+	    <!-- Land (9) -->
+	    <test logic="AND" value="9">
+		/instrumentation/flightdirector/fd-phase NE 8
+		/instrumentation/fmc/flight-mode EQ 10
+	    </test>
+
+	    <!-- Go Around (10) -->
+	    <test logic="AND" value="10">
+		/instrumentation/flightdirector/fd-phase NE 10
+		/instrumentation/fmc/landing/go-around EQ 1
+	    </test>
+
+	    <!-- Climb (2) at the end of Go Around (10) -->
+	    <test logic="AND" value="2">
+		/instrumentation/flightdirector/fd-phase EQ 10
+		/instrumentation/fmc/landing/go-around EQ 0
+	    </test>
+
+	    <!-- Off (0) -->
+	    <test logic="AND" value="0">
+		/instrumentation/fmc/flight-mode GT 10
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates time and distance to the top-of-climb phase.
+	It is only needed before ToC is achieved, after which it can be turned off.
+    -->
+    <channel name="Top-of-climb" execute="fmc/estimate-climb" execrate="8">
+
+    <!-- ~~~~~~~~ Top of Climb calculators ~~~~~~~~ -->
+
+    <!-- calculate the height climbed since departure -->
+	<summer name="fmc/climb-height-m">
+	    <input> position/h-sl-meters </input>
+	    <input> -/instrumentation/fmc/dep-alt-m </input>
+	</summer>
+
+	<!-- estimate the average climb angle thus far -->
+	<fcs_function name="/instrumentation/fmc/avg-climb-angle-rad">
+	    <description> Calc angle-of-climb in radians </description>
+	    <function>
+		<!-- convert all distances to metres -->
+		<atan>
+		    <quotient>
+			<property> fmc/climb-height-m </property>
+			<product>
+			    <property> /instrumentation/gps/odometer </property>
+			    <value> 1852 </value>         <!-- nm2M -->
+			</product>
+		    </quotient>
+		</atan>
+	    </function>
+	</fcs_function>
+
+	<!--
+	    The remaining height is "h" and will attained after we have travelled a horizontal
+	    distance "d". If this angle "a" is maintained, then d x tan(a) = h.
+	-->
+	<fcs_function name="/instrumentation/fmc/top-of-climb-dist-nm">
+	    <description> Remaining distance to ToC </description>
+	    <function>
+		<product>
+		    <quotient>
+			<property> fmc/vnav/height-to-climb-alt </property>
+			<tan>
+			    <property>/instrumentation/fmc/avg-climb-angle-rad</property>
+			</tan>
+		    </quotient>
+		    <value>0.000164578834</value>	<!-- FT2nm -->
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!-- estimate the time remaining to the ToC -->
+	<fcs_function name="/instrumentation/fmc/top-of-climb-eta-sec">
+	    <description> Remaining time to ToC </description>
+	    <function>
+		<product>
+		    <quotient>
+			<property> fmc/vnav/height-to-climb-alt </property>
+			<property> velocities/v-down-fps </property>
+		    </quotient>
+		    <value> -1 </value>	<!-- convert to up -->
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!-- Finally, mark when ToC has been reached -->
+	<switch name="/instrumentation/flightdirector/past-tc">
+	    <description> Reached ToC </description>
+	    <!-- default is to keep current value (one way switch) -->
+	    <default value="/instrumentation/flightdirector/past-tc"/>
+	    <!-- start as off -->
+	    <test  logic="AND" value="0">
+		/instrumentation/fmc/flight-control-ground-mode EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		/instrumentation/fmc/flight-mode EQ 8
+		fmc/vnav/height-to-climb-alt LT 50
+		/instrumentation/fmc/top-of-climb-dist-nm LT 0.5
+		/instrumentation/fmc/top-of-climb-eta-sec LT 6
+	    </test>
+	    <!-- set if we have achieved cruise altitude without the ToC tests -->
+	    <test  logic="AND" value="1">
+		/instrumentation/fmc/flight-mode EQ 8
+		<test logic="OR" value="1">
+		    position/h-sl-ft GE /instrumentation/fmc/cruise-alt-ft
+		    /instrumentation/flightdirector/vnav EQ 7
+		</test>
+	    </test>
+	    <!-- set if we have achieved ToD first and are above 8,000 ft AGL  -->
+	    <test  logic="AND" value="1">
+		position/h-agl-ft GE 8000
+		/instrumentation/flightdirector/past-td EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates time, distance and speed parameters for the descent phase.
+	It is only needed after the climb phase until the approach phase, after which
+	it can be turned off.
+    -->
+    <channel name="Descent" execute="/autopilot/internal/monitor-descent-on" execrate="8">
+
+    <!-- Calculate the difference between current and descent altitude -->
+	<summer name="fmc/descend-height-ft">
+	    <input> position/h-sl-ft  </input>
+	    <input> -/instrumentation/fmc/deceleration-alt </input>
+	</summer>
+
+	<!-- Calculate the difference between current speed and descent speed -->
+	<summer name="fmc/speed/speed-above-des-kt">
+	    <input> velocities/vc-kts  </input>
+	    <input> -/instrumentation/fmc/descend-speed </input>
+	</summer>
+
+	<!-- Calculate the difference between current and 1st approach fix -->
+	<summer name="fmc/approach/delta1-height-ft">
+	    <input> position/h-sl-ft  </input>
+	    <input> -/instrumentation/fmc/approach/initial-alt-ft</input>
+	</summer>
+
+	<!-- Calculate the difference between current and ILS approach fix -->
+	<summer name="fmc/approach/delta2-height-ft">
+	    <input> position/h-sl-ft  </input>
+	    <input> -/instrumentation/fmc/approach/final-alt-ft</input>
+	</summer>
+
+	<!-- Calculate the distance to the first approach fix -->
+	<summer name="/instrumentation/fmc/approach/initial-dist-nm">
+	    <input> /autopilot/route-manager/distance-remaining-nm </input>
+	    <input> -/instrumentation/fmc/approach/initial-to-dest-nm </input>
+	    <clipto>
+		<min> 0.0 </min>
+		<max> 200 </max>
+	    </clipto>
+	</summer>
+
+	<!-- Calculate the distance to the ILS approach fix -->
+	<summer name="/instrumentation/fmc/approach/final-dist-nm">
+	    <input> /autopilot/route-manager/distance-remaining-nm </input>
+	    <input> -/instrumentation/fmc/approach/final-to-dest-nm </input>
+	    <clipto>
+		<min> 0.0 </min>
+		<max> 200 </max>
+	    </clipto>
+	</summer>
+
+	<!--
+	    Based on the current ground speed, how long would it take to get to
+	    the 1st approach fix?
+	-->
+	<fcs_function name="fmc/approach/eta1-mins">
+	    <description> Time estimate to initial approach </description>
+	    <function>
+		<product>
+		    <quotient>
+			<property> /instrumentation/fmc/approach/initial-dist-nm </property>
+			<property> /instrumentation/gps/indicated-ground-speed-kt </property>
+		    </quotient>
+		    <value> 60 </value>	<!-- to mins -->
+		</product>
+	    </function>
+	    <clipto>
+		<min> 0.001 </min>	<!-- just to avoid div-by-zero later -->
+		<max> 600 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    Based on the current ground speed, how long would it take to get to
+	    the 2nd approach fix?
+	-->
+	<fcs_function name="fmc/approach/eta2-mins">
+	    <description> Time estimate to final approach </description>
+	    <function>
+		<product>
+		    <quotient>
+			<property> /instrumentation/fmc/approach/final-dist-nm </property>
+			<property> /instrumentation/gps/indicated-ground-speed-kt </property>
+		    </quotient>
+		    <value> 60 </value>	<!-- to mins -->
+		</product>
+	    </function>
+	    <clipto>
+		<min> 0.001 </min>	<!-- just to avoid div-by-zero later -->
+		<max> 600 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    Now we can work out a required descent rate to reach the approaches in
+	    time.
+	-->
+	<fcs_function name="/instrumentation/fmc/approach/descent-rate-fpm">
+	    <description> Required rate of descent to approaches </description>
+	    <function>
+		<product>
+		    <value> -1.05 </value>	<!-- safety factor -->
+		    <max>
+			<quotient>
+			    <property> fmc/approach/delta1-height-ft </property>
+			    <property> fmc/approach/eta1-mins </property>
+			</quotient>
+			<quotient>
+			    <property> fmc/approach/delta2-height-ft </property>
+			    <property> fmc/approach/eta2-mins </property>
+			</quotient>
+		    </max>
+		</product>
+	    </function>
+	    <clipto>
+		<min> -3000 </min>
+		<max> -500 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Set deceleration phase step: acquire (-1), level (0), leave (1) -->
+	<switch name="/instrumentation/flightdirector/decel-step">
+	    <description> Set the decelaration phase step </description>
+	    <default value="/instrumentation/flightdirector/decel-step"/>
+	    <!-- if not in managed mode or before the ToD: acquire (-1) -->
+	    <test  logic="OR" value="-1">
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+		/instrumentation/flightdirector/past-td EQ 0
+		/instrumentation/flightdirector/fd-phase NE 5
+	    </test>
+	    <!-- on initial entry to deceleration phase: level (0) -->
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/decel-step EQ -1
+	    </test>
+	    <!-- switch to leave (1) once we have slowed down sufficiently -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/decel-step EQ 0
+		<!-- wait for LEVEL mode (11) -->
+		/instrumentation/flightdirector/vnav EQ 11
+		fmc/speed/speed-above-des-kt LT 2
+	    </test>
+	</switch>
+
+	<!-- Arm descent mode when in cruise mode or deceleration mode -->
+	<switch name="/instrumentation/flightdirector/descend-arm">
+	    <description> Arm descent mode </description>
+	    <default value="/instrumentation/flightdirector/descend-arm"/>
+	    <!-- we must be in managed mode and past the ToD -->
+	    <test  logic="OR" value="0">
+		/instrumentation/flightdirector/vertical-alt-mode EQ 0
+		/instrumentation/flightdirector/past-td EQ 0
+		<!-- reset if DES mode (8) is set -->
+		/instrumentation/flightdirector/vnav EQ 8
+	    </test>
+
+	    <!--
+		1st signal at cruise altitude:
+		switch ON when past ToD and if still in ALTCRZ mode (6)
+	    -->
+	    <test value="1">
+		/instrumentation/flightdirector/vnav EQ 6
+	    </test>
+
+	    <!--
+		2nd batch of signals at deceleration altitude:
+		* the decelaration phase step is "leave"
+		* the phase shifted anyway the next phase due to a LOC signal
+	    -->
+
+	    <!-- Deceleration leave signal -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/decel-step EQ 1
+		/instrumentation/flightdirector/fd-phase EQ 5
+	    </test>
+	    <!-- entered approach phase (6) without setting DES mode (8) -->
+	    <test  logic="AND" value="1">
+		/instrumentation/flightdirector/fd-phase EQ 6
+		<test  logic="AND" value="1">
+		    /instrumentation/flightdirector/vnav NE 8
+		    /instrumentation/flightdirector/vnav NE 10
+		</test>
+	    </test>
+
+	    <!--
+		3rd signal when above deceleration altitude but not descending
+	    -->
+	    <test value="1">
+		/instrumentation/flightdirector/fd-phase EQ 4
+		position/h-sl-ft GT /instrumentation/fmc/deceleration-alt
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel evaluates time and distance to the Top-of-Descent.
+	It is only needed after the climb phase until the ToD is reached,
+	after which it can be turned off.
+    -->
+    <channel name="Top-of-Descent" execute="fmc/estimate-descent" execrate="8">
+    <!--
+	~~~~~~~~ Top of Descent calculation ~~~~~~~~
+	The calculation of descent rate angle says: TAN( angle°) = descent rate (%)
+	The standard descent is calculated along a 3° descent angle:
+	TAN(3°) = 0.05240778 ≈ 5.2%
+
+	Rule of 3:
+	3 nm of travel should be allowed for every 1,000 feet (300 m) of descent.
+	So a 5% rate is equivalent to 300 ft/nm
+    -->
+
+    <!--
+	The start of descent distance is calculated using this formula:
+	D = (Altitudecruise - Altitudefix) / (100 * DescentAngle), where
+	D is start of descent distance before expected approach fix (nm)
+	"Altitudecruise" is the cruise altitude (ft)
+	"Altitudefix" is the altitude expected at approach fix (ft)
+	"DescentAngle" is descent angle chosen (°)
+
+	As a safety margin, it is recommended to add 1 nm to 5 nm to this calculated
+	distance to account for the actual descent rate and winds effects.
+    -->
+
+	<fcs_function name="/instrumentation/fmc/top-of-descent-dist-nm">
+	    <description> Start of descent distance from fix </description>
+	    <function>
+		<sum>
+		    <quotient>
+			<property> fmc/approach/delta1-height-ft </property>
+			<value> 300 </value>	<!-- Rate (ft/nm) -->
+		    </quotient>
+		    <value> 5 </value>	<!-- safety margin -->
+		</sum>
+	    </function>
+	    <clipto>
+		<min>  0 </min>
+		<max> 300 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!--
+	    Descent rate calculation:
+	    Vertical speed (ft/min) = Descent rate (%) x Ground speed (knots)
+	-->
+	<pure_gain name="fmc/tod/ground-rate-fpm">
+	    <description> Descent rate using the ground speed </description>
+	    <input>/instrumentation/gps/indicated-ground-speed-kt </input>
+	    <gain> -5.2 </gain>	<!-- descent rate is standard -->
+	</pure_gain>
+
+	<!--
+	    Descent rate using Mach number:
+	    At high altitude above FL260, during the cruise phase commercial aircraft
+	    fly at a constant Mach number independent of the target altitude. The pilot
+	    can initiate also a first phase of descent using a constant Mach number:
+	    Vertical speed (ft/min) = Descent angle (°) x Mach x 1000
+	-->
+	<pure_gain name="fmc/tod/mach-rate-fpm">
+	    <description> Descent rate using the Mach number </description>
+	    <input> velocities/mach </input>
+	    <gain> -3000 </gain>	<!-- standard descent angle x 1000 -->
+	</pure_gain>
+
+	<!-- Select the descent rate -->
+	<switch name="fmc/tod/descent-rate-fpm">
+	    <description> Set the descent rate </description>
+	    <!-- default is ground speed base rate -->
+	    <default value="fmc/tod/ground-rate-fpm"/>
+	    <!-- use the Mach rate above the changeover altitude -->
+	    <test  logic="AND" value="fmc/tod/mach-rate-fpm">
+		/instrumentation/fmc/changeover-mode EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    In reality, when we are a long way off from the fix, the ground speed
+	    will be considerably less than the current on. So the value of
+	    "descent-rate-fpm" might be misleading, being much lower than the
+	    average rate was the ground speed declines. So we will adjust
+	    "descent-rate-fpm" based on the ground speed above a "standard"
+	    speed of 250 kts and at a distance of 10 nm from the fix.
+	-->
+	<fcs_function name="fmc/tod/adj-descent-rate-fpm">
+	    <description>
+		Adjusted descent rate accounting for speed and distance
+	    </description>
+	    <function>
+		<product>
+		    <property> fmc/tod/descent-rate-fpm </property>
+		    <table>
+			<independentVar lookup="row"> /instrumentation/gps/indicated-ground-speed-kt </independentVar>
+			<independentVar lookup="column"> /instrumentation/fmc/top-of-descent-dist-nm </independentVar>
+			<tableData>
+				    10	    50	    150
+			    250	    1.0	    0.9	    0.8
+			    500	    1.0	    0.7	    0.5
+			</tableData>
+		    </table>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!-- USe the adjusted descent rate to compute the ETA -->
+	<fcs_function name="fmc/tod/eta-var-rate">
+	    <description> Descent time at variable descent rate </description>
+	    <function>
+		<product>
+		    <quotient>
+			<property> fmc/approach/delta1-height-ft </property>
+			<property> fmc/tod/adj-descent-rate-fpm </property>
+		    </quotient>
+		    <value> -60 </value>	<!-- secs -->
+		</product>
+	    </function>
+	</fcs_function>
+
+	<!-- Descent time at a constant descent rate (1,500 fpm) -->
+	<pure_gain name="fmc/tod/eta-const-rate">
+	    <description> Descent time at constant descent rate </description>
+	    <input> fmc/approach/delta1-height-ft </input>
+	    <gain> 0.04 </gain>	<!-- 60 sec / 1500 fpm -->
+	</pure_gain>
+
+	<!--  Select the maximum descent time -->
+	<fcs_function name="/instrumentation/fmc/top-of-descent-eta-sec">
+	    <description> Descent time from ToD to initial approach </description>
+	    <function>
+		<max>
+		    <property> fmc/tod/eta-const-rate </property>
+		    <property> fmc/tod/eta-var-rate </property>
+		</max>
+	    </function>
+	</fcs_function>
+
+	<!-- Time to initial approach in secs -->
+	<pure_gain name="fmc/approach/fix-eta-sec">
+	    <description> Time estimate to initial approach (horizontal)</description>
+	    <input> fmc/approach/eta1-mins </input>
+	    <gain> 60 </gain>	<!-- secs -->
+	</pure_gain>
+
+	<!-- Finally, mark when ToD has been reached -->
+	<switch name="/instrumentation/flightdirector/past-td">
+	    <description> Reached ToD </description>
+	    <!-- default is to keep current value (one way switch) -->
+	    <default value="/instrumentation/flightdirector/past-td"/>
+	    <!-- start as off -->
+	    <test  logic="AND" value="0">
+		/instrumentation/fmc/flight-control-flight-mode EQ 0
+	    </test>
+	    <!--logic "AND" ensures we start descending as late as possible -->
+	    <test  logic="AND" value="1">
+		/instrumentation/fmc/flight-mode EQ 8
+		<!-- time to fix -->
+		fmc/approach/fix-eta-sec LT /instrumentation/fmc/top-of-descent-eta-sec
+		<!-- distance to fix -->
+		/instrumentation/fmc/approach/initial-dist-nm LT /instrumentation/fmc/top-of-descent-dist-nm
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- The following channel is active when the TACAN power button is ON -->
+    <channel name="Tacan" execute="/instrumentation/tacan/power-on" execrate="8">
+
+    <!--
+	===============================================================
+	TACAN helpers
+	===============================================================
+    -->
+
+    <!-- Arm TACAN when the switch is ON (REC or T/R) and TACAN is in range -->
+	<switch name="/instrumentation/flightdirector/tacan-arm">
+	    <description> Arm TACAN </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/autopilot-engage EQ 1
+		/instrumentation/fmc/flight-control-flight-mode EQ 1
+		<!-- Not in full passive mode -->
+		/autopilot/locks/passive-mode LT 1
+		<!-- In Tacan range -->
+		/instrumentation/tacan/in-range EQ 1
+		<!-- Tacan power is ON -->
+		/instrumentation/tacan/power-on EQ 1
+	    </test>
+	</switch>
+
+	<!-- Enable TACAN when it is already armed and the switch is in T/R or A/A -->
+	<switch name="/instrumentation/flightdirector/tacan-enable">
+	    <description> Enable TACAN </description>
+	    <default value="0"/>
+	    <test value="1">
+		/instrumentation/flightdirector/tacan-arm EQ 1
+		<test logic="OR" value="1">
+		    <!-- TACAN switch is T/R (2) -->
+		    /instrumentation/tacan/switch-position EQ 2
+		    <!-- TACAN switch is A/A (3) -->
+		    /instrumentation/tacan/switch-position EQ 3
+		</test>
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <path>dimmer.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <animation>
+	<type>knob</type>
+	<object-name>Knob</object-name>
+	<property>/controls/switches/lights-brightness</property>
+	<interpolation>
+	    <entry>
+		<ind>0.0</ind>
+		<dep>160</dep>
+	    </entry>
+	    <entry>
+		<ind>1.0</ind>
+		<dep>-160</dep>
+	    </entry>
+	</interpolation>
+	<axis>
+	    <x>1</x>
+	    <y>0</y>
+	    <z>0</z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/controls/switches/lights-brightness</property>
+		<factor>0.1</factor>
+		<min>0</min>
+		<max>1</max>
+		<wrap>0</wrap>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Light Brightness: %3d%%</label>
+		<tooltip-id>light_brightness</tooltip-id>
+		<mapping>percent</mapping>
+		<property>/controls/switches/lights-brightness</property>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-shiny.xml">
+	<object-name>Knob</object-name>
+    </animation>
+
+    <!-- *** LoD for the whole model *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

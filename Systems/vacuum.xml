@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<system name="vacuum">
+
+    <!-- 
+	******************************************************
+	Merge the outputs of the vacuum suction-inhg from the
+	four engines into one so that they can be used by any
+	instrument instead of the individual ones.
+	******************************************************
+    -->
+    <channel name="Vacuum" execrate="8">
+
+	<fcs_function name="/systems/vacuum-max/suction-inhg">
+	    <function>
+		<max>
+		    <property>/systems/vacuum[0]/suction-inhg</property>
+		    <property>/systems/vacuum[1]/suction-inhg</property>
+		    <property>/systems/vacuum[2]/suction-inhg</property>
+		    <property>/systems/vacuum[3]/suction-inhg</property>
+		</max>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+</system>

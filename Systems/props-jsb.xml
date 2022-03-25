@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <aero>
+	<beta-switch type="bool">false</beta-switch>
+	<function>
+	    <CoG-aft-offset type="float">0.0</CoG-aft-offset>
+	    <CoG-fwd-offset type="float">0.0</CoG-fwd-offset>
+	    <CoG-limit-max type="float">0.0</CoG-limit-max>
+	    <CoG-limit-min type="float">0.0</CoG-limit-min>
+	    <CoG-MAC-pct type="float">0.0</CoG-MAC-pct>
+	    <CoG-offset-in type="float">0.0</CoG-offset-in>
+	</function>
+    </aero>
+
+    <autopilot>
+
+	<agl-climb-rate-fps type="double">0.0</agl-climb-rate-fps>
+	<altitude-climb-rate-fps type="double">0.0</altitude-climb-rate-fps>
+	<descent-gain-factor type="float">0.0</descent-gain-factor>
+	<gs-abs-deflection-norm type="double">0.0</gs-abs-deflection-norm>
+	<gs-sink-rate-adjust type="double">0.0</gs-sink-rate-adjust>
+	<monitor-wp type="bool">false</monitor-wp>
+	<remaining-wpts type="int">0</remaining-wpts>
+	<target-agl-ft type="int">0</target-agl-ft>
+	<target-vertical-speed-abs type="int">0</target-vertical-speed-abs>
+	<target-vertical-speed-fpm type="int">0</target-vertical-speed-fpm>
+	<target-vertical-speed-fps type="float">0.0</target-vertical-speed-fps>
+	<TTW-sec type="float">0.0</TTW-sec>
+	<vertical-speed-abs type="int">0</vertical-speed-abs>
+	<vorloc-abs-deflection-norm type="double">0.0</vorloc-abs-deflection-norm>
+	<vorloc-delta-abs type="double">0.0</vorloc-delta-abs>
+	<vs-gain-per-min type="float">0.0</vs-gain-per-min>
+	<vs-gain-per-sec type="float">0.0</vs-gain-per-sec>
+    </autopilot>
+
+    <fmc>
+	<approach>
+	    <delta1-height-ft type="int">0</delta1-height-ft>
+	    <delta2-height-ft type="int">0</delta2-height-ft>
+	    <eta1-mins type="float">0.0</eta1-mins>
+	    <eta2-mins type="float">0.0</eta2-mins>
+	    <fix-eta-sec type="int">0</fix-eta-sec>
+	</approach>
+
+	<lnav>
+	    <managed-mode type="int">0</managed-mode>
+	    <run-managed type="bool">false</run-managed>
+	    <run-selected type="bool">false</run-selected>
+	    <selected-mode type="int">0</selected-mode>
+	</lnav>
+
+	<pitch>
+	    <alpha-limit-deg type="float">14.0</alpha-limit-deg>
+	    <max-pitch-deg type="float">0.0</max-pitch-deg>
+	    <min-pitch-deg type="float">0.0</min-pitch-deg>
+	    <rate-limit-deg_sec type="double">0.0</rate-limit-deg_sec>
+	    <rate-limit-rad_sec type="double">0.0</rate-limit-rad_sec>
+	</pitch>
+
+	<speed>
+	    <managed-mode type="int">0</managed-mode>
+	    <minimum-keas type="int">0</minimum-keas>
+	    <run-managed type="bool">false</run-managed>
+	    <run-selected type="bool">false</run-selected>
+	    <selected-mode type="int">0</selected-mode>
+	    <speed-above-des-kt type="float">0.0</speed-above-des-kt>
+	    <Vconf type="float">0.0</Vconf>
+	    <Vstall type="float">0.0</Vstall>
+	    <weight-factor type="float">0.0</weight-factor>
+	    <wind-factor-kt type="float">0.0</wind-factor-kt>
+	</speed>
+
+	<tod>
+	    <adj-descent-rate-fpm type="int">0</adj-descent-rate-fpm>
+	    <descent-rate-fpm type="int">0</descent-rate-fpm>
+	    <eta-const-rate type="float">0.0</eta-const-rate>
+	    <eta-var-rate type="float">0.0</eta-var-rate>
+	    <ground-rate-fpm type="int">0</ground-rate-fpm>
+	    <mach-rate-fpm type="int">0</mach-rate-fpm>
+	</tod>
+
+	<vnav>
+	    <height-to-climb-alt type="int">0</height-to-climb-alt>
+	    <height-to-cruise-alt type="int">0</height-to-cruise-alt>
+	    <managed-mode type="int">0</managed-mode>
+	    <run-managed type="bool">false</run-managed>
+	    <run-selected type="bool">false</run-selected>
+	    <selected-mode type="int">0</selected-mode>
+	</vnav>
+
+	<calc-vspeeds type="bool">false</calc-vspeeds>
+	<climb-height-m type="float">0.0</climb-height-m>
+	<descend-height-ft type="int">0</descend-height-ft>
+	<estimate-climb type="bool">false</estimate-climb>
+	<estimate-descent type="bool">false</estimate-descent>
+
+    </fmc>
+
+    <gear>
+	<gear-compression-ft type="float">0.0</gear-compression-ft>
+	<gear-damaged type="bool">false</gear-damaged>
+	<gear-no-wow type="bool">false</gear-no-wow>
+	<gear-pos-norm type="double">1.0</gear-pos-norm>
+	<gear-switch-cmd type="float">0.0</gear-switch-cmd>
+	<gear-tyre-exploded type="bool">false</gear-tyre-exploded>
+	<load-factor type="float">0.0</load-factor>
+	<main-gear-grounded type="bool">true</main-gear-grounded>
+	<steering-norm type="double">0.0</steering-norm>
+    </gear>
+
+    <position>
+	<h-agl-m type="float">0.0</h-agl-m>
+	<indicated-agl-ft type="float">0.0</indicated-agl-ft>
+    </position>
+
+    <structural>
+	<limit-negative-g type="float">-2.0</limit-negative-g>
+	<limit-positive-g type="float"> 4.0</limit-positive-g>
+    </structural>
+
+    <systems>
+	<chute>
+	    <chute-available type="bool">true</chute-available>
+	    <chute-cmd-norm type="bool">false</chute-cmd-norm>
+	    <chute-door-cmd type="int">0</chute-door-cmd>
+	    <chute-not-released type="bool">true</chute-not-released>
+	    <chute-reef-pos-norm type="double">0.0</chute-reef-pos-norm>
+	    <chute-released type="bool">false</chute-released>
+	    <chute-size-factor type="double">0.0</chute-size-factor>
+	    <chute-switch-cmd type="bool">false</chute-switch-cmd>
+	    <drag-chute-deployed type="bool">false</drag-chute-deployed>
+	    <drag-chute-offset type="double">0.0</drag-chute-offset>
+	    <drag-chute-pos-norm type="double">0.0</drag-chute-pos-norm>
+	    <drag-force type="float">0.0</drag-force>
+	    <drogue-chute-deployed type="bool">false</drogue-chute-deployed>
+	</chute>
+
+	<electrical>
+	    <ac-power type="bool">false</ac-power>
+	    <avionics-power type="bool">false</avionics-power>
+	    <dc-power type="bool">false</dc-power>
+	    <generator-reserve-cmd type="float">0.0</generator-reserve-cmd>
+	    <generator-reserve-rpm type="int">0</generator-reserve-rpm>
+	    <generators-total type="int">0</generators-total>
+	    <gpu-generator type="float">0.0</gpu-generator>
+	    <ground-power type="bool">false</ground-power>
+	    <power-available type="int">0</power-available>
+	    <standby-power type="bool">false</standby-power>
+	    <trus-left type="int">0</trus-left>
+	    <trus-right type="int">0</trus-right>
+	</electrical>
+
+	<fuel>
+	    <group n="0">
+		<crossfeed type="bool">false</crossfeed>
+		<excess-1-2 type="float">0.0</excess-1-2>
+		<excess-1-3 type="float">0.0</excess-1-3>
+		<excess-1-4 type="float">0.0</excess-1-4>
+		<flow-1-2-pps type="float">0.0</flow-1-2-pps>
+		<flow-1-3-pps type="float">0.0</flow-1-3-pps>
+		<flow-1-4-pps type="float">0.0</flow-1-4-pps>
+	    </group>
+
+	    <group n="1">
+		<crossfeed type="bool">false</crossfeed>
+		<excess-2-1 type="float">0.0</excess-2-1>
+		<excess-2-3 type="float">0.0</excess-2-3>
+		<excess-2-4 type="float">0.0</excess-2-4>
+		<flow-2-1-pps type="float">0.0</flow-2-1-pps>
+		<flow-2-3-pps type="float">0.0</flow-2-3-pps>
+		<flow-2-4-pps type="float">0.0</flow-2-4-pps>
+	    </group>
+
+	    <group n="2">
+		<crossfeed type="bool">false</crossfeed>
+		<excess-3-1 type="float">0.0</excess-3-1>
+		<excess-3-2 type="float">0.0</excess-3-2>
+		<excess-3-4 type="float">0.0</excess-3-4>
+		<flow-3-1-pps type="float">0.0</flow-3-1-pps>
+		<flow-3-2-pps type="float">0.0</flow-3-2-pps>
+		<flow-3-4-pps type="float">0.0</flow-3-4-pps>
+	    </group>
+
+	    <group n="3">
+		<crossfeed type="bool">false</crossfeed>
+		<excess-4-1 type="float">0.0</excess-4-1>
+		<excess-4-2 type="float">0.0</excess-4-2>
+		<excess-4-3 type="float">0.0</excess-4-3>
+		<flow-4-1-pps type="float">0.0</flow-4-1-pps>
+		<flow-4-2-pps type="float">0.0</flow-4-2-pps>
+		<flow-4-3-pps type="float">0.0</flow-4-3-pps>
+	    </group>
+
+	    <tank n="0">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="1">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="2">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="3">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="4">
+	    	<tank-5-10 type="float">0.0</tank-5-10>
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="5">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="6">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="7">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="8">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="9">
+	    	<tank-10-5 type="float">0.0</tank-10-5>
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="10">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="11">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="12">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="13">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="14">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <tank n="15">
+		<transfer-in type="bool">false</transfer-in>
+		<transfer-out type="bool">false</transfer-out>
+	    </tank>
+
+	    <transfers-on type="bool">false</transfers-on>
+	</fuel>
+
+	<heat>
+	    <airflow-valve type="bool">false</airflow-valve>
+	    <body-heat-degc type="float">0.0</body-heat-degc>
+	    <dewpoint-diff-degc type="float">0.0</dewpoint-diff-degc>
+	    <dewpoint-diff-norm type="float">0.0</dewpoint-diff-norm>
+	    <external-degc type="float">0.0</external-degc>
+	    <external-norm type="float">0.0</external-norm>
+	    <fog-level type="float">0.0</fog-level>
+	    <frost-level type="float">0.0</frost-level>
+	    <internal-norm type="float">0.0</internal-norm>
+	    <moisture-level type="float">0.0</moisture-level>
+	</heat>
+
+	<pressurisation>
+	    <delta-pressure-psi type="float">0.0</delta-pressure-psi>
+	    <pressure-limit-psi type="float">0.0</pressure-limit-psi>
+	    <schedule-psi type="float">0.0</schedule-psi>
+	</pressurisation>
+
+	<propulsion>
+
+	    <APU>
+		<cutoff-cmd type="bool">false</cutoff-cmd>
+		<cutoff-switch type="bool">false</cutoff-switch>
+		<cutoff-switch-delay type="double">0.0</cutoff-switch-delay>
+		<fuel-pump-cmd type="bool">false</fuel-pump-cmd>
+	    </APU>
+
+	    <engine n="0">
+		<cutoff-cmd type="bool">false</cutoff-cmd>
+		<cutoff-switch type="bool">false</cutoff-switch>
+		<cutoff-switch-delay type="double">0.0</cutoff-switch-delay>
+		<fuel-pump-cmd type="bool">false</fuel-pump-cmd>
+	    </engine>
+
+	    <engine n="1">
+		<cutoff-cmd type="bool">false</cutoff-cmd>
+		<cutoff-switch type="bool">false</cutoff-switch>
+		<cutoff-switch-delay type="double">0.0</cutoff-switch-delay>
+		<fuel-pump-cmd type="bool">false</fuel-pump-cmd>
+	    </engine>
+
+	    <engine n="2">
+		<cutoff-cmd type="bool">false</cutoff-cmd>
+		<cutoff-switch type="bool">false</cutoff-switch>
+		<cutoff-switch-delay type="double">0.0</cutoff-switch-delay>
+		<fuel-pump-cmd type="bool">false</fuel-pump-cmd>
+	    </engine>
+
+	    <engine n="3">
+		<cutoff-cmd type="bool">false</cutoff-cmd>
+		<cutoff-switch type="bool">false</cutoff-switch>
+		<cutoff-switch-delay type="double">0.0</cutoff-switch-delay>
+		<fuel-pump-cmd type="bool">false</fuel-pump-cmd>
+	    </engine>
+
+	    <active-engines type="int">0</active-engines>
+	    <engine-pending type="int">0</engine-pending>
+	    <engines-condition type="float">0.0</engines-condition>
+	    <lock-starter type="double">0.0</lock-starter>
+	    <starter-trigger type="bool">false</starter-trigger>
+	</propulsion>
+
+	<refuel>
+	    <aar-state type="int">0</aar-state>
+	    <air-refuel-cmd type="bool">false</air-refuel-cmd>
+	    <ground-refuel-cmd type="bool">false</ground-refuel-cmd>
+	    <lid-position-norm type="double">0.0</lid-position-norm>
+	    <refuel-pump-cmd type="bool">false</refuel-pump-cmd>
+	    <refuel-pump-on type="double">0.0</refuel-pump-on>
+	</refuel>
+
+    </systems>
+
+</PropertyList>

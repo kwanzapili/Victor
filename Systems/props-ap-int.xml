@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <aileron-servo type="double">0.0</aileron-servo>
+    <auto-elevator type="bool">false</auto-elevator>
+    <climb-factor type="float">2.0</climb-factor>
+    <elevation>
+	<abs-height-delta-ft type="int">0</abs-height-delta-ft>
+	<agl-delta-ft type="int">0</agl-delta-ft>
+	<alt-delta-ft type="int">0</alt-delta-ft>
+	<alt-true-delta-ft type="int">0</alt-true-delta-ft>
+	<des-hold-clb type="int">0</des-hold-clb>
+	<height-delta-ft type="int">0</height-delta-ft>
+	<height-true-delta-ft type="int">0</height-true-delta-ft>
+	<in-alt-hold-zone type="bool">false</in-alt-hold-zone>
+    </elevation>
+    <elevator-trim-servo type="double">0.0</elevator-trim-servo>
+    <fdm-heading-bug-error-deg type="double">0.0</fdm-heading-bug-error-deg>
+    <gs-intercepted-good type="bool">false</gs-intercepted-good>
+    <gs-intercepted-weak type="bool">false</gs-intercepted-weak>
+    <gs-rate-of-climb-filtered type="float">0.0</gs-rate-of-climb-filtered>
+    <gs-sink-rate-fpm type="float">0.0</gs-sink-rate-fpm>
+    <gs-sink-rate-fps type="float">0.0</gs-sink-rate-fps>
+    <heading-bug-error-deg type="double">0.0</heading-bug-error-deg>
+    <heading-offset-deg type="double">0.0</heading-offset-deg>
+    <heading-offset-deg-unfiltered type="double">0.0</heading-offset-deg-unfiltered>
+    <kp-alt-adjustment-factor type="float">0.0</kp-alt-adjustment-factor>
+    <kp-for-agl-climb-rate type="float">0.0</kp-for-agl-climb-rate>
+    <kp-for-alt-climb-rate type="float">0.0</kp-for-alt-climb-rate>
+    <kp-for-alt-hold type="float">0.0</kp-for-alt-hold>
+    <kp-for-alt-hold-base type="float">0.0</kp-for-alt-hold-base>
+    <kp-for-alt-throttle type="float">0.0</kp-for-alt-throttle>
+    <kp-for-aoa-hold type="float">0.0</kp-for-aoa-hold>
+    <kp-for-gs-hold type="float">0.0</kp-for-gs-hold>
+    <kp-for-gs-hold-thr type="float">0.0</kp-for-gs-hold-thr>
+    <kp-for-heading-deg type="float">0.0</kp-for-heading-deg>
+    <kp-for-heading-hold type="float">0.0</kp-for-heading-hold>
+    <kp-for-mach-pitch-deg type="float">0.0</kp-for-mach-pitch-deg>
+    <kp-for-mach-throttle type="float">0.0</kp-for-mach-throttle>
+    <kp-for-pitch-hold type="float">0.0</kp-for-pitch-hold>
+    <kp-for-roll-deg type="float">0.0</kp-for-roll-deg>
+    <kp-for-speed-pitch-deg type="float">0.0</kp-for-speed-pitch-deg>
+    <kp-for-speed-throttle type="float">0.0</kp-for-speed-throttle>
+    <kp-for-vs-hold type="float">0.0</kp-for-vs-hold>
+    <kp-for-vs-hold-base type="float">0.0</kp-for-vs-hold-base>
+    <kp-for-vs-hold-thr type="float">0.0</kp-for-vs-hold-thr>
+    <lateral-mode-engaged type="bool">false</lateral-mode-engaged>
+    <managed-speed-kt type="float">200</managed-speed-kt>
+    <max-pitch-deg type="float">0.0</max-pitch-deg>
+    <min-pitch-deg type="float">0.0</min-pitch-deg>
+    <monitor-descent-on type="bool">false</monitor-descent-on>
+    <nav1-heading-error-deg type="double">0.0</nav1-heading-error-deg>
+    <nav1-heading-error-lookahead-deg type="double">0.0</nav1-heading-error-lookahead-deg>
+    <rudder-servo type="double">0.0</rudder-servo>
+    <runway-heading-deg type="double">0.0</runway-heading-deg>
+    <runway-heading-error-deg type="double">0.0</runway-heading-error-deg>
+    <!-- this is a group that holds the unfiltered settings targets -->
+    <settings>
+	<heading-bug-deg type="double">0.0</heading-bug-deg>
+	<target-altitude-ft type="int">15000</target-altitude-ft>
+	<target-pitch-deg type="double">0.0</target-pitch-deg>
+	<target-speed-kt type="int">200</target-speed-kt>
+	<target-speed-pitch-deg type="double">0.0</target-speed-pitch-deg>
+	<target-speed-mach type="float">0.5</target-speed-mach>
+	<vertical-speed-fpm type="int">1000</vertical-speed-fpm>
+	<vertical-speed-fps type="float">20</vertical-speed-fps>
+    </settings>
+    <speed-error-kt type="float">0.0</speed-error-kt>
+    <speed-error-mach-x10 type="float">0.0</speed-error-mach-x10>
+    <speed-pitch-adj-factor type="float">0.0</speed-pitch-adj-factor>
+    <speed-pitch-mode type="bool">false</speed-pitch-mode>
+    <speed-with-pitch-deg type="float">0.0</speed-with-pitch-deg>
+    <speed-with-pitch-max type="float">0.0</speed-with-pitch-max>
+    <speed-with-pitch-min type="float">0.0</speed-with-pitch-min>
+    <speed-with-pitch-kt type="int">0</speed-with-pitch-kt>
+    <speed-with-pitch-mach type="float">0.0</speed-with-pitch-mach>
+    <switch-to-alt-hold type="bool">false</switch-to-alt-hold>
+    <switch-to-alt-hold-ft type="float">0.0</switch-to-alt-hold-ft>
+    <switch-to-alt-hold-near type="bool">false</switch-to-alt-hold-near>
+    <tacan-heading-error-deg type="float">0.0</tacan-heading-error-deg>
+    <target-climb-rate-fps type="float">0.0</target-climb-rate-fps>
+    <target-roll-deg type="float">0.0</target-roll-deg>
+    <target-roll-deg-unfiltered type="float">0.0</target-roll-deg-unfiltered>
+    <td-for-heading-hold type="float">0.0</td-for-heading-hold>
+    <throttle-lever type="double">0.0</throttle-lever>
+    <throttle-servo type="double">0.0</throttle-servo>
+    <ti-for-heading-hold type="float">0.0</ti-for-heading-hold>
+    <true-heading-error-deg type="double">0.0</true-heading-error-deg>
+    <variable-vs-enabled type="bool">false</variable-vs-enabled>
+    <variable-vs-mode type="bool">false</variable-vs-mode>
+    <variable-vs-roc-lock type="bool">false</variable-vs-roc-lock>
+    <vert-speed-fpm type="float">0.0</vert-speed-fpm>
+    <vertical-mode type="int">0</vertical-mode>
+    <vertical-pitch-deg type="float">0.0</vertical-pitch-deg>
+    <vertical-pitch-mode type="bool">false</vertical-pitch-mode>
+    <vertical-throttle-mode type="bool">false</vertical-throttle-mode>
+    <vorloc-intercepted-good type="bool">false</vorloc-intercepted-good>
+    <vorloc-intercepted-weak type="bool">false</vorloc-intercepted-weak>
+    <vs-limits>
+	<lower-alt-based type="float">0.0</lower-alt-based>
+	<lower-mode-based type="float">0.0</lower-mode-based>
+	<upper-alt-based type="float">0.0</upper-alt-based>
+	<upper-mode-based type="float">0.0</upper-mode-based>
+	<upper-speed-based type="float">0.0</upper-speed-based>
+    </vs-limits>
+    <waypoint-monitor-on type="bool">false</waypoint-monitor-on>
+    <waypoint-nearby type="bool">false</waypoint-nearby>
+    <waypoint-switch-on type="bool">false</waypoint-switch-on>
+    <waypoint-valid type="bool">false</waypoint-valid>
+    <waypoint-vspeed-gain type="float">0.0</waypoint-vspeed-gain>
+
+</PropertyList>

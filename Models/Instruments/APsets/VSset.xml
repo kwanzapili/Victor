@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<PropertyList>
+
+    <path>VSset.ac</path>
+
+    <animation>
+	<name>Collection1</name>
+	<object-name>VSSetFrame2</object-name>
+	<object-name>Button11</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection2</name>
+	<object-name>VSmin</object-name>
+	<object-name>SetVS-T</object-name>
+	<object-name>SetVS-H</object-name>
+	<object-name>SetVSfixed1</object-name>
+	<object-name>SetVSfixed2</object-name>
+    </animation>
+
+    <animation>
+	<name>Collection3</name>
+	<object-name>VSSETMINUS</object-name>
+	<object-name>VSSETPLUS</object-name>
+    </animation>
+
+    <!-- objects we do not need -->
+    <animation>
+	<type>select</type>
+	<object-name>Collection3</object-name>
+    </animation>   
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>Collection1</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/gauge-indicators.xml"> 
+	<object-name>Collection2</object-name>
+    </animation>
+
+    <animation>
+	<type>material</type>
+	<object-name>VSSETON</object-name>
+	<emission>
+	    <red>  0.0</red>
+	    <green>0.9</green>
+	    <blue> 0.0</blue>
+	</emission>
+	<ambient>
+	    <red>  0.0</red>
+	    <green>1.0</green>
+	    <blue> 0.0</blue>
+	</ambient>
+    </animation>
+
+    <!-- Check if autopilot VS is set on and light the green led -->
+    <animation>
+	<type>select</type>
+	<object-name>VSSETON</object-name>
+	<condition>
+	    <equals>
+		<property>/controls/switches/altitude-mode</property>
+		<value type="bool">false</value>
+	    </equals>
+	    <equals>
+		<property>/controls/switches/autopilot</property>
+		<value type="bool">true</value>
+	    </equals>
+	</condition>
+    </animation> 
+
+    <!-- VS minus -->
+    <animation>
+	<type>select</type>
+	<object-name>VSmin</object-name>
+	<condition>           
+	    <less-than>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<value>0</value>
+	    </less-than>         
+	</condition>
+    </animation>
+
+    <!-- VS set indicator Singles digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetVSfixed2</object-name>
+	<property>/instrumentation/flightdirector/vertical-speed-abs</property>
+	<factor>0.1</factor>
+	<step>1</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- VS set indicator Deca digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetVSfixed1</object-name>
+	<property>/instrumentation/flightdirector/vertical-speed-abs</property>
+	<factor>0.01</factor>
+	<step>10</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- VS set indicator Hundreds digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetVS-H</object-name>
+	<property>/instrumentation/flightdirector/vertical-speed-abs</property>
+	<factor>0.001</factor>
+	<step>100</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- VS set indicator Thousands digit -->
+    <animation>
+	<type>textranslate</type>
+	<object-name>SetVS-T</object-name>
+	<property>/instrumentation/flightdirector/vertical-speed-abs</property>
+	<factor>0.0001</factor>
+	<step>1000</step>
+	<scroll>1</scroll>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- VS Knob settings -->
+    <animation>
+	<type>knob</type>
+	<object-name>Button11</object-name>
+	<value>0.0</value>
+	<center>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 0 </z-m>
+	</center>
+	<axis>
+	    <x> -1 </x>
+	    <y>  0 </y>
+	    <z>  0 </z>
+	</axis>
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<factor>100</factor>
+		<min>-6000</min>
+		<max>11000</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<shift-action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<factor>500</factor>
+		<min>-6000</min>
+		<max>11000</max>
+		<wrap>false</wrap>
+	    </binding>
+	</shift-action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Vertical speed: %5d</label>
+		<property>/instrumentation/flightdirector/vertical-speed-select</property>
+		<tooltip-id>vertical-speed</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- End VS setting -->
+
+    <!-- *** LoD for the whole model *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

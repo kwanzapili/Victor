@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <path>strobe-switch.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <!-- **************** switch **************** -->
+    <animation>
+	<type>pick</type>
+	<object-name>Switch</object-name>
+	<object-name>Base</object-name>
+	<visible>true</visible>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>/controls/lighting/strobe</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Strobe Light: %s</label>
+		<mapping>on-off</mapping>
+		<property>/controls/lighting/strobe</property>
+		<tooltip-id>strobe</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <animation>
+	<type>rotate</type>
+	<object-name>Switch</object-name>
+	<property>/controls/lighting/strobe</property>
+	<interpolation>
+	    <entry>
+		<ind>0</ind>
+		<dep>-25</dep>
+	    </entry>
+	    <entry>
+		<ind>1</ind>
+		<dep>35</dep>
+	    </entry>
+	</interpolation>
+	<axis>
+	    <x> 0</x>
+	    <y>-1</y>
+	    <z> 0</z>
+	</axis>
+    </animation>
+
+    <!-- Panel Lighting -->
+    <animation>
+	<name>Surrounding</name>
+	<object-name>Base</object-name>
+	<object-name>Plate</object-name>
+	<object-name>Mount</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/switch-normal.xml">
+	<object-name>Switch</object-name>
+    </animation>
+
+    <animation include="Models/Instruments/Lighting/base-normal.xml">
+	<object-name>Surrounding</object-name>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

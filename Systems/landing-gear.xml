@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+
+<system name="Landing Gear">
+
+    <channel name="Landing Gear" execrate="8">
+
+	<!-- 
+	    Check if a wheel from each set of main gear is on the ground.
+	    We will use this to signal touchdown.
+	-->
+	<switch name="gear/main-gear-grounded">
+	    <description>
+		A wheel from both left and right main gear is on ground
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		<test logic="OR" value="1">
+		    gear/unit[1]/WOW eq 1
+		    gear/unit[2]/WOW eq 1
+		</test>
+		<test logic="OR" value="1">
+		    gear/unit[3]/WOW eq 1
+		    gear/unit[4]/WOW eq 1
+		</test>
+	    </test>
+	</switch>
+
+	<!-- Check both fore and aft main gear -->
+	<switch name="gear/gear-no-wow">
+	    <description>
+		No wheels on ground
+	    </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		gear/unit[1]/WOW eq 1
+		gear/unit[2]/WOW eq 1
+		gear/unit[3]/WOW eq 1
+		gear/unit[4]/WOW eq 1
+	    </test>
+	</switch>
+
+	<!--
+	    An safety lock prevents the gear handle from being inadvertently placed
+	    UP when the aircraft is on the ground. This prevents retraction of the
+	    gear on the ground.
+	-->
+	<switch name="/controls/gear/gear-locked">
+	    <description>
+		Gear Safety Lock
+	    </description>
+	    <default value="0"/>
+	    <test  logic="OR" value="1">
+		gear/gear-damaged EQ 1
+		gear/gear-no-wow EQ 0
+	    </test>
+	</switch>
+
+	<switch name="gear/gear-switch-cmd">
+	    <description>
+		Gear Switch
+	    </description>
+	    <default value="/controls/gear/gear-down"/>
+	    <test logic="AND" value="0">
+		ground/solid EQ 0
+		position/h-agl-ft LT 40
+	    </test>
+	    <!-- lock the gear in place if it was damaged -->
+	    <test value="gear/gear-pos-norm">
+		gear/gear-damaged EQ 1
+	    </test>
+	</switch>
+
+	<!-- now intercept the gear control command -->
+	<switch name="/controls/gear/gear-down">
+	    <description>
+		Gear Lever Command
+	    </description>
+	    <default value="gear/gear-switch-cmd"/>
+	    <test  logic="AND" value="1">
+		/controls/gear/gear-locked EQ 1
+		gear/gear-pos-norm GT 0.1
+	    </test>
+	</switch>
+
+	<!-- gear retraction requires 6-7 seconds -->
+	<kinematic name="gear/gear-pos-norm">
+	    <description>
+		Landing Gear Control
+	    </description>
+	    <input>gear/gear-cmd-norm</input>
+	    <traverse>
+		<setting>
+		    <position> 0 </position>
+		    <time>     0 </time>
+		</setting>
+		<setting>
+		    <position> 1 </position>
+		    <time>   6.6 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!--
+	    The maximum ground speed rating of the tyres is 239 knots. 1 knot ~ 1.688 fps
+	-->
+	<switch name="gear/gear-tyre-exploded">
+	    <description>
+		Gear Tyre Exploded
+	    </description>
+	    <default value="0"/>
+	    <test logic="AND" value="1">
+		ground/solid EQ 1
+		velocities/u-fps GT 404
+		gear/gear-pos-norm GT 0.1
+		<test logic="OR" value="1">
+		    gear/unit[1]/WOW EQ 1
+		    gear/unit[2]/WOW EQ 1
+		    gear/unit[3]/WOW EQ 1
+		    gear/unit[4]/WOW EQ 1
+		</test>
+	    </test>
+	</switch>
+
+	<!--
+	    In-flight gear door strength limits the airpeed with gear down to 270 KEAS
+	-->
+	<switch name="gear/gear-damaged">
+	    <description>
+		Gear Damaged
+	    </description>
+	    <default value="gear/gear-tyre-exploded"/>
+	    <test logic="OR" value="1">
+		gear/gear-damaged EQ 1
+	    </test>
+	    <!-- gear down above threshold -->
+	    <test  logic="AND" value="1">
+		velocities/vc-kts GT /limits/max-gear-extension-speed
+		gear/gear-pos-norm GT 0.1
+	    </test>
+	</switch>
+
+	<!-- Update failure mode -->
+	<switch name="/sim/failure-manager/controls/gear/failure-level">
+	    <description>
+		Gear failure
+	    </description>
+	    <default value="/sim/failure-manager/controls/gear/failure-level"/>
+	    <test value="1">
+		gear/gear-damaged EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    The gears carry the plane when on the ground, thus reducing the load on the wings.
+	    The factor will estimate the proportion of load carried by the wings based on the
+	    compression of the gear, When this is 0, all the load is carried by the wings.
+	    In contrast, when the compression exceeds say 0.005 ft, then all the load is carried
+	    by the gear.
+	-->
+	<fcs_function name="gear/gear-compression-ft">
+	    <function>
+		<description> Largest compression on any gear </description>
+		<max>
+		    <property> gear/unit[0]/compression-ft </property>
+		    <property> gear/unit[1]/compression-ft </property>
+		    <property> gear/unit[2]/compression-ft </property>
+		    <property> gear/unit[3]/compression-ft </property>
+		    <property> gear/unit[4]/compression-ft </property>
+		</max>
+	    </function>
+	</fcs_function>
+
+	<fcs_function name="gear/load-factor">
+	    <function>
+		<description> Fraction of the load borne by the gear </description>
+		<table>
+		    <independentVar> gear/gear-compression-ft </independentVar>
+		    <tableData>
+			0.000	    0.0
+			0.005	    1.0
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+    <!--
+	This channel only runs in ground mode. 
+	It needs to run at the fastest rate in order to override JSBsim defaults.
+    -->
+    <channel name="Nosewheel Steering" execute="gear/wow" execrate="1">
+    <!--
+	The nosewheel steering system is engaged when the aircraft weight is on
+	any gear. It is controlled by the rudder pedal position. Steering disengages
+	automatically when weight is not on any gear. With weight on a gear, steering
+	disengages with loss of hyradaulic pressure on when manually disengaged by
+	the pilot.
+
+	The steering angle is directly proportional to rudder pedal deflection. The
+	nosewheel is steerable 45 degrees either side on centre. Do not engage
+	nosewheel steering before nosewheel touchdown.
+
+	Power for steering is obtained from the L system. If L system pressure decreases
+	below 2200 psi, the R-system hydraulic power drives the steering.
+    -->
+
+	<switch name="/controls/gear/steering">
+	    <default value="fcs/steer-cmd-norm"/>
+	    <!-- lock in place if both L and R hydraulic systems fail -->
+	    <test logic="AND" value="/controls/gear/steering">
+		/systems/hydraulic/pump-psi[1] LT 2200
+		/systems/hydraulic/pump-psi[3] LT 2200
+	    </test>
+	    <!-- center when nosewheel is off the ground -->
+	    <test  logic="OR" value="0">
+		gear/unit[0]/WOW EQ 0
+		/controls/gear/nose-wheel-steering EQ 0
+	    </test>
+	</switch>
+
+	<!-- reduce the steering command at higher speeds to limit side loads -->
+	<scheduled_gain name="gear/steering-norm">
+	    <description>
+		Scheduled Steer Command Limited
+	    </description>
+	    <input>/controls/gear/steering</input>
+	    <table>
+		<independentVar>velocities/vg-fps</independentVar>
+		<tableData>
+		    10		1.00
+		    50		0.50
+		    150		0.02
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<!--
+	    By default, a steerable wheel is driven by the property fcs/steer-cmd-norm.
+	    The angle of such a wheel is obtained by the product of fcs/steer-cmd-norm
+	    by the value in the "max_steer" element. We redefine the steer angle here.
+	-->
+	<pure_gain name="fcs/steer-pos-deg">
+	    <description> Nosewheel degrees </description>
+	    <input> gear/steering-norm </input>
+	    <gain> 45 </gain>
+	</pure_gain>
+
+    </channel>
+
+</system>

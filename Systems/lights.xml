@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<system name="lights">
+
+    <!--
+	******************************************************
+	Calculate the intensity of the instrument, panel and
+	cockpit lights based on the position of the sun.
+	******************************************************
+    -->
+
+    <channel name="Lights Intensity" execrate="8">
+
+	<fcs_function name="/controls/lighting/instruments-norm">
+	    <function>
+		<product>
+		    <property>/controls/lighting/instrument-lights</property>
+		    <property>/controls/electric/master-switch</property>
+		    <property>/systems/electrical/outputs/instrument-lights</property>
+		    <!-- Divide by 200 because the voltage should be 200 -->
+		    <value> 0.005 </value>
+		    <table>      <!-- sun angle adjustment -->
+			<independentVar>/sim/time/sun-angle-rad</independentVar>
+			<tableData>
+			    0.00	0.0
+			    0.50	0.5
+			    1.57	1.0
+			</tableData>
+		    </table>
+		    <property>/controls/switches/lights-brightness</property>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<fcs_function name="/controls/lighting/panel-norm">
+	    <function>
+		<product>
+		    <property>/controls/lighting/panel-lights</property>
+		    <property>/controls/electric/master-switch</property>
+		    <property>/systems/electrical/outputs/panel-lights</property>
+		    <!-- Divide by 200 because the voltage should be 200 -->
+		    <value> 0.005 </value>
+		    <table>      <!-- sun angle adjustment -->
+			<independentVar>/sim/time/sun-angle-rad</independentVar>
+			<tableData>
+			    0.00	0.0
+			    0.50	0.5
+			    1.57	1.0
+			</tableData>
+		    </table>
+		    <property>/controls/switches/lights-brightness</property>
+		</product>
+	    </function>
+	</fcs_function>
+
+	<fcs_function name="/controls/lighting/dome-norm">
+	    <function>
+		<product>
+		    <property>/controls/lighting/cabin-lights</property>
+		    <property>/controls/electric/master-switch</property>
+		    <property>/systems/electrical/outputs/cabin-lights</property>
+		    <!-- Divide by 200 because the voltage should be 200 -->
+		    <value> 0.005 </value>
+		    <table>      <!-- sun angle adjustment -->
+			<independentVar>/sim/time/sun-angle-rad</independentVar>
+			<tableData>
+			    0.00	0.0
+			    0.50	0.5
+			    1.57	1.0
+			</tableData>
+		    </table>
+		    <property>/controls/switches/lights-brightness</property>
+		</product>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+    <!-- This channel manages the light switches -->
+    <channel name="Exterior Lights" execrate="8">
+
+	<!--
+	    The nose lights switch operates both the landing lights and taxi lights.
+	    It has three settings: TAXI (down), OFF (center) and LAND (up).
+	    The switch is ineffective when the nose gear is retracted.
+	    Here, we transfer those settings to the respective boolean variables.
+	-->
+
+	<switch name="/controls/lighting/landing-lights">
+	    <description>
+		Landing light switch
+	    </description>
+	    <default value="0"/>
+	    <!-- ON when the nose lights switch is UP -->
+	    <test logic="AND" value="1">
+		/controls/switches/nose-lights EQ 1
+		gear/unit[0]/pos-norm GT 0.95
+	    </test>
+	</switch>
+
+	<switch name="/controls/lighting/taxi-light">
+	    <description>
+		Taxi light switch
+	    </description>
+	    <default value="0"/>
+	    <!-- ON when the nose lights switch is DOWN-->
+	    <test logic="AND" value="1">
+		/controls/switches/nose-lights EQ -1
+		gear/unit[0]/pos-norm GT 0.95
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

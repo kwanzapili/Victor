@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+
+    <sounds>
+	<crack-on type="bool">false</crack-on>
+	<creaking-on type="bool">false</creaking-on>
+	<crack-volume type="bool">false</crack-volume>
+	<creaking-volume type="bool">false</creaking-volume>
+	<water-crash-on type="bool">false</water-crash-on>
+	<crash-on type="bool">false</crash-on>
+	<detach-on type="bool">false</detach-on>
+	<explode-on type="bool">false</explode-on>
+    </sounds>
+
+    <controls>
+
+	<flight>
+	    <aileron-condition type="float">1.0</aileron-condition>
+	    <elevator-condition type="float">1.0</elevator-condition>
+	    <flaps-condition type="float">1.0</flaps-condition>
+	    <rudder-condition type="float">1.0</rudder-condition>
+	    <speedbrake-condition type="float">1.0</speedbrake-condition>
+	</flight>
+
+	<gear-condition type="float">1.0</gear-condition>
+
+    </controls>
+
+    <structural>
+	<wings-condition type="float">1.0</wings-condition>
+    </structural>
+
+    <instrumentation>
+	<ai-condition type="float">1.0</ai-condition>
+	<altimeter-condition type="float">1.0</altimeter-condition>
+	<asi-condition type="float">1.0</asi-condition>
+	<hsi-condition type="float">1.0</hsi-condition>
+	<nav1>
+	    <cdi-condition type="float">1.0</cdi-condition>
+	    <gs-condition type="float">1.0</gs-condition>
+	</nav1>
+	<nav2>
+	    <cdi-condition type="float">1.0</cdi-condition>
+	    <gs-condition type="float">1.0</gs-condition>
+	</nav2>
+	<slip-condition type="float">1.0</slip-condition>
+	<turn-condition type="float">1.0</turn-condition>
+	<vsi-condition type="float">1.0</vsi-condition>
+    </instrumentation>
+
+    <systems>
+
+	<electrical-condition type="float">1.0</electrical-condition>
+
+    </systems>
+
+    <engines>
+
+	<engine n="0">
+	    <engine-condition type="float">1.0</engine-condition>
+	</engine>
+	<engine n="1">
+	    <engine-condition type="float">1.0</engine-condition>
+	</engine>
+	<engine n="2">
+	    <engine-condition type="float">1.0</engine-condition>
+	</engine>
+	<engine n="3">
+	    <engine-condition type="float">1.0</engine-condition>
+	</engine>
+	<!-- APU -->
+	<engine n="4">
+	    <engine-condition type="float">1.0</engine-condition>
+	</engine>
+
+    </engines>
+
+</PropertyList>

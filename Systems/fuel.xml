@@ -1,0 +1,2414 @@
+<?xml version="1.0"?>
+
+<!--
+    ******************************************************************************
+    The Fuel System got B Mk 2 Series aircraft.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The fuel system varied a lot between different variants (bombers Mk 1 & 2,
+    reconnaissance, tanker). For example, the tanker versions used the bomb bay
+    for fuel tanks in the form of bags. Thus, it may have had up to twenty-nine
+    fuel tanks. This fuel system is primarily based on the Mk 2 version with
+    twenty-two tanks. with a total capacity of 84,456 lb.
+
+    There are three basic fuel systems:
+	1 The Fuselage system
+	2 The Port and Starboard Wing systems
+	3 Bomb bay system
+
+    For our purpsoes, we will only model 16 tanks:
+	2 x 5 wing tanks, 4 fuselage and 2 bomb bay tanks
+    ******************************************************************************
+-->
+
+<system name="Fuel">
+
+    <!--
+	Wing Tanks (should be 6 on each wing)
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	Engines						Capacity
+	Tank Name       1       2       3       4       (lb)
+	Portside 1	X                               7,320
+	Portside 3+4            X                       7,320
+	Portside 5      X                               4,880
+	Portside 6              X                       4,880
+	Portside UW     X       X                       5,116
+	Starboard 1                     X               7,320
+	Starboard 3+4                           X       7,320
+	Starboard 5                     X               4,880
+	Starboard 6                             X       4,880
+	Starboard UW                    X       X       5,116
+
+	Fuselage Tanks (should be 8)
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Engines                      Capacity
+	Tank Name       1       2       3       4      APU     (lb)
+	Fuselage 7      X               X               X       8,000
+	Fuselage 8+9            X               X       X       8,026
+	Fuselage 10+11  X       X       X       X       X       9,000
+	Fuselage 12     X       X       X       X       X       9,000
+
+	Bomb bay Tanks (x 2)
+	~~~~~~~~~~~~~~~~~~~~~
+	Tank Name          Engine   Capacity (lb)
+	Bomb Bay Fore       All	    7,900
+	Bomb Bay Aft	      All	    7,900
+
+	To effect transfers, we model tank groups and tank pairs.
+	Cross-feeding occurs between tank groups, while forward and aft transfers
+	occur between pairs.
+
+	The groups are linked to the engines that the tanks feed. So these are
+	essentially the wing tanks:
+	    Group    Engine   Tanks
+	    1         1       P1, P5
+	    2         2       P3+4, P6
+	    3         3       S1, S5
+	    4         4       S3+4, S6
+
+	The tank pairs are in the form (Fore, Aft). The fore tank only does aft
+	transfers while the aft tank only does forward transfers.
+	Wing:	    (P1 ~ P5), (P3+4 ~ P6), (S1 ~ S5), (S3+4 ~ S6)
+	Fuselage:   (F7 ~ F12), (F5+9 ~ F10+11)
+	Bom bay:    (Fore ~ Aft)
+
+	Mapping to tank numbers:
+	Name	P1  P3+4  P5   P6  PUW  S1  S3+4  S5   S6  SUW  F7  F8+9  F10+11  F12  BBF  BBA
+	No.	0    1    2    3    4    5    6    7    8    9   10   11     12    13   14   15
+
+    -->
+
+    <!-- at what differential level should cross-feed be enabled? -->
+    <property value="1000"> systems/fuel/cross-feed-start </property>
+    <!-- at what differential level should cross-feed be stopped? -->
+    <property value="500"> systems/fuel/cross-feed-stop </property>
+    <!-- cross-feed transfer rate from any tank is 60 lb/min (1 pps) -->
+    <property value="1"> systems/fuel/cross-feed-pps </property>
+
+    <channel name="Fuel Contents" execrate="8" >
+
+	<!-- Total contents for each group of tanks     -->
+
+	<!-- Group 1 feeds engine 1 from tanks P1 and P5 -->
+	<summer name="/consumables/fuel/group1-lbs">
+	    <input>propulsion/tank[0]/contents-lbs</input>              <!-- from tank P1 -->
+	    <input>propulsion/tank[2]/contents-lbs</input>              <!-- from tank P5 -->
+	</summer>
+
+	<!-- Group 2 feeds engine 2 from tanks P3+4 and P6 -->
+	<summer name="/consumables/fuel/group2-lbs">
+	    <input>propulsion/tank[1]/contents-lbs</input>              <!-- from tank P3+4 -->
+	    <input>propulsion/tank[3]/contents-lbs</input>              <!-- from tank P6 -->
+	</summer>
+
+	<!-- Group 3 feeds engine 3 from tanks S1 and S5 -->
+	<summer name="/consumables/fuel/group3-lbs">
+	    <input>propulsion/tank[5]/contents-lbs</input>              <!-- from tank S1 -->
+	    <input>propulsion/tank[7]/contents-lbs</input>              <!-- from tank S5 -->
+	</summer>
+
+	<!-- Group 4 feeds engine 4 from tanks S3+4 and S6 -->
+	<summer name="/consumables/fuel/group4-lbs">
+	    <input>propulsion/tank[6]/contents-lbs</input>              <!-- from tank S3+4 -->
+	    <input>propulsion/tank[8]/contents-lbs</input>              <!-- from tank S6 -->
+	</summer>
+
+	<!--
+	    A switch issues a warning when the fuel is too low.
+	    Levels are defines as:
+		0 = no warning
+		1 = fuel below 10%
+		2 = fuel below 5%
+	-->
+
+	<switch name="/instrumentation/annunciator/fuel-warning">
+	    <description> Low fuel warning </description>
+	    <default value="0"/>
+	    <!-- Critical fuel level first -->
+	    <test value="2">
+		<!-- Under 5% remaining -->
+		/consumables/fuel/total-fuel-norm LT 0.05
+	    </test>
+	    <test value="1">
+		<!-- Under 10% remaining -->
+		/consumables/fuel/total-fuel-norm LT 0.10
+		<!-- projected use exceeds the amount available -->
+		/consumables/fuel/projected-use-lbs GT /consumables/fuel/total-fuel-lbs
+	    </test>
+	</switch>
+
+	<!-- Total fuel used thus far -->
+	<summer name="/consumables/fuel/total-used-lbs">
+	    <description> Total consumption of fuel </description>
+	    <input> propulsion/engine[0]/fuel-used-lbs </input>
+	    <input> propulsion/engine[1]/fuel-used-lbs </input>
+	    <input> propulsion/engine[2]/fuel-used-lbs </input>
+	    <input> propulsion/engine[3]/fuel-used-lbs </input>
+	</summer>
+
+	<!--
+	    This switch turns fuel transfer ON. It is switched ON here, but must
+	    be switched OFF in the "Fuel transfer" channel.
+	-->
+	<switch name="systems/fuel/transfers-on">
+	    <description>
+		Enable fuel transfers
+	    </description>
+	    <default value="systems/fuel/transfers-on"/>
+	    <test logic="OR" value="1">
+		/controls/fuel/aft-transfer EQ 1
+		/controls/fuel/cross-feed EQ 1
+		/controls/fuel/fwd-transfer EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!--
+	This channel manages the contents of the small APU collector tank is is only
+	needed when the APU is running. FIXME add exec
+    -->
+    <channel name="APU Tank" execrate="2" >
+	<!--
+	    The APU collector tank [16] will has a capacity of 2 lb. This enables it to feed
+	    the APU for up to 10 sec without being replenished (the maximum flow rate at full
+	    power is 0.208 lb/s). The actual contents are kept nealy constant (at 2 lb content)
+	    by a step-controlled input flow rate (0 or 0.5 pps here). The "ON" value of this step
+	    flow rate must be a bit higher than the maximum" fuel-flow-rate-pps" needed by the
+	    APU at full power.
+
+	    The collector tank [16] content is a compromise. A large content is secure but it gives
+	    an excessive delay between the moment when the 'true' tank runs out of fuel and the
+	    APU effectively stops running.
+
+	    The tank is supplied by the fuselage and bomb bay tanks in this order:
+		Tank  Name            Priority
+		14    Bomb Bay Fore	1
+		15    Bomb Bay Aft	2
+		10    Fuselage 7		3
+		11    Fuselage 8+9	4
+		13    Fuselage 12		5
+		12    Fuselage 10+11	6
+	-->
+
+	<!--
+	    start the feed when the tank contents fall below 0.75 and stop it when full
+	-->
+	<switch name="systems/propulsion/APU/tank-valve">
+	    <default value="systems/propulsion/APU/tank-valve"/>
+	    <!-- disable if tank is full -->
+	    <test logic="AND" value="0">
+		propulsion/tank[16]/pct-full GT 99.9
+	    </test>
+	    <!-- restart when the level is below 50% -->
+	    <test logic="AND" value="1">
+		propulsion/tank[16]/pct-full LT 50
+	    </test>
+	</switch>
+
+	<!-- save the prior feeder tank number -->
+	<pure_gain name="systems/propulsion/APU/prior-tank">
+	    <input> systems/propulsion/APU/feed-tank </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- select the feed tank -->
+	<switch name="systems/propulsion/APU/feed-tank">
+	    <default value="-1"/>
+	    <!-- disable if tank valve is off -->
+	    <test logic="AND" value="-1">
+		systems/propulsion/APU/tank-valve EQ 0
+	    </test>
+	    <!-- now choose in the priority order -->
+	    <test logic="AND" value="14">
+		propulsion/tank[14]/contents-lbs GT 0
+	    </test>
+	    <test logic="AND" value="15">
+		propulsion/tank[15]/contents-lbs GT 0
+	    </test>
+	    <test logic="AND" value="10">
+		propulsion/tank[10]/contents-lbs GT 0
+	    </test>
+	    <test logic="AND" value="11">
+		propulsion/tank[11]/contents-lbs GT 0
+	    </test>
+	    <test logic="AND" value="13">
+		propulsion/tank[13]/contents-lbs GT 0
+	    </test>
+	    <test logic="AND" value="12">
+		propulsion/tank[12]/contents-lbs GT 0
+	    </test>
+	</switch>
+
+	<!--
+	    Each tank has two related properties: tank-X-16[0] and tank-X-16[1].
+		* tank-X-16[0] is the current transfer rate from tank X
+		* tank-X-16[1] is the prior transfer rate from tank X if it needs
+		    to be stopped, or otherwise 0
+	    Therefore, the net transfer rate from tank X will be given by:
+		tank-X-16-pps = tank-X-16[0] - tank-X-16[1]
+	    Note that tank-X-16[1] is only non-zero for one cycle when the
+	    transfer is being terminated.
+	-->
+
+	<!-- set prior rates that need to be reversed -->
+
+	<switch name="systems/fuel/tank[13]/tank-14-16[1]">
+	    <description> Reset flow from tank 14 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[13]/tank-14-16[0]">
+		systems/propulsion/APU/feed-tank NE 13
+		systems/propulsion/APU/prior-tank EQ 13
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[14]/tank-15-16[1]">
+	    <description> Reset flow from tank 15 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[14]/tank-15-16[0]">
+		systems/propulsion/APU/feed-tank NE 14
+		systems/propulsion/APU/prior-tank EQ 14
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[9]/tank-10-16[1]">
+	    <description> Reset flow from tank 10 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[9]/tank-10-16[0]">
+		systems/propulsion/APU/feed-tank NE 9
+		systems/propulsion/APU/prior-tank EQ 9
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[10]/tank-11-16[1]">
+	    <description> Reset flow from tank 11 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[10]/tank-11-16[0]">
+		systems/propulsion/APU/feed-tank NE 10
+		systems/propulsion/APU/prior-tank EQ 10
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[12]/tank-13-16[1]">
+	    <description> Reset flow from tank 13 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[12]/tank-13-16[0]">
+		systems/propulsion/APU/feed-tank NE 12
+		systems/propulsion/APU/prior-tank EQ 12
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[11]/tank-12-16[1]">
+	    <description> Reset flow from tank 12 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="systems/fuel/tank[11]/tank-12-16[0]">
+		systems/propulsion/APU/feed-tank NE 11
+		systems/propulsion/APU/prior-tank EQ 11
+	    </test>
+	</switch>
+
+	<!-- assign the inflow -->
+	<switch name="propulsion/tank[16]/external-flow-rate-pps">
+	    <default value="0"/>
+	    <test value="1">
+		systems/propulsion/APU/feed-tank GT 0
+		systems/propulsion/APU/tank-valve EQ 1
+		/controls/APU/run EQ 1
+	    </test>
+	</switch>
+
+	<!-- define the deduction source -->
+
+	<switch name="systems/fuel/tank[13]/tank-14-16[0]">
+	    <description> Current flow from tank 14 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 13
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[14]/tank-15-16[0]">
+	    <description> Current flow from tank 15 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 14
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[9]/tank-10-16[0]">
+	    <description> Current flow from tank 10 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 9
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[10]/tank-11-16[0]">
+	    <description> Current flow from tank 11 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 10
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[12]/tank-13-16[0]">
+	    <description> Current flow from tank 13 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 12
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[11]/tank-12-16[0]">
+	    <description> Current flow from tank 12 into tank 16 </description>
+	    <default value="0"/>
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 11
+	    </test>
+	</switch>
+
+	<!-- substract the outflow of each engine -->
+
+	<summer name="propulsion/tank[13]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 14 </description>
+	    <input> -systems/fuel/tank[13]/tank-14-16[0] </input>
+	    <input>  systems/fuel/tank[13]/tank-14-16[1] </input>
+	    <input> propulsion/tank[13]/external-flow-rate-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[14]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 15 </description>
+	    <input> -systems/fuel/tank[14]/tank-15-16[0] </input>
+	    <input>  systems/fuel/tank[14]/tank-15-16[1] </input>
+	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[9]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 10 </description>
+	    <input> -systems/fuel/tank[9]/tank-10-16[0] </input>
+	    <input>  systems/fuel/tank[9]/tank-10-16[1] </input>
+	    <input> propulsion/tank[9]/external-flow-rate-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[10]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 11 </description>
+	    <input> -systems/fuel/tank[10]/tank-11-16[0] </input>
+	    <input>  systems/fuel/tank[10]/tank-11-16[1] </input>
+	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[12]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 13 </description>
+	    <input> -systems/fuel/tank[12]/tank-13-16[0] </input>
+	    <input>  systems/fuel/tank[12]/tank-13-16[1] </input>
+	    <input> propulsion/tank[12]/external-flow-rate-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[11]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 12 </description>
+	    <input> -systems/fuel/tank[11]/tank-12-16[0] </input>
+	    <input>  systems/fuel/tank[11]/tank-12-16[1] </input>
+	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
+	</summer>
+
+    </channel>
+
+    <!--
+	*********************
+	Refuelling Operations
+	*********************
+    -->
+    <channel name="Refuel" execrate="8">
+
+	<kinematic name="systems/refuel/lid-position-norm">
+	    <description>
+		Refuelling Control
+	    </description>
+	    <input>/controls/switches/refuel</input>
+	    <traverse>
+		<setting>
+		    <position> 0 </position>
+		    <time>     0 </time>
+		</setting>
+		<setting>
+		    <position> 1 </position>
+		    <time>     3 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- this switch opens the electrical connection -->
+	<switch name="/controls/switches/refuel-pump">
+	    <description>
+		Refuelling Pump Power
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/refuel/lid-position-norm EQ 1
+	    </test>
+	</switch>
+
+	<!-- refuelling can start once the lid is fully open and electrical power is on -->
+	<switch name="systems/refuel/refuel-pump-cmd">
+	    <description>
+		Refuel Pump Command
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/refuel/lid-position-norm EQ 1
+		/systems/electrical/outputs/refuel-pump GT 27
+	    </test>
+	</switch>
+
+	<!-- pump startup time is 0.2 secs -->
+	<kinematic name="systems/refuel/refuel-pump-on">
+	    <description>
+		Refuel Pump Ready
+	    </description>
+	    <input>systems/refuel/refuel-pump-cmd</input>
+	    <traverse>
+		<setting>
+		    <position> 0.0 </position>
+		    <time>     0.0 </time>
+		</setting>
+		<setting>
+		    <position> 1.0 </position>
+		    <time>     0.2 </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<!-- announce refuelling availability -->
+	<switch name="/instrumentation/annunciator/refuel-pump">
+	    <description>
+		Announce that pump is ready
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		systems/refuel/refuel-pump-on EQ 1
+	    </test>
+	</switch>
+
+	<!--
+	    A-A refuelling states:
+	    0 (Off) -> lid closed, no tanker
+	    1 (Ready) -> lid open, tanker close, no contact
+	    2 (Connected) -> lid open, tanker close, contact made
+	    3 (Disconnected) -> lid closed, tanker close
+	-->
+	<switch name="systems/refuel/aar-state">
+	    <description>
+		Air Refuelling State
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="2">
+		<!-- connected -->
+		/systems/refuel/contact EQ 1
+		position/h-agl-ft GT 1500
+		velocities/vc-kts GT 200
+		systems/refuel/refuel-pump-on EQ 1
+	    </test>
+	    <test  logic="AND" value="1">
+		<!-- ready -->
+		/systems/refuel/contact EQ 0
+		position/h-agl-ft GT 1500
+		velocities/vc-kts GT 200
+		systems/refuel/refuel-pump-on EQ 1
+		/instrumentation/tacan/in-range EQ 1
+	    </test>
+	    <test  logic="AND" value="3">
+		<!-- diconnected -->
+		position/h-agl-ft GT 1500
+		velocities/vc-kts GT 200
+		systems/refuel/refuel-pump-on LT 1
+		/instrumentation/tacan/in-range EQ 1
+	    </test>
+	</switch>
+
+	<!-- export the A-A refuelling state -->
+	<pure_gain name="/instrumentation/fmc/aar-state">
+	    <description>
+		State of Air-Air Refuelling
+	    </description>
+	    <input>systems/refuel/aar-state</input>
+	    <gain>1</gain>
+	</pure_gain>
+
+	<!-- enable tanker refuelling whenever contact is established -->
+	<switch name="systems/refuel/air-refuel-cmd">
+	    <description>
+		Air Refuelling Command
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		<!-- state 2 means we are in contact with the probe -->
+		systems/refuel/aar-state EQ 2
+	    </test>
+	</switch>
+
+	<!-- enable ground refuelling when at standstill with the lid open -->
+	<switch name="systems/refuel/ground-refuel-cmd">
+	    <description>
+		Ground Refuelling Command
+	    </description>
+	    <default value="0"/>
+	    <test  logic="AND" value="1">
+		gear/main-gear-grounded EQ 1
+		velocities/vc-kts LT 20
+		/controls/gear/brake-parking EQ 1
+		systems/refuel/refuel-pump-on EQ 1
+	    </test>
+	</switch>
+
+	<!-- Refuelling is triggered with the boolean property "propulsion/refuel" -->
+	<switch name="propulsion/refuel">
+	    <description>
+		Refuelling Action
+	    </description>
+	    <default value="0"/>
+	    <test  logic="OR" value="1">
+		systems/refuel/ground-refuel-cmd EQ 1
+		systems/refuel/air-refuel-cmd EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- This channel manages cross-feeding between tank groups -->
+    <channel name="Tank groups" exec="/controls/fuel/cross-feed" execrate="8">
+    <!--
+	We assume that a tank group can cross-feed any other group.
+	Whether a tank group feeds another is determined by the amount
+	of excess fuel it has over the other as a group (not by individual tank).
+	The cross-feed is initiated on the entire group. Each tank feeds or is fed
+	by its opposite number only. Each tank can then individually block the
+	transfer based on its own condition (empty or full).
+    -->
+
+    <!-- ========================== Tank Group 1 ========================== -->
+
+    <!-- difference between Group 1 and Group 2 -->
+	<summer name="systems/fuel/group[0]/excess-1-2">
+	    <input> /consumables/fuel/group1-lbs </input>
+	    <input>-/consumables/fuel/group2-lbs </input>
+	</summer>
+
+	<!-- difference between Group 1 and Group 3 -->
+	<summer name="systems/fuel/group[0]/excess-1-3">
+	    <input> /consumables/fuel/group1-lbs </input>
+	    <input>-/consumables/fuel/group3-lbs </input>
+	</summer>
+
+	<!-- difference between Group 1 and Group 4 -->
+	<summer name="systems/fuel/group[0]/excess-1-4">
+	    <input> /consumables/fuel/group1-lbs </input>
+	    <input>-/consumables/fuel/group4-lbs </input>
+	</summer>
+
+	<!-- the flow rate to other groups per tank -->
+
+	<switch name="systems/fuel/group[0]/flow-1-2-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[0]/excess-1-2 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[0]/flow-1-2-pps">
+		systems/fuel/group[0]/excess-1-2 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/flow-1-3-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[0]/excess-1-3 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[0]/flow-1-3-pps">
+		systems/fuel/group[0]/excess-1-3 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/flow-1-4-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[0]/excess-1-4 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[0]/flow-1-4-pps">
+		systems/fuel/group[0]/excess-1-4 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<!-- switch on cross-feeding from this group -->
+	<switch name="systems/fuel/group[0]/cross-feed">
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		systems/fuel/group[0]/flow-1-2-pps GT 0
+		systems/fuel/group[0]/flow-1-3-pps GT 0
+		systems/fuel/group[0]/flow-1-4-pps GT 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 2 ========================== -->
+
+	<!-- difference between Group 2 and Group 1 -->
+	<pure_gain name="systems/fuel/group[1]/excess-2-1">
+	    <input> -systems/fuel/group[0]/excess-1-2 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- difference between Group 2 and Group 3 -->
+	<summer name="systems/fuel/group[1]/excess-2-3">
+	    <input> /consumables/fuel/group2-lbs </input>
+	    <input>-/consumables/fuel/group3-lbs </input>
+	</summer>
+
+	<!-- difference between Group 2 and Group 4 -->
+	<summer name="systems/fuel/group[1]/excess-2-4">
+	    <input> /consumables/fuel/group2-lbs </input>
+	    <input>-/consumables/fuel/group4-lbs </input>
+	</summer>
+
+	<!-- the flow rate to other groups per tank -->
+
+	<switch name="systems/fuel/group[1]/flow-2-1-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[1]/excess-2-1 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[1]/flow-2-1-pps">
+		systems/fuel/group[1]/excess-2-1 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/flow-2-3-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[1]/excess-2-3 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[1]/flow-2-3-pps">
+		systems/fuel/group[1]/excess-2-3 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/flow-2-4-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[1]/excess-2-4 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[1]/flow-2-4-pps">
+		systems/fuel/group[1]/excess-2-4 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<!-- switch on cross-feeding from this group -->
+	<switch name="systems/fuel/group[1]/cross-feed">
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		systems/fuel/group[1]/flow-2-1-pps GT 0
+		systems/fuel/group[1]/flow-2-3-pps GT 0
+		systems/fuel/group[1]/flow-2-4-pps GT 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 3 ========================== -->
+
+	<!-- difference between Group 3 and Group 1 -->
+	<pure_gain name="systems/fuel/group[2]/excess-3-1">
+	    <input> -systems/fuel/group[0]/excess-1-3 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- difference between Group 3 and Group 2 -->
+	<pure_gain name="systems/fuel/group[2]/excess-3-2">
+	    <input> -systems/fuel/group[1]/excess-2-3 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- difference between Group 3 and Group 4 -->
+	<summer name="systems/fuel/group[2]/excess-3-4">
+	    <input> /consumables/fuel/group3-lbs </input>
+	    <input>-/consumables/fuel/group4-lbs </input>
+	</summer>
+
+	<!-- the flow rate to other groups per tank -->
+
+	<switch name="systems/fuel/group[2]/flow-3-1-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[2]/excess-3-1 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[2]/flow-3-1-pps">
+		systems/fuel/group[2]/excess-3-1 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/flow-3-2-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[2]/excess-3-2 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[2]/flow-3-2-pps">
+		systems/fuel/group[2]/excess-3-2 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/flow-3-4-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[2]/excess-3-4 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[2]/flow-3-4-pps">
+		systems/fuel/group[2]/excess-3-4 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<!-- switch on cross-feeding from this group -->
+	<switch name="systems/fuel/group[2]/cross-feed">
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		systems/fuel/group[2]/flow-3-1-pps GT 0
+		systems/fuel/group[2]/flow-3-2-pps GT 0
+		systems/fuel/group[2]/flow-3-4-pps GT 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 4 ========================== -->
+
+	<!-- difference between Group 4 and Group 1 -->
+	<pure_gain name="systems/fuel/group[3]/excess-4-1">
+	    <input> -systems/fuel/group[0]/excess-1-4 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- difference between Group 4 and Group 2 -->
+	<pure_gain name="systems/fuel/group[3]/excess-4-2">
+	    <input> -systems/fuel/group[1]/excess-2-4 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- difference between Group 4 and Group 3 -->
+	<pure_gain name="systems/fuel/group[3]/excess-4-3">
+	    <input> -systems/fuel/group[2]/excess-3-4 </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- the flow rate to other groups per tank -->
+
+	<switch name="systems/fuel/group[3]/flow-4-1-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[3]/excess-4-1 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[3]/flow-4-1-pps">
+		systems/fuel/group[3]/excess-4-1 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/flow-4-2-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[3]/excess-4-2 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[3]/flow-4-2-pps">
+		systems/fuel/group[3]/excess-4-2 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/flow-4-3-pps">
+	    <default value="0"/>
+	    <test logic="OR" value="systems/fuel/cross-feed-pps">
+		systems/fuel/group[3]/excess-4-3 GT systems/fuel/cross-feed-start
+	    </test>
+	    <test logic="OR" value="systems/fuel/group[3]/flow-4-3-pps">
+		systems/fuel/group[3]/excess-4-3 GT systems/fuel/cross-feed-stop
+	    </test>
+	</switch>
+
+	<!-- switch on cross-feeding from this group -->
+	<switch name="systems/fuel/group[3]/cross-feed">
+	    <default value="0"/>
+	    <test logic="OR" value="1">
+		systems/fuel/group[3]/flow-4-1-pps GT 0
+		systems/fuel/group[3]/flow-4-2-pps GT 0
+		systems/fuel/group[3]/flow-4-3-pps GT 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Underwing Tanks ========================== -->
+
+	<!-- Difference in contents in underwing L-R tanks -->
+	<summer name="systems/fuel/underwing-diff-lbs">
+	    <input> propulsion/tank[4]/contents-lbs </input>
+	    <input>-propulsion/tank[9]/contents-lbs </input>
+	</summer>
+
+    </channel>
+
+    <!-- This channel manages the fuel tank float switches -->
+    <channel name="Tank switches" exec="systems/fuel/transfers-on" execrate="8">
+
+    <!-- ========================== Tank 1 ========================== -->
+
+    <!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[0]/transfer-in">
+	    <description> Control inward transfer into tank 1 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[0]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[0]/transfer-out">
+	    <description> Control outward transfer from tank 1 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[0]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer -->
+	<switch name="/controls/fuel/tank[0]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 1-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		systems/fuel/tank[0]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[0]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 1-2 </description>
+	    <default value="systems/fuel/group[0]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[0]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 2 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[1]/transfer-in">
+	    <description> Control inward transfer into tank 2 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[1]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[1]/transfer-out">
+	    <description> Control outward transfer from tank 2 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[1]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer -->
+	<switch name="/controls/fuel/tank[1]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 2-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		systems/fuel/tank[1]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[1]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 2-2 </description>
+	    <default value="systems/fuel/group[1]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[1]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 3 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[2]/transfer-in">
+	    <description> Control inward transfer into tank 3 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[2]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[2]/transfer-out">
+	    <description> Control outward transfer from tank 3 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[2]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer -->
+	<switch name="/controls/fuel/tank[2]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 3-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		systems/fuel/tank[2]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfers -->
+	<switch name="/controls/fuel/tank[2]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 3-2 </description>
+	    <default value="systems/fuel/group[0]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[2]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 4 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[3]/transfer-in">
+	    <description> Control inward transfer into tank 4 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[3]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[3]/transfer-out">
+	    <description> Control outward transfer from tank 4 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[3]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer -->
+	<switch name="/controls/fuel/tank[3]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 4-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		systems/fuel/tank[3]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[3]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 4-2 </description>
+	    <default value="systems/fuel/group[1]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[3]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 5 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[4]/transfer-in">
+	    <description> Control inward transfer into tank 5 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[4]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[4]/transfer-out">
+	    <description> Control outward transfer from tank 5 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[4]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer -->
+	<switch name="/controls/fuel/tank[4]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 5-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		systems/fuel/tank[4]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[4]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 5-2 </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[4]/transfer-out EQ 0
+		<!-- +ve values of underwing-diff-lbs indicate excess in this tank -->
+		systems/fuel/underwing-diff-lbs LT 100
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 6 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[5]/transfer-in">
+	    <description> Control inward transfer into tank 6 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[5]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[5]/transfer-out">
+	    <description> Control outward transfer from tank 6 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[5]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer -->
+	<switch name="/controls/fuel/tank[5]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 6-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		systems/fuel/tank[5]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[5]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 6-2 </description>
+	    <default value="systems/fuel/group[2]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[5]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 7 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[6]/transfer-in">
+	    <description> Control inward transfer into tank 7 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[6]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[6]/transfer-out">
+	    <description> Control outward transfer from tank 7 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[6]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer -->
+	<switch name="/controls/fuel/tank[6]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 7-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		systems/fuel/tank[6]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfers -->
+	<switch name="/controls/fuel/tank[6]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 7-2 </description>
+	    <default value="systems/fuel/group[3]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[6]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 8 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[7]/transfer-in">
+	    <description> Control inward transfer into tank 8 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[7]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[7]/transfer-out">
+	    <description> Control outward transfer from tank 8 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[7]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfers -->
+	<switch name="/controls/fuel/tank[7]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 8-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		systems/fuel/tank[7]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[7]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 8-2 </description>
+	    <default value="systems/fuel/group[2]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[7]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 9 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[8]/transfer-in">
+	    <description> Control inward transfer into tank 9 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[8]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[8]/transfer-out">
+	    <description> Control outward transfer from tank 9 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[8]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfers -->
+	<switch name="/controls/fuel/tank[8]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 9-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		systems/fuel/tank[8]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[8]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 9-2 </description>
+	    <default value="systems/fuel/group[3]/cross-feed"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[8]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 10 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[9]/transfer-in">
+	    <description> Control inward transfer into tank 10 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[9]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[9]/transfer-out">
+	    <description> Control outward transfer from tank 10 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[9]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer -->
+	<switch name="/controls/fuel/tank[9]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 10-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		systems/fuel/tank[9]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- Cross-feed transfer -->
+	<switch name="/controls/fuel/tank[9]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 10-2 </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		/controls/fuel/cross-feed EQ 0
+		systems/fuel/tank[9]/transfer-out EQ 0
+		<!-- negative ve values of underwing-diff-lbs indicate excess in this tank -->
+		systems/fuel/underwing-diff-lbs GT -100
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 11 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[10]/transfer-in">
+	    <description> Control inward transfer into tank 11 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[10]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[10]/transfer-out">
+	    <description> Control outward transfer from tank 11 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[10]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer 1 -->
+	<switch name="/controls/fuel/tank[10]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 11-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		systems/fuel/tank[10]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- aft transfer 2 -->
+	<switch name="/controls/fuel/tank[10]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 11-2 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		systems/fuel/tank[10]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 12 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[11]/transfer-in">
+	    <description> Control inward transfer into tank 12 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[11]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[11]/transfer-out">
+	    <description> Control outward transfer from tank 12 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[11]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer 1 -->
+	<switch name="/controls/fuel/tank[11]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 12-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[0] LT 25
+		systems/fuel/tank[11]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- aft transfer 2 -->
+	<switch name="/controls/fuel/tank[11]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 12-2 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[2] LT 25
+		systems/fuel/tank[11]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 13 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[12]/transfer-in">
+	    <description> Control inward transfer into tank 13 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[12]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[12]/transfer-out">
+	    <description> Control outward transfer from tank 13 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[12]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 1 -->
+	<switch name="/controls/fuel/tank[12]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 13-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		systems/fuel/tank[12]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 2 -->
+	<switch name="/controls/fuel/tank[12]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 13-2 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		systems/fuel/tank[12]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 14 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[13]/transfer-in">
+	    <description> Control inward transfer into tank 14 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[13]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[13]/transfer-out">
+	    <description> Control outward transfer from tank 14 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[13]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 1 -->
+	<switch name="/controls/fuel/tank[13]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 14-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[1] LT 25
+		systems/fuel/tank[13]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 2 -->
+	<switch name="/controls/fuel/tank[13]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 14-2 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		/systems/electrical/outputs/fuel-pump[3] LT 25
+		systems/fuel/tank[13]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 15 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[14]/transfer-in">
+	    <description> Control inward transfer into tank 15 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[14]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[14]/transfer-out">
+	    <description> Control outward transfer from tank 15 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[14]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- aft transfer 1 -->
+	<switch name="/controls/fuel/tank[14]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 15-1 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /systems/electrical/outputs/fuel-pump[0] LT 25
+		    /systems/electrical/outputs/fuel-pump[2] LT 25
+		</test>
+		systems/fuel/tank[14]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- aft transfer 2 -->
+	<switch name="/controls/fuel/tank[14]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 15-2 </description>
+	    <default value="/controls/fuel/aft-transfer"/>
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /systems/electrical/outputs/fuel-pump[1] LT 25
+		    /systems/electrical/outputs/fuel-pump[3] LT 25
+		</test>
+		systems/fuel/tank[14]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank 16 ========================== -->
+
+	<!-- Control inward transfer -->
+	<switch name="systems/fuel/tank[15]/transfer-in">
+	    <description> Control inward transfer into tank 16 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[15]/pct-full GE 98
+	    </test>
+	</switch>
+
+	<!-- Control outward transfer -->
+	<switch name="systems/fuel/tank[15]/transfer-out">
+	    <description> Control outward transfer from tank 16 </description>
+	    <default value="1"/>
+	    <test logic="AND" value="0">
+		propulsion/tank[15]/pct-full LE 2
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 1 -->
+	<switch name="/controls/fuel/tank[15]/boost-pump[0]">
+	    <description> Start/shutoff boost pump 16-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /systems/electrical/outputs/fuel-pump[1] LT 25
+		    /systems/electrical/outputs/fuel-pump[3] LT 25
+		</test>
+		systems/fuel/tank[15]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+	<!-- fwd transfer 2 -->
+	<switch name="/controls/fuel/tank[15]/boost-pump[1]">
+	    <description> Start/shutoff boost pump 16-1 </description>
+	    <default value="/controls/fuel/fwd-transfer"/>
+	    <test logic="OR" value="0">
+		<test logic="AND" value="1">
+		    /systems/electrical/outputs/fuel-pump[1] LT 25
+		    /systems/electrical/outputs/fuel-pump[3] LT 25
+		</test>
+		systems/fuel/tank[15]/transfer-out EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+    <!-- This channel manages cross-feeding at tank level -->
+    <channel name="Cross feed" exec="/controls/fuel/cross-feed" execrate="8">
+
+    <!--
+	Three types of fuel transfer are provided:
+	    * a semi-automatic forward transfer,
+	    * a semi-automatic aft transfer, and
+	    * a semi-automatic cross-feed transfer
+
+	Cross-feed Transfer:
+	~~~~~~~~~~~~~~~~~~~~~~~
+	Cross-feed transfer between tank counterparts in two different tank groups.
+	The maximum rate is 60 lb/min (1 lb/sec) from any tank. The total rate can
+	be up to 12 pps if all other groups feed into one tank in a given group.
+	Fuel transfer is initiated by the CROSS TRANS transfer switch and affects
+	all tank groups equally. The direction of transfer is automatically determined
+	based on the comparative volumes in the tank groups.
+
+	Transfer stops on four events:
+	    * the CROSS TRANS switch is turned off
+	    * the receiving tanks fill up
+	    * the supplyinh tanks are empty
+	    * the volumes across all tank groups are almost evenly balanced
+    -->
+
+    <!-- ========================== Tank Group 1 ========================== -->
+
+    <!-- flows from tank 1 -->
+
+	<switch name="systems/fuel/group[0]/tank-1-2">
+	    <description> Flow from tank 1 into tank 2 </description>
+	    <default value="systems/fuel/group[0]/flow-1-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[0]/boost-pump[1] EQ 0
+		systems/fuel/tank[1]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/tank-1-6">
+	    <description> Flow from tank 1 into tank 6 </description>
+	    <default value="systems/fuel/group[0]/flow-1-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[0]/boost-pump[1] EQ 0
+		systems/fuel/tank[5]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/tank-1-7">
+	    <description> Flow from tank 1 into tank 7 </description>
+	    <default value="systems/fuel/group[0]/flow-1-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[0]/boost-pump[1] EQ 0
+		systems/fuel/tank[6]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- flows from tank 3 -->
+
+	<switch name="systems/fuel/group[0]/tank-3-4">
+	    <description> Flow from tank 3 into tank 4 </description>
+	    <default value="systems/fuel/group[0]/flow-1-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[2]/boost-pump[1] EQ 0
+		systems/fuel/tank[3]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/tank-3-8">
+	    <description> Flow from tank 3 into tank 8 </description>
+	    <default value="systems/fuel/group[0]/flow-1-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[2]/boost-pump[1] EQ 0
+		systems/fuel/tank[7]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[0]/tank-3-9">
+	    <description> Flow from tank 3 into tank 9 </description>
+	    <default value="systems/fuel/group[0]/flow-1-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[2]/boost-pump[1] EQ 0
+		systems/fuel/tank[8]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 2 ========================== -->
+
+	<!-- flows from tank 2 -->
+
+	<switch name="systems/fuel/group[1]/tank-2-1">
+	    <description> Flow from tank 2 into tank 1 </description>
+	    <default value="systems/fuel/group[1]/flow-2-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[1]/boost-pump[1] EQ 0
+		systems/fuel/tank[0]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/tank-2-6">
+	    <description> Flow from tank 2 into tank 6 </description>
+	    <default value="systems/fuel/group[1]/flow-2-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[1]/boost-pump[1] EQ 0
+		systems/fuel/tank[5]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/tank-2-7">
+	    <description> Flow from tank 2 into tank 7 </description>
+	    <default value="systems/fuel/group[1]/flow-2-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[1]/boost-pump[1] EQ 0
+		systems/fuel/tank[6]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- flows from tank 4 -->
+
+	<switch name="systems/fuel/group[1]/tank-4-3">
+	    <description> Flow from tank 4 into tank 3 </description>
+	    <default value="systems/fuel/group[1]/flow-2-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[3]/boost-pump[1] EQ 0
+		systems/fuel/tank[2]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/tank-4-8">
+	    <description> Flow from tank 4 into tank 8 </description>
+	    <default value="systems/fuel/group[1]/flow-2-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[3]/boost-pump[1] EQ 0
+		systems/fuel/tank[7]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[1]/tank-4-9">
+	    <description> Flow from tank 4 into tank 9 </description>
+	    <default value="systems/fuel/group[1]/flow-2-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[3]/boost-pump[1] EQ 0
+		systems/fuel/tank[8]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 3 ========================== -->
+
+	<!-- flows from tank 6 -->
+
+	<switch name="systems/fuel/group[2]/tank-6-1">
+	    <description> Flow from tank 6 into tank 1 </description>
+	    <default value="systems/fuel/group[2]/flow-3-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[5]/boost-pump[1] EQ 0
+		systems/fuel/tank[0]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/tank-6-2">
+	    <description> Flow from tank 6 into tank 2 </description>
+	    <default value="systems/fuel/group[2]/flow-3-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[5]/boost-pump[1] EQ 0
+		systems/fuel/tank[1]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/tank-6-7">
+	    <description> Flow from tank 6 into tank 7 </description>
+	    <default value="systems/fuel/group[2]/flow-3-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[5]/boost-pump[1] EQ 0
+		systems/fuel/tank[6]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- flows from tank 8 -->
+
+	<switch name="systems/fuel/group[2]/tank-8-3">
+	    <description> Flow from tank 8 into tank 3 </description>
+	    <default value="systems/fuel/group[2]/flow-3-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[7]/boost-pump[1] EQ 0
+		systems/fuel/tank[2]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/tank-8-4">
+	    <description> Flow from tank 8 into tank 4 </description>
+	    <default value="systems/fuel/group[2]/flow-3-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[7]/boost-pump[1] EQ 0
+		systems/fuel/tank[3]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[2]/tank-8-9">
+	    <description> Flow from tank 8 into tank 9 </description>
+	    <default value="systems/fuel/group[2]/flow-3-4-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[7]/boost-pump[1] EQ 0
+		systems/fuel/tank[8]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Tank Group 4 ========================== -->
+
+	<!-- flows from tank 7 -->
+
+	<switch name="systems/fuel/group[3]/tank-7-1">
+	    <description> Flow from tank 7 into tank 1 </description>
+	    <default value="systems/fuel/group[3]/flow-4-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[6]/boost-pump[1] EQ 0
+		systems/fuel/tank[0]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/tank-7-2">
+	    <description> Flow from tank 7 into tank 2 </description>
+	    <default value="systems/fuel/group[3]/flow-4-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[6]/boost-pump[1] EQ 0
+		systems/fuel/tank[1]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/tank-7-6">
+	    <description> Flow from tank 7 into tank 6 </description>
+	    <default value="systems/fuel/group[3]/flow-4-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[6]/boost-pump[1] EQ 0
+		systems/fuel/tank[5]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- flows from tank 9 -->
+
+	<switch name="systems/fuel/group[3]/tank-9-3">
+	    <description> Flow from tank 9 into tank 3 </description>
+	    <default value="systems/fuel/group[3]/flow-4-1-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[8]/boost-pump[1] EQ 0
+		systems/fuel/tank[2]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/tank-9-4">
+	    <description> Flow from tank 9 into tank 4 </description>
+	    <default value="systems/fuel/group[3]/flow-4-2-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[8]/boost-pump[1] EQ 0
+		systems/fuel/tank[3]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/group[3]/tank-9-8">
+	    <description> Flow from tank 9 into tank 8 </description>
+	    <default value="systems/fuel/group[3]/flow-4-3-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[8]/boost-pump[1] EQ 0
+		systems/fuel/tank[7]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- ========================== Underwing Tanks ========================== -->
+
+	<!-- one of these two flows will be zero -->
+
+	<switch name="systems/fuel/tank[4]/tank-5-10">
+	    <description> Flow from tank 5 into tank 10 </description>
+	    <default value="systems/fuel/cross-feed-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[4]/boost-pump[1] EQ 0
+		systems/fuel/tank[9]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<switch name="systems/fuel/tank[9]/tank-10-5">
+	    <description> Flow from tank 10 into tank 5 </description>
+	    <default value="systems/fuel/cross-feed-pps"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[9]/boost-pump[1] EQ 0
+		systems/fuel/tank[4]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- This channel manages the foward fuel transfer system -->
+    <channel name="Forward fuel transfer" exec="/controls/fuel/fwd-transfer" execrate="8">
+
+    <!--
+	Three types of fuel transfer are provided:
+	    * a semi-automatic forward transfer,
+	    * a semi-automatic aft transfer, and
+	    * a semi-automatic cross-feed transfer
+
+	Foward Transfer:
+	~~~~~~~~~~~~~~~~~~~~~~~
+	Forward transfer from rear tanks to forward tanks. The maximum rate is
+	600 lb/min (10 lb/sec) in total. When supplying to more than one tank,
+	the late is correspondingly lower. Fuel transfer is initiated by
+	the FWD TRANS transfer switch and affects all tank groups equally.
+
+	Transfer stops on three events:
+	    * the FWD TRANS switch is turned off
+	    * the forward tanks fill up
+	    * the rear tanks are empty
+    -->
+
+    <!-- from tank 5 to tank 1 at 5 pps -->
+	<switch name="systems/fuel/tank[4]/fwd-flow-5-1-pps">
+	    <description> Forward flow from tank 5 into tank 1 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[4]/boost-pump[0] EQ 0
+		systems/fuel/tank[0]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 5 to tank 2 at 5 pps -->
+	<switch name="systems/fuel/tank[4]/fwd-flow-5-2-pps">
+	    <description> Forward flow from tank 5 into tank 2 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[4]/boost-pump[0] EQ 0
+		systems/fuel/tank[1]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 10 to tank 6 at 5 pps -->
+	<switch name="systems/fuel/tank[9]/fwd-flow-10-6-pps">
+	    <description> Forward flow from tank 10 into tank 6 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[9]/boost-pump[0] EQ 0
+		systems/fuel/tank[5]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 10 to tank 7 at 5 pps -->
+	<switch name="systems/fuel/tank[9]/fwd-flow-10-7-pps">
+	    <description> Forward flow from tank 10 into tank 7 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[9]/boost-pump[0] EQ 0
+		systems/fuel/tank[6]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 3 to tank 1 at 5 pps -->
+	<switch name="systems/fuel/tank[2]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 3 into tank 1 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[2]/boost-pump[0] EQ 0
+		systems/fuel/tank[0]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 8 to tank 6 at 5 pps -->
+	<switch name="systems/fuel/tank[7]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 8 into tank 6 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[7]/boost-pump[0] EQ 0
+		systems/fuel/tank[5]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 4 to tank 2 at 5 pps -->
+	<switch name="systems/fuel/tank[3]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 4 into tank 2 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[3]/boost-pump[0] EQ 0
+		systems/fuel/tank[1]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 9 to tank 7 at 5 pps -->
+	<switch name="systems/fuel/tank[8]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 9 into tank 7 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[8]/boost-pump[0] EQ 0
+		systems/fuel/tank[6]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 16 to tank 5 at 5 pps -->
+	<switch name="systems/fuel/tank[15]/fwd-flow-16-5-pps">
+	    <description> Forward flow from tank 16 into tank 5 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[15]/boost-pump[0] EQ 0
+		systems/fuel/tank[4]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 16 to tank 10 at 5 pps -->
+	<switch name="systems/fuel/tank[15]/fwd-flow-16-10-pps">
+	    <description> Forward flow from tank 16 into tank 10 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[15]/boost-pump[1] EQ 0
+		systems/fuel/tank[9]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 13 to tank 11 at 5 or 10 pps -->
+	<switch name="systems/fuel/tank[12]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 13 into tank 11 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		systems/fuel/tank[10]/transfer-in EQ 0
+		<test logic="AND" value="1">
+		    /controls/fuel/tank[12]/boost-pump[0] EQ 0
+		    /controls/fuel/tank[12]/boost-pump[1] EQ 0
+		</test>
+	    </test>
+	    <test logic="AND" value="10">
+		/controls/fuel/tank[12]/boost-pump[0] EQ 1
+		/controls/fuel/tank[12]/boost-pump[1] EQ 1
+	    </test>
+	</switch>
+
+	<!-- from tank 14 to tank 12 at 5 or 10 pps -->
+	<switch name="systems/fuel/tank[13]/fwd-flow-rate-pps">
+	    <description> Forward flow from tank 14 into tank 12 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		systems/fuel/tank[11]/transfer-in EQ 0
+		<test logic="AND" value="1">
+		    /controls/fuel/tank[13]/boost-pump[0] EQ 0
+		    /controls/fuel/tank[13]/boost-pump[1] EQ 0
+		</test>
+	    </test>
+	    <test logic="AND" value="10">
+		/controls/fuel/tank[13]/boost-pump[0] EQ 1
+		/controls/fuel/tank[13]/boost-pump[1] EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- This channel manages the aft fuel transfer system -->
+    <channel name="Aft fuel transfer" exec="/controls/fuel/aft-transfer" execrate="8">
+
+    <!--
+	Three types of fuel transfer are provided:
+	    * a semi-automatic forward transfer,
+	    * a semi-automatic aft transfer, and
+	    * a semi-automatic cross-feed transfer
+
+	Aft Transfer:
+	~~~~~~~~~~~~~~~~~~~~~~~
+	Aft transfer is from the foward and middle tanks to a middle and
+	rear tank. The maximum rate is 600 lb/min (10 lb/s) from a single tank.
+	It is controlled by the AFT TRANS switch. Fuel transfer is initiated by
+	the AFT TRANS transfer switch and affects all tank groups equally.
+
+	Transfer stops on three events:
+	    * the AFT TRANS switch is turned off
+	    * the rear tank fills up
+	    * the forward tank is empty
+    -->
+
+    <!-- from tank 1 to tank 3 at 10 pps -->
+	<switch name="systems/fuel/tank[0]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 1 into tank 3 </description>
+	    <default value="10"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[0]/boost-pump[0] EQ 0
+		systems/fuel/tank[2]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 6 to tank 8 at 10 pps -->
+	<switch name="systems/fuel/tank[5]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 6 into tank 8 </description>
+	    <default value="10"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[5]/boost-pump[0] EQ 0
+		systems/fuel/tank[7]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 11 to tank 13 at 5 or 10 pps -->
+	<switch name="systems/fuel/tank[10]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 11 into tank 13 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		systems/fuel/tank[12]/transfer-in EQ 0
+		<test logic="AND" value="1">
+		    /controls/fuel/tank[10]/boost-pump[0] EQ 0
+		    /controls/fuel/tank[10]/boost-pump[1] EQ 0
+		</test>
+	    </test>
+	    <test logic="AND" value="10">
+		/controls/fuel/tank[10]/boost-pump[0] EQ 1
+		/controls/fuel/tank[10]/boost-pump[1] EQ 1
+	    </test>
+	</switch>
+
+	<!-- from tank 2 to tank 4 at 10 pps -->
+	<switch name="systems/fuel/tank[1]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 2 into tank 4 </description>
+	    <default value="10"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[1]/boost-pump[0] EQ 0
+		systems/fuel/tank[3]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 7 to tank 9 at 10 pps -->
+	<switch name="systems/fuel/tank[6]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 7 into tank 9 </description>
+	    <default value="10"/>
+	    <test logic="OR" value="0">
+		/controls/fuel/tank[6]/boost-pump[0] EQ 0
+		systems/fuel/tank[8]/transfer-in EQ 0
+	    </test>
+	</switch>
+
+	<!-- from tank 12 to tank 14 at 5 or 10 pps -->
+	<switch name="systems/fuel/tank[11]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 12 into tank 14 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		systems/fuel/tank[13]/transfer-in EQ 0
+		<test logic="AND" value="1">
+		    /controls/fuel/tank[11]/boost-pump[0] EQ 0
+		    /controls/fuel/tank[11]/boost-pump[1] EQ 0
+		</test>
+	    </test>
+	    <test logic="AND" value="10">
+		/controls/fuel/tank[11]/boost-pump[0] EQ 1
+		/controls/fuel/tank[11]/boost-pump[1] EQ 1
+	    </test>
+	</switch>
+
+	<!-- from tank 15 to tank 16 at 5 or 10 pps -->
+	<switch name="systems/fuel/tank[14]/aft-flow-rate-pps">
+	    <description> Aft flow from tank 15 into tank 16 </description>
+	    <default value="5"/>
+	    <test logic="OR" value="0">
+		systems/fuel/tank[15]/transfer-in EQ 0
+		<test logic="AND" value="1">
+		    /controls/fuel/tank[14]/boost-pump[0] EQ 0
+		    /controls/fuel/tank[14]/boost-pump[1] EQ 0
+		</test>
+	    </test>
+	    <test logic="AND" value="10">
+		/controls/fuel/tank[14]/boost-pump[0] EQ 1
+		/controls/fuel/tank[14]/boost-pump[1] EQ 1
+	    </test>
+	</switch>
+
+    </channel>
+
+
+    <!-- This channel manages the net fuel transfer system -->
+    <channel name="Fuel transfer" exec="systems/fuel/transfers-on" execrate="8">
+
+    <!--
+	Three types of fuel transfer are provided:
+	    * a semi-automatic forward transfer,
+	    * a semi-automatic aft transfer, and
+	    * a semi-automatic cross-feed transfer
+
+	For all tanks, we derive the net flow from all three types of transfer.
+	NB: Inflows are are positive and outflows are negative.
+    -->
+
+    <!--
+	Disable fuel transfers after gracefully resetting the flow rates.
+	This happens here to avoid "dangling" transfers. This is also the
+	first so that it evades any changes to the actual controls while
+	this channel is running.
+    -->
+	<switch name="systems/fuel/transfers-on">
+	    <description>
+		Disable fuel transfers
+	    </description>
+	    <default value="systems/fuel/transfers-on"/>
+	    <test logic="AND" value="0">
+		/controls/fuel/aft-transfer EQ 0
+		/controls/fuel/cross-feed EQ 0
+		/controls/fuel/fwd-transfer EQ 0
+	    </test>
+	</switch>
+
+	<!-- =========== Tank 1 =========== -->
+
+	<!-- net cross-feed into tank 1 -->
+	<summer name="systems/fuel/tank[0]/cross-feed-pps">
+	    <input> systems/fuel/group[1]/tank-2-1 </input>
+	    <input> systems/fuel/group[2]/tank-6-1 </input>
+	    <input> systems/fuel/group[3]/tank-7-1 </input>
+	    <input>-systems/fuel/group[0]/tank-1-2 </input>
+	    <input>-systems/fuel/group[0]/tank-1-6 </input>
+	    <input>-systems/fuel/group[0]/tank-1-7 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[0]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[2]/fwd-flow-rate-pps </input>
+	    <input> systems/fuel/tank[4]/fwd-flow-5-1-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[0]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 1 </description>
+	    <input> systems/fuel/tank[0]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[0]/fwd-inflow-pps </input>
+	    <input>-systems/fuel/tank[0]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 2 =========== -->
+
+	<!-- net cross-feed into tank 2 -->
+	<summer name="systems/fuel/tank[1]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-1-2 </input>
+	    <input> systems/fuel/group[2]/tank-6-2 </input>
+	    <input> systems/fuel/group[3]/tank-7-2 </input>
+	    <input>-systems/fuel/group[1]/tank-2-1 </input>
+	    <input>-systems/fuel/group[1]/tank-2-6 </input>
+	    <input>-systems/fuel/group[1]/tank-2-7 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[1]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[3]/fwd-flow-rate-pps </input>
+	    <input> systems/fuel/tank[4]/fwd-flow-5-2-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[1]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 2 </description>
+	    <input> systems/fuel/tank[1]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[1]/fwd-inflow-pps </input>
+	    <input>-systems/fuel/tank[1]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 3 =========== -->
+
+	<!-- net cross-feed into tank 3 -->
+	<summer name="systems/fuel/tank[2]/cross-feed-pps">
+	    <input> systems/fuel/group[1]/tank-4-3 </input>
+	    <input> systems/fuel/group[2]/tank-8-3 </input>
+	    <input> systems/fuel/group[3]/tank-9-3 </input>
+	    <input>-systems/fuel/group[0]/tank-3-4 </input>
+	    <input>-systems/fuel/group[0]/tank-3-8 </input>
+	    <input>-systems/fuel/group[0]/tank-3-9 </input>
+	</summer>
+
+	<summer name="propulsion/tank[2]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 3 </description>
+	    <input> systems/fuel/tank[2]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[0]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[2]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 4 =========== -->
+
+	<!-- net cross-feed into tank 4 -->
+	<summer name="systems/fuel/tank[3]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-3-4 </input>
+	    <input> systems/fuel/group[2]/tank-8-4 </input>
+	    <input> systems/fuel/group[3]/tank-9-4 </input>
+	    <input>-systems/fuel/group[1]/tank-4-3 </input>
+	    <input>-systems/fuel/group[1]/tank-4-8 </input>
+	    <input>-systems/fuel/group[1]/tank-4-9 </input>
+	</summer>
+
+	<summer name="propulsion/tank[3]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 4 </description>
+	    <input> systems/fuel/tank[3]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[1]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[3]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 5 =========== -->
+
+	<!-- net cross-feed into tank 5 -->
+	<summer name="systems/fuel/tank[4]/cross-feed-pps">
+	    <input>-systems/fuel/tank[4]/tank-5-10 </input>
+	    <input> systems/fuel/tank[9]/tank-10-5 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[4]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[15]/fwd-flow-16-5-pps </input>
+	    <input>-systems/fuel/tank[4]/fwd-flow-5-1-pps </input>
+	    <input>-systems/fuel/tank[4]/fwd-flow-5-2-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[4]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 5 </description>
+	    <input> systems/fuel/tank[4]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[4]/fwd-inflow-pps </input>
+	</summer>
+
+	<!-- =========== Tank 6 =========== -->
+
+	<!-- net cross-feed into tank 6 -->
+	<summer name="systems/fuel/tank[5]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-1-6 </input>
+	    <input> systems/fuel/group[1]/tank-2-6 </input>
+	    <input> systems/fuel/group[3]/tank-7-6 </input>
+	    <input>-systems/fuel/group[2]/tank-6-1 </input>
+	    <input>-systems/fuel/group[2]/tank-6-2 </input>
+	    <input>-systems/fuel/group[2]/tank-6-7 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[5]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[7]/fwd-flow-rate-pps </input>
+	    <input> systems/fuel/tank[9]/fwd-flow-10-6-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[5]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 6 </description>
+	    <input> systems/fuel/tank[5]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[5]/fwd-inflow-pps </input>
+	    <input>-systems/fuel/tank[5]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 7 =========== -->
+
+	<!-- net cross-feed into tank 7 -->
+	<summer name="systems/fuel/tank[6]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-1-7 </input>
+	    <input> systems/fuel/group[1]/tank-2-7 </input>
+	    <input> systems/fuel/group[2]/tank-6-7 </input>
+	    <input>-systems/fuel/group[3]/tank-7-1 </input>
+	    <input>-systems/fuel/group[3]/tank-7-2 </input>
+	    <input>-systems/fuel/group[3]/tank-7-6 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[6]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[8]/fwd-flow-rate-pps </input>
+	    <input> systems/fuel/tank[9]/fwd-flow-10-7-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[6]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 7 </description>
+	    <input> systems/fuel/tank[6]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[6]/fwd-inflow-pps </input>
+	    <input>-systems/fuel/tank[6]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 8 =========== -->
+
+	<!-- net cross-feed into tank 8 -->
+	<summer name="systems/fuel/tank[7]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-3-8 </input>
+	    <input> systems/fuel/group[1]/tank-4-8 </input>
+	    <input> systems/fuel/group[3]/tank-9-8 </input>
+	    <input>-systems/fuel/group[2]/tank-8-3 </input>
+	    <input>-systems/fuel/group[2]/tank-8-4 </input>
+	    <input>-systems/fuel/group[2]/tank-8-9 </input>
+	</summer>
+
+	<summer name="propulsion/tank[7]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 8 </description>
+	    <input> systems/fuel/tank[7]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[5]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[7]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 9 =========== -->
+
+	<!-- net cross-feed into tank 9 -->
+	<summer name="systems/fuel/tank[8]/cross-feed-pps">
+	    <input> systems/fuel/group[0]/tank-3-9 </input>
+	    <input> systems/fuel/group[1]/tank-4-9 </input>
+	    <input> systems/fuel/group[2]/tank-8-9 </input>
+	    <input>-systems/fuel/group[3]/tank-9-3 </input>
+	    <input>-systems/fuel/group[3]/tank-9-4 </input>
+	    <input>-systems/fuel/group[3]/tank-9-8 </input>
+	</summer>
+
+	<summer name="propulsion/tank[8]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 9 </description>
+	    <input> systems/fuel/tank[8]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[6]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[8]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 10 =========== -->
+
+	<!-- net cross-feed into tank 10 -->
+	<summer name="systems/fuel/tank[9]/cross-feed-pps">
+	    <input>-systems/fuel/tank[9]/tank-10-5 </input>
+	    <input> systems/fuel/tank[4]/tank-5-10 </input>
+	</summer>
+
+	<summer name="systems/fuel/tank[9]/fwd-inflow-pps">
+	    <input> systems/fuel/tank[15]/fwd-flow-16-10-pps </input>
+	    <input>-systems/fuel/tank[9]/fwd-flow-10-6-pps </input>
+	    <input>-systems/fuel/tank[9]/fwd-flow-10-7-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[9]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 10 </description>
+	    <input> systems/fuel/tank[9]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[9]/fwd-inflow-pps </input>
+	</summer>
+
+	<!-- =========== Tank 11 =========== -->
+
+	<summer name="propulsion/tank[10]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 11 </description>
+	    <input> systems/fuel/tank[12]/fwd-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[10]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 12 =========== -->
+
+	<summer name="propulsion/tank[11]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 12 </description>
+	    <input> systems/fuel/tank[13]/fwd-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[11]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 13 =========== -->
+
+	<summer name="propulsion/tank[12]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 13 </description>
+	    <input> systems/fuel/tank[10]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[12]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 14 =========== -->
+
+	<summer name="propulsion/tank[13]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 14 </description>
+	    <input> systems/fuel/tank[11]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[13]/fwd-flow-rate-pps </input>
+	</summer>
+
+
+	<!-- =========== Tank 15 =========== -->
+
+	<summer name="propulsion/tank[14]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 15 </description>
+	    <input>-systems/fuel/tank[14]/aft-flow-rate-pps </input>
+	</summer>
+
+	<!-- =========== Tank 16 =========== -->
+
+	<summer name="systems/fuel/tank[15]/fwd-flow-rate-pps">
+	    <input> systems/fuel/tank[15]/fwd-flow-16-5-pps </input>
+	    <input> systems/fuel/tank[15]/fwd-flow-16-10-pps </input>
+	</summer>
+
+	<summer name="propulsion/tank[15]/external-flow-rate-pps">
+	    <description> Net flow to or from tank 16 </description>
+	    <input> systems/fuel/tank[14]/aft-flow-rate-pps </input>
+	    <input>-systems/fuel/tank[15]/fwd-flow-rate-pps </input>
+	</summer>
+
+	<!-- FIXME remove after debugging -->
+	<summer name="systems/propulsion/total-cross-feed-rate-pps">
+	    <input> systems/fuel/tank[0]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[1]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[2]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[3]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[4]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[5]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[6]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[7]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[8]/cross-feed-pps </input>
+	    <input> systems/fuel/tank[9]/cross-feed-pps </input>
+	</summer>
+
+	<summer name="systems/propulsion/total-external-rate-pps">
+	    <input> propulsion/tank[0]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[1]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[2]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[3]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[4]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[5]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[6]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[7]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[8]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[9]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[12]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[13]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
+	    <input> propulsion/tank[15]/external-flow-rate-pps </input>
+	</summer>
+
+    </channel>
+
+</system>

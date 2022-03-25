@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   Handley Page Victor flight recorder configuration with:
+   4 engines, 10 tanks and 5 retractable gear.
+-->
+
+<PropertyList>
+
+    <replay-config type="int">0</replay-config>
+    <default-config type="string">Aircraft/victor/Systems/flightrecorder.xml</default-config>
+    <config n="0">
+	<name type="string">Victor Flight Recorder</name>
+
+	<!-- include generic stuff -->
+	<signals include="/Aircraft/Generic/flightrecorder/components/environment.xml"/>
+	<signals include="/Aircraft/Generic/flightrecorder/components/controls.xml"/>
+	<signals include="/Aircraft/Generic/flightrecorder/components/surfaces.xml"/>
+	<signals include="/Aircraft/Generic/flightrecorder/components/position.xml"/>
+	<signals include="/Aircraft/Generic/flightrecorder/components/faults-engines.xml">
+	    <count type="int">4</count>
+	</signals>
+	<signals include="/Aircraft/Generic/flightrecorder/components/tanks.xml">
+	    <count type="int">10</count>
+	</signals>
+
+	<!-- gear properties -->
+	<signals include="/Aircraft/Generic/flightrecorder/components/gear-retractable.xml">
+	    <count type="int">5</count>
+	</signals>
+
+	<!-- ~~~~~~~~~~~~~ Custom properties ~~~~~~~~~~~~~~~ -->
+
+	<!--  engine related signals -->
+	<signals>
+	    <count type="int">4</count>
+	    <signal>
+		<type>bool</type>
+		<property type="string">/controls/engines/engine[%i]/master</property>
+	    </signal>
+	    <signal>
+		<type>bool</type>
+		<property type="string">/controls/engines/engine[%i]/starter</property>
+	    </signal>
+	    <signal>
+		<type>bool</type>
+		<property type="string">/controls/engines/engine[%i]/cutoff</property>
+	    </signal>
+	    <signal>
+		<type>bool</type>
+		<property type="string">/controls/engines/engine[%i]/ignition</property>
+	    </signal>
+	    <signal>
+		<type>float</type>
+		<property type="string">/controls/engines/engine[%i]/throttle</property>
+	    </signal>
+	    <signal>
+		<type>float</type>
+		<property type="string">/controls/engines/engine[%i]/thrust-lever</property>
+	    </signal>
+	    <signal>
+		<type>float</type>
+		<property type="string">/controls/engines/engine[%i]/starter-sound</property>
+	    </signal>
+
+	    <signal>
+		<type>float</type>
+		<property type="string">/engines/engine[%i]/n1</property>
+	    </signal>
+	    <signal>
+		<type>float</type>
+		<property type="string">/engines/engine[%i]/n2</property>
+	    </signal>
+	    <signal>
+		<type>bool</type>
+		<property type="string">/engines/engine[%i]/running</property>
+	    </signal>
+
+	</signals>
+
+	<!-- APU stuff -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/APU/off-start-run</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/APU/run</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/controls/APU/trigger-switch</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/engines/engine[4]/cutoff</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/engines/engine[4]/ignition</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/engines/engine[4]/starter</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/APU-generator</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/engine[4]/generator</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/engine[4]/bus-tie</property>
+	</signal>
+
+	<!-- Electrical controls -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/master-switch</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/battery-switch</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/electric/external-power</property>
+	</signal>
+
+	<!-- Brakes and Chute controls -->
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/flight/chute-pos-norm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/flight/drag-chute</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/flight/speedbrake-pos-deg</property>
+	</signal>
+
+	<!-- Gear controls -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/gear/gear-guard</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/gear/gear-locked</property>
+	</signal>
+
+	<!-- Lights -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/cabin-lights</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/lighting/dome-norm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/instrument-lights</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/lighting/instruments-norm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/landing-lights</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/map-lights</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/nav-lights</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/panel-lights</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/lighting/panel-norm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/strobe</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/lighting/taxi-light</property>
+	</signal>
+
+	<!-- Other switches -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/autopilot</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/autothrottle</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/altitude-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/chute</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/heading-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/controls/switches/lights-brightness</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/master-avionics</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/nav-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/pitot-heat</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/RAT</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/refuel</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/controls/switches/refuel-pump</property>
+	</signal>
+
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/aileron-servo</property>
+	</signal>
+
+	<!-- Autopilot settings -->
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/auto-elevator</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/elevator-trim-servo</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/gs-intercepted-good</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/gs-intercepted-weak</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/heading-bug-error-deg</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/heading-offset-deg</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/lateral-mode-engaged</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/managed-speed-kt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/nav1-heading-error-deg</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/rudder-servo</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/runway-heading-deg</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/settings/heading-bug-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/settings/target-altitude-ft</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/settings/target-pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/settings/target-speed-kt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/settings/target-speed-pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/settings/target-speed-mach</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/settings/vertical-speed-fpm</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/speed-error-kt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/speed-error-mach-x10</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/speed-pitch-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/speed-with-pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/internal/speed-with-pitch-kt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/speed-with-pitch-mach</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/throttle-lever</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/throttle-servo</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/vertical-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/internal/vertical-pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/vertical-pitch-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/vertical-throttle-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/vorloc-intercepted-good</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/autopilot/internal/vorloc-intercepted-weak</property>
+	</signal>
+
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/settings/heading-bug-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/settings/target-agl-ft</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/settings/target-altitude-ft</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/settings/target-pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/settings/target-speed-kt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/settings/target-speed-mach</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/autopilot/settings/true-heading-deg</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/autopilot/settings/vertical-speed-fpm</property>
+	</signal>
+
+	<!-- Flightdirector -->
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/accelerometer/g-load</property>
+	</signal>
+
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/alt-acquire-mode</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/flightdirector/altitude-select</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/appr-arm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/appr-on</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/autopilot-engage</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/decel-step</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/descend-arm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/fd-on</property>
+	</signal>
+	<signal>
+	    <type>int16</type>
+	    <property type="string">/instrumentation/flightdirector/fd-phase</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/in-approach</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/lateral-managed-mode</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/lateral-mode</property>
+	</signal>
+	<signal>
+	    <type>int16</type>
+	    <property type="string">/instrumentation/flightdirector/lnav-arm</property>
+	</signal>
+	<signal>
+	    <type>int16</type>
+	    <property type="string">/instrumentation/flightdirector/lnav</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/loc-arm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/loc-enable</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/loc-on</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/loc-nearby</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/mach-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/flightdirector/mach-select</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/flightdirector/pitch-deg</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/past-tc</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/past-td</property>
+	</signal>
+	<signal>
+	    <type>int16</type>
+	    <property type="string">/instrumentation/flightdirector/spd</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/speed-managed-mode</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/speed-mode</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/flightdirector/speed-select</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/flightdirector/start-approach</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/vertical-alt-mode</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/vertical-managed-mode</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/flightdirector/vertical-speed-select</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/vertical-vs-mode</property>
+	</signal>
+	<signal>
+	    <type>int8</type>
+	    <property type="string">/instrumentation/flightdirector/vnav</property>
+	</signal>
+
+	<!-- Flight management -->
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/altitude-ft</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/changeover-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/climb-mach</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/climb-rate-fpm</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/climb-speed</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/cruise-alt-ft</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/cruise-mach</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/cruise-speed</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/deceleration-alt</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/descend-mach</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/descend-speed</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/flight-control-flare-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/flight-control-flight-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/flight-control-ground-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/flight-control-retard-mode</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/flight-control-rollout-mode</property>
+	</signal>
+	<signal>
+	    <type>int16</type>
+	    <property type="string">/instrumentation/fmc/flight-mode</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/next-heading-diff-deg</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/roc-lock</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/throttle-lock</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/turn-distance-nm</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/turn-radius-nm</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/landing/commit</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/landing/descent-rate-est</property>
+	</signal>
+	<signal>
+	    <type>float</type>
+	    <property type="string">/instrumentation/fmc/landing/descent-rate-ratio</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/landing/descent-rate-target</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/landing/go-around</property>
+	</signal>
+	<signal>
+	    <type>bool</type>
+	    <property type="string">/instrumentation/fmc/landing/monitor</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/parameters/gs-agl</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/parameters/loc-agl</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/vspeeds/Vapp</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/vspeeds/Vls</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/vspeeds/Vref</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/vspeeds/Vso</property>
+	</signal>
+	<signal>
+	    <type>int</type>
+	    <property type="string">/instrumentation/fmc/vspeeds/Vtd</property>
+	</signal>
+
+    </config>
+
+</PropertyList>

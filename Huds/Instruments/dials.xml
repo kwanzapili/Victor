@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- Airspeeds: from the airspeed indicator -->
+    <label>
+	<name>airspeed</name>
+	<x>-300</x>
+	<y>-150</y>
+	<halign>left</halign>
+	<format>Airspeed  %5.0f kts</format>
+	<input>
+	    <property>/instrumentation/airspeed-indicator/indicated-speed-kt</property>
+	</input>
+    </label>
+
+    <label>
+	<name>mach</name>
+	<x>-300</x>
+	<y>-160</y>
+	<halign>left</halign>
+	<format>Mach Number  %4.2f</format>
+	<input>
+	    <property>/instrumentation/airspeed-indicator/indicated-mach</property>
+	</input>
+    </label>
+
+    <!-- Heading: from the heading indicator -->
+    <label>
+	<name>heading</name>
+	<x>-100</x>
+	<y>-150</y>
+	<halign>left</halign>
+	<format>Heading  %5.1f deg</format>
+	<input>
+	    <property>/instrumentation/heading-indicator-dg/indicated-heading-deg</property>
+	</input>
+    </label>
+
+    <!-- Vertical speed: from autopilot; the vertical speed indicators give lagged values -->
+    <label>
+	<name>vfpm</name>
+	<x>-100</x>
+	<y>-160</y>
+	<halign>left</halign>
+	<format>V/Speed  %5d fpm</format>
+	<input>
+	    <property>/autopilot/internal/vert-speed-fpm</property>
+	</input>
+    </label>
+
+    <!-- Pitch: from the master reference gyro  -->
+    <label>
+	<name>pitch</name>
+	<x>50</x>
+	<y>-150</y>
+	<halign>left</halign>
+	<format>Pitch %3.0f deg</format>
+	<input>
+	    <property>/instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+	</input>
+    </label>
+
+    <!-- Angle of attack through a range from -5° to 22° -->
+    <label>
+	<name>AoA</name>
+	<x>50</x>
+	<y>-160</y>
+	<condition>
+	    <and>
+		<greater-than>
+		    <property>/orientation/alpha-deg</property>
+		    <value>-5.0</value>
+		</greater-than>
+		<less-than>
+		    <property>/orientation/alpha-deg</property>
+		    <value>22.0</value>
+		</less-than>
+	    </and>
+	</condition>
+	<halign>left</halign>
+	<format>AoA %3.1f deg</format>
+	<input>
+	    <property>/orientation/alpha-deg</property>
+	</input>
+    </label>
+
+    <!-- Altitude: from the altimeter -->
+    <label>
+	<name>altitude</name>
+	<x>200</x>
+	<y>-150</y>
+	<halign>left</halign>
+	<format>Ind. altitude: %5.0f ft</format>
+	<input>
+	    <property>/instrumentation/altimeter/indicated-altitude-ft</property>
+	    <offset>2.0</offset>
+	</input>
+    </label>
+
+    <label>
+	<name>agl</name>
+	<x>200</x>
+	<y>-160</y>
+	<halign>left</halign>
+	<format>Abs. altitude: %5.0f ft</format>
+	<input>
+	    <property>/position/altitude-agl-ft</property>
+	    <offset>2.0</offset>
+	</input>
+    </label>
+
+</PropertyList>

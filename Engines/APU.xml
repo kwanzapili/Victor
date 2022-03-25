@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+    File:     APU.xml
+
+    Turbomeca (Blackburn) Artouste auxiliary power unit
+    installed in the starboard wing root
+
+    The APU provides:
+	* high-pressure air for starting the engines
+	* electrical power on the ground or in the air as an emergency power supply
+
+    +++++++++++++++++++++++++++++++
+    Specifications (Artouste IIIB)
+    +++++++++++++++++++++++++++++++
+
+    General characteristics
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Type:	Turboshaft
+    Length:	1,815 mm (71.5 in)
+    Diameter:	~450 mm (18 in) (casing)
+    Width:	507 mm (20.0 in)
+    Height:	627 mm (24.7 in)
+    Dry weight:	154 kg (340 lb)
+
+    Components
+    ~~~~~~~~~~
+
+    Compressor:	1-stage axial + 1-stage centrifugal
+    Combustors:	Annular combustion chamber
+    Turbine:	3-stage turbine
+    Fuel type:	Aviation Kerosene, such as Jet A, Jet A-1 or JP-4
+    Oil system:	Pressure spray at 4.6 bar (66 psi) with return
+
+    Performance
+    ~~~~~~~~~~~
+
+    Maximum power output:
+
+    Take-off power: 437 kW (586 shp) (equivalent) 
+		    (410 kW (550 shp) + 0.39 kN (88 lbf)) at 33,500 rpm, de-rated
+    Maximum continuous power: 437 kW (586 shp) (equivalent) 
+		    (410 kW (550 shp) + 0.39 kN (88 lbf)) at 33,500 rpm, to 5,000 m (16,000 ft)
+
+    Overall pressure ratio:	5.2:1
+    Air mass flow:		4.3 kg/s (9.5 lb/s)
+    Turbine inlet temperature:	JPT 773 K (500 °C) at 33,500 rpm
+    Specific fuel consumption:	0.46 kg/kWh (0.76 lb/(hp⋅h)) (equivalent)
+    Power-to-weight ratio:	2.84 kW/kg (1.73 hp/lb) (equivalent)
+
+-->
+
+<turbine_engine name="APU">
+
+    <milthrust unit="LBS"> 1000	</milthrust>  <!-- no real thrust from APU -->
+    <bypassratio>   0.1	 </bypassratio>
+    <bleed>	    0.00 </bleed>	<!-- Thrust reduction factor due to losses -->
+    <tsfc>	    0.76  </tsfc>    <!-- thrust-specific fuel consumption at cruise, lbm/hr/lbf -->
+    <idlen1>	    30.0 </idlen1>
+    <idlen2>	    60.0 </idlen2>
+    <n1spinup>	     2.0 </n1spinup>	<!-- (default 1.0%/sec) -->
+    <n2spinup>	     5.0 </n2spinup>	<!-- (default 3.0%/sec) -->
+    <n1startrate>    3.0 </n1startrate>	<!-- (default 1.4%/sec) -->
+    <n2startrate>    4.0 </n2startrate>	<!-- (default 2.0%/sec) -->
+    <maxn1>	    100  </maxn1>
+    <maxn2>	    100  </maxn2>
+    <augmented> 0 </augmented>
+    <injected>  0 </injected>
+
+    <!-- When idling, generate 10% thrust up to 30,000 ft, then fade to 0% -->
+    <function name="IdleThrust">
+	<table>
+	    <independentVar lookup="row">atmosphere/density-altitude</independentVar>
+	    <independentVar lookup="column"> /controls/APU/run </independentVar>
+	    <tableData>
+	    		0	1
+		-10000	0	0.1
+		   0	0	0.1
+		30000	0	0.1
+		40000	0	0.0
+	    </tableData>
+	</table>
+    </function>
+
+    <!-- When running, slowly declines from SL to 40,000 ft and then sharply above that -->
+    <function name="MilThrust">
+	<table>
+	    <independentVar lookup="row">atmosphere/density-altitude</independentVar>
+	    <independentVar lookup="column"> /controls/APU/run </independentVar>
+	    <tableData>
+	    		0	1
+		-10000	0	1.260
+		   0	0	1.000
+		10000	0	0.740
+		20000	0	0.534
+		30000	0	0.372
+		50000	0	0.000
+	    </tableData>
+	</table>
+    </function>
+
+</turbine_engine>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- Taxi light -->
+    <model>
+	<name>taxi-light</name>
+	<path>Aircraft/Exterior-Lights/taxilight.xml</path>
+
+	<offsets>
+	    <x-m> 8.2</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-1.6</z-m>
+	    <pitch-deg>0</pitch-deg>
+	</offsets>
+	<condition>
+	    <and>
+		<!-- nose lights switch is at TAXI (down) -->
+		<property>controls/lighting/taxi-light</property>
+		<greater-than>
+		    <property>gear/gear/position-norm</property>
+		    <value>0.95</value>
+		</greater-than>
+	    </and>
+	</condition>
+    </model>
+
+    <!-- Landing lights -->
+    <model>
+	<name>landing-light</name>
+	<path>Aircraft/Exterior-Lights/landinglight.xml</path>
+
+	<offsets>
+	    <x-m> 8.2</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m>-1.6</z-m>
+	    <pitch-deg>0</pitch-deg>
+	</offsets>
+	<condition>
+	    <and>
+		<!-- nose lights switch is at LAND (up) -->
+		<property>controls/lighting/landing-lights</property>
+		<greater-than>
+		    <property>gear/gear/position-norm</property>
+		    <value>0.95</value>
+		</greater-than>
+	    </and>
+	</condition>
+    </model>
+
+</PropertyList>

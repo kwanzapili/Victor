@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<!--
+Usable with FlightGear
+Property of Gerard Robin
+Copyright License:  GPL
+-->
+
+<PropertyList>
+    <type>material</type>
+    <condition>
+	<property>controls/lighting/cabin-lights</property>
+	<!-- We must have enough electrical power -->
+	<greater-than>
+	    <property>systems/electrical/outputs/cabin-lights</property>
+	    <value> 100 </value>
+	</greater-than>
+    </condition>
+    <emission>
+	<factor-prop>controls/lighting/dome-norm</factor-prop>
+	<red>   0.18 </red>
+	<green> 0.00 </green>
+	<blue>  0.00 </blue>
+    </emission>
+</PropertyList>

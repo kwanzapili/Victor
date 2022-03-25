@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <path>nose-light-switch.ac</path>
+    <texture-path>Models/Instruments/Textures</texture-path>
+
+    <!-- **************** switch **************** -->
+    <animation>
+	<type>knob</type>
+	<object-name>Switch</object-name>
+	<property>/controls/switches/nose-lights</property>
+	<interpolation>
+	    <entry>
+		<ind>-1</ind>
+		<dep>-45</dep>
+	    </entry>
+	    <entry>
+		<ind>1</ind>
+		<dep>45</dep>
+	    </entry>
+	</interpolation>
+	<axis>
+	    <x> 0</x>
+	    <y>-1</y>
+	    <z> 0</z>
+	</axis>
+
+	<action>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>/controls/switches/nose-lights</property>
+		<factor>1</factor>
+		<min>-1</min>
+		<max>1</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<tooltip-id>nose_lights</tooltip-id>
+		<label>Nose Lights: %s</label>
+		<property>/controls/switches/nose-lights</property>
+		<mapping>nasal</mapping>
+		<script>
+		    var modes = ['Taxi', 'Off', 'Landing'];
+		    return modes[arg[0] + 1];
+		</script>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+</PropertyList>

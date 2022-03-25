@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<system name="Speedbrake">
+
+    <channel name="Speedbrake">
+
+	<!-- three-position (retracted, medium drag, high drag) airbrakes -->
+	<kinematic name="fcs/speedbrake-pos-norm">
+	    <description> Speedbrake Control </description>
+	    <input>fcs/speedbrake-cmd-norm</input>
+	    <traverse>
+		<setting>
+		    <position> 0 </position>
+		    <time>     0 </time>
+		</setting>
+		<setting>
+		    <position> 0.5 </position>
+		    <time>     3   </time>
+		</setting>
+		<setting>
+		    <position> 1.0 </position>
+		    <time>     5   </time>
+		</setting>
+	    </traverse>
+	</kinematic>
+
+	<fcs_function name="fcs/speedbrake-pos-deg">
+	    <function>
+		<description> Speedbrake angle relative to plane </description>
+		<table>
+		    <independentVar> fcs/speedbrake-pos-norm </independentVar>
+		    <tableData>
+			0.0	0
+			0.5	15
+			1.0	50
+		    </tableData>
+		</table>
+	    </function>
+	</fcs_function>
+
+    </channel>
+
+</system>

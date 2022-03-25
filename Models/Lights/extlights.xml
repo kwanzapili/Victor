@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- Strobe Light -->
+    <model>
+	<name>Strobe</name>
+	<path>Aircraft/Exterior-Lights/strobe-tail.xml</path>
+	<offsets>
+	    <x-m> 32.8 </x-m>
+	    <y-m>  0.0 </y-m>
+	    <z-m>  4.5 </z-m>
+	</offsets>
+    </model>
+
+    <!-- Beacons -->
+    <model>
+	<name>beacon-down</name>
+	<path>Aircraft/Exterior-Lights/beacon-down.xml</path>
+	<offsets>
+	    <x-m> 13.5 </x-m>
+	    <y-m>  0.0 </y-m>
+	    <z-m> -1.1 </z-m>
+	</offsets>
+    </model>
+    <model>
+	<name>beacon-up</name>
+	<path>Aircraft/Exterior-Lights/beacon-up.xml</path>
+	<offsets>
+	    <x-m> 13.5 </x-m>
+	    <y-m>  0.0 </y-m>
+	    <z-m>  2.0 </z-m>
+	</offsets>
+    </model>
+
+    <!-- Navigation Lights -->
+    <model>
+	<name>posleft</name>
+	<path>Aircraft/Exterior-Lights/redlight.xml</path>
+	<offsets>
+	    <x-m> 22.00 </x-m>
+	    <y-m>-16.57 </y-m>
+	    <z-m> -0.32 </z-m>
+	</offsets>
+    </model>
+    <model>
+	<name>posright</name>
+	<path>Aircraft/Exterior-Lights/greenlight.xml</path>
+	<offsets>
+	    <x-m> 22.00 </x-m>
+	    <y-m> 16.57</y-m>
+	    <z-m> -0.32 </z-m>
+	</offsets>
+    </model>
+
+</PropertyList>

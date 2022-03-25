@@ -1,0 +1,2097 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <path>Panel.ac</path>
+
+    <!-- External Power Connected -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.031</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.35</red>
+	    <green> 0.1 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>/controls/electric/external-power</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- ~~~~~~~~~~~~ Engine Indicators ~~~~~~~~~~~~ -->
+
+    <!-- APU is running -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.036</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.35</red>
+	    <green> 0.1 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>/controls/APU/off-start-run</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 1 starter on -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.026</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/engines/engine[0]/starter</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 2 starter on -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.027</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/engines/engine[1]/starter</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 3 starter on -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.032</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/engines/engine[2]/starter</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 4 starter on -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.033</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/engines/engine[3]/starter</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 1 running -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.038</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>engines/engine[0]/running</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 2 running -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.037</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>engines/engine[1]/running</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 3 running -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.035</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>engines/engine[2]/running</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Engine 4 running -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.034</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>engines/engine[3]/running</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- ~~~~~~~~~~~~ Speedbrake and Tail Chute Indicators ~~~~~~~~~~~~ -->
+
+    <!-- 1/2 airbrakes on -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.073</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml">
+	    <greater-than>
+		<property>surface-positions/speedbrake-pos-norm</property>
+		<value>0.05</value>
+	    </greater-than>
+	</condition>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	</emission>
+    </animation>
+
+    <!-- full airbrakes -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.074</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml">
+	    <greater-than>
+		<property>surface-positions/speedbrake-pos-norm</property>
+		<value>0.5</value>
+	    </greater-than>
+	</condition>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>surface-positions/speedbrake-pos-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Tail chute switch position -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.077</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/doors/chute-switch/position-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Tail chute door position -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.078</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/doors/chute-door/position-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Tail chute position -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.081</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/flight/chute-pos-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- ~~~~~~~~~~~~~~~ Warning Lights Set ~~~~~~~~~~~~~~~ -->
+
+    <!-- 
+	Radar Altimeter: two lights - Circle.057 for "warning", and Circle.058 for "alert"
+	Not in use at the moment; custom lights are preferred
+    -->
+
+    <!-- Terrain Warning Lights x 2 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.066</object-name>
+	<object-name>Circle.065</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml">
+	    <property>sim/alarms/terrain-warning</property>
+	</condition>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	</emission>
+    </animation>
+
+    <!-- ~~~~~~~ Station Selection and Trigger Operations ~~~~~~~ -->
+
+    <animation>
+	<name>bb_trigger</name>
+	<object-name>Circle</object-name>
+	<object-name>Circle.040</object-name>
+	<object-name>Circle.041</object-name>
+    </animation>
+
+    <!-- Cycle through the different stations -->
+    <animation>
+	<type>knob</type>
+	<object-name>Circle.041</object-name>
+	<value>0.0</value>
+	<center>
+	    <x-m>0.0</x-m><y-m>0.0</y-m><z-m>0.0</z-m>
+	</center>
+	<axis>
+	    <x>-1</x><y>0</y><z>0</z>
+	</axis>
+
+	<action>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>switch-adjust</command>
+		<property>/controls/armament/station-select</property>
+		<factor>1</factor>
+		<min>0</min>
+		<max>13</max>
+		<wrap>true</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.selectedStnStatus()</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Change Station</label>
+		<tooltip-id>stn_select</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- Bomb bay doors position -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.039</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/doors/bomb-bay/position-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Toggle trigger guard -->
+    <animation>
+	<type>pick</type>
+	<object-name>Circle.040</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>controls/armament/trigger-guard</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Trigger Guard</label>
+		<tooltip-id>trigger_guard</tooltip-id>
+		<mapping>open-close</mapping>
+		<property>/controls/armament/trigger-guard</property>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>Circle.040</object-name>
+	<property>controls/armament/trigger-guard</property>
+	<factor> 160 </factor>
+	<center>
+	    <x-m> 0.005 </x-m>
+	    <y-m>-0.1358 </y-m>
+	    <z-m> 0.1547 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Trigger -->
+    <animation>
+	<type>pick</type>
+	<object-name>Circle</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.fireWeapon()</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Pull trigger</label>
+		<tooltip-id>trigger</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- ~~~~~~~~~~~~ Armament Stations Arming ~~~~~~~~~~~~ -->
+
+    <!-- Red 1 -->
+    <animation>
+	<name>red1</name>
+	<object-name>Sphere.086</object-name>
+	<object-name>Cylinder.013</object-name>
+    </animation>
+    <!-- Green 2 -->
+    <animation>
+	<name>green2</name>
+	<object-name>Sphere.085</object-name>
+	<object-name>Cylinder.012</object-name>
+    </animation>
+    <!-- Red 3 -->
+    <animation>
+	<name>red3</name>
+	<object-name>Sphere.083</object-name>
+	<object-name>Cylinder.010</object-name>
+    </animation>
+    <!-- Green 4 -->
+    <animation>
+	<name>green4</name>
+	<object-name>Sphere.084</object-name>
+	<object-name>Cylinder.011</object-name>
+    </animation>
+    <!-- Red 5 -->
+    <animation>
+	<name>red5</name>
+	<object-name>Sphere.073</object-name>
+	<object-name>Cylinder</object-name>
+    </animation>
+    <!-- Green 6 -->
+    <animation>
+	<name>green6</name>
+	<object-name>Sphere.074</object-name>
+	<object-name>Cylinder.001</object-name>
+    </animation>
+    <!-- Red 7 -->
+    <animation>
+	<name>red7</name>
+	<object-name>Sphere.076</object-name>
+	<object-name>Cylinder.003</object-name>
+    </animation>
+    <!-- Green 8 -->
+    <animation>
+	<name>green8</name>
+	<object-name>Sphere.075</object-name>
+	<object-name>Cylinder.002</object-name>
+    </animation>
+    <!-- Red 9 -->
+    <animation>
+	<name>red9</name>
+	<object-name>Sphere.077</object-name>
+	<object-name>Cylinder.004</object-name>
+    </animation>
+    <!-- Green 10 -->
+    <animation>
+	<name>green10</name>
+	<object-name>Sphere.078</object-name>
+	<object-name>Cylinder.005</object-name>
+    </animation>
+    <!-- Red 11 -->
+    <animation>
+	<name>red11</name>
+	<object-name>Sphere.080</object-name>
+	<object-name>Cylinder.007</object-name>
+    </animation>
+    <!-- Green 12 -->
+    <animation>
+	<name>green12</name>
+	<object-name>Sphere.079</object-name>
+	<object-name>Cylinder.006</object-name>
+    </animation>
+    <!-- Red 13 -->
+    <animation>
+	<name>red13</name>
+	<object-name>Sphere.081</object-name>
+	<object-name>Cylinder.008</object-name>
+    </animation>
+    <!-- Green 14 -->
+    <animation>
+	<name>green14</name>
+	<object-name>Sphere.082</object-name>
+	<object-name>Cylinder.009</object-name>
+    </animation>
+
+    <!-- Red 1 ~ Shrike 1 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.086</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(1);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Shrike 1</label>
+		<tooltip-id>shrike1</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red1</object-name>
+	<property>controls/armament/station[1]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.1700 </y-m>
+	    <z-m> 0.2903 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 2 ~ Shrike 2 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.085</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(2);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Shrike 2</label>
+		<tooltip-id>shrike2</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green2</object-name>
+	<property>controls/armament/station[2]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.1500 </y-m>
+	    <z-m> 0.2903 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 3 ~ Shrike 3 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.083</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(3);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Shrike 3</label>
+		<tooltip-id>shrike3</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red3</object-name>
+	<property>controls/armament/station[3]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.1300 </y-m>
+	    <z-m> 0.2903 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 4 ~ Shrike 4 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.084</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(4);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Shrike 4</label>
+		<tooltip-id>shrike4</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green4</object-name>
+	<property>controls/armament/station[4]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.1100 </y-m>
+	    <z-m> 0.2903 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 5 ~ Stn 0 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.073</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(0);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[0]/id</property>
+		<tooltip-id>station0</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red5</object-name>
+	<property>controls/armament/station[0]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.0900 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 6 ~ Stn 5 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.074</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(5);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[5]/id</property>
+		<tooltip-id>station5</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green6</object-name>
+	<property>controls/armament/station[5]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.0700 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 7 ~ Stn 6 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.076</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(6);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[6]/id</property>
+		<tooltip-id>station6</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red7</object-name>
+	<property>controls/armament/station[6]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.0500 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 8 ~ Stn 7 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.075</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(7);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<tooltip-id>station7</tooltip-id>
+		<property>controls/armament/station[7]/id</property>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green8</object-name>
+	<property>controls/armament/station[7]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.0300 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 9 ~ Stn 8 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.077</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(8);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[8]/id</property>
+		<tooltip-id>station8</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red9</object-name>
+	<property>controls/armament/station[8]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m>-0.0100 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 10 ~ Stn 9 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.078</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(9);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[9]/id</property>
+		<tooltip-id>station9</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green10</object-name>
+	<property>controls/armament/station[9]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m> 0.0100 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 11 ~ Stn 10 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.080</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(10);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[10]/id</property>
+		<tooltip-id>station10</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red11</object-name>
+	<property>controls/armament/station[10]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m> 0.0300 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 12 ~ Stn 11 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.079</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(11);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[11]/id</property>
+		<tooltip-id>station11</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green12</object-name>
+	<property>controls/armament/station[11]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m> 0.0500 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Red 13 ~ Stn 12 -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.081</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggleStnArmed(12);</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>(Dis)Arm Station %i</label>
+		<property>controls/armament/station[12]/id</property>
+		<tooltip-id>station12</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>red13</object-name>
+	<property>controls/armament/station[12]/armed</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m> 0.0700 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- Green 14 ~ Master Arm -->
+    <animation>
+	<type>pick</type>
+	<object-name>Sphere.082</object-name>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>switch-toggle</command>
+		<property>controls/armament/master-arm</property>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Toggle Master Arm</label>
+		<tooltip-id>masterarm</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+    <animation>
+	<type>rotate</type>
+	<object-name>green14</object-name>
+	<property>controls/armament/master-arm</property>
+	<factor> -60 </factor>
+	<center>
+	    <x-m> 0.0280 </x-m>
+	    <y-m> 0.0900 </y-m>
+	    <z-m> 0.3053 </z-m>
+	</center>
+	<axis>
+	    <x>  0 </x>
+	    <y> -1 </y>
+	    <z>  0 </z>
+	</axis>
+    </animation>
+
+    <!-- ~~~~~~~ Armament Availability ~~~~~~~ -->
+
+    <!-- Station 0 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.051</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[0]/load-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 1 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.090</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[1]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 2 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.089</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[2]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 3 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.086</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[3]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 4 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.085</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[4]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 5 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.001</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[5]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 6 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.005</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[6]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 7 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.006</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[7]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 8 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.009</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[8]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 9 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.010</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[9]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 10 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.043</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[10]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 11 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.044</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[11]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Station 12 -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.047</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/station[12]/units</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Safe to release -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.048</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/armament/safe-to-release</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- ~~~~~~~ Refuelling Operations ~~~~~~~ -->
+
+    <!-- Left Drogue Deployment Indicator -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.054</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/refuelling/drogues/position-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Right Drogue Deployment Indicator -->
+    <animation>
+	<type>material</type>
+	<object-name>Circle.061</object-name>
+	<condition include="Instruments/Lighting/led-powered.xml"/>
+	<emission>
+	    <red>   0.7 </red>
+	    <green> 0.2 </green>
+	    <blue>  0.0 </blue>
+	    <factor-prop>controls/refuelling/drogues/position-norm</factor-prop>
+	</emission>
+    </animation>
+
+    <!-- Drogues toggle -->
+    <animation>
+	<type>pick</type>
+	<object-name>Circle.025</object-name>
+	<condition>
+	    <property>/sim/variant/tanker</property>
+	</condition>
+	<action>
+	    <button>0</button>
+	    <repeatable>false</repeatable>
+	    <interval-sec>0.2</interval-sec>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.toggle_refuelling_drogues()</script>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>Toggle Drogues</label>
+		<tooltip-id>drogues</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- ~~~~~~~~~~~~ Illuminations ~~~~~~~~~~~~ -->
+
+    <animation>
+	<object-name>bb_trigger</object-name>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <lightmap-factor type="float" n="0">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="1">0.6</lightmap-factor>
+	    <lightmap-factor type="float" n="2">0.5</lightmap-factor>
+	    <reflection-enabled type="int">0</reflection-enabled>
+	    <ambient-correction type="float">0.15</ambient-correction>
+	</parameters>
+	<object-name>bb_trigger</object-name>
+    </effect>
+
+    <!-- 
+	==========================
+	Externally defined models
+	==========================
+    -->
+
+    <!-- ~~~~~~~ Dials ~~~~~~~ -->
+
+    <model>
+	<name>RPM-1</name>
+	<path>Aircraft/victor/Models/Instruments/rpm-1.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.144</y-m>
+	    <z-m>0.226</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>RPM-2</name>
+	<path>Aircraft/victor/Models/Instruments/rpm-2.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.071</y-m>
+	    <z-m>0.226</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>RPM-3</name>
+	<path>Aircraft/victor/Models/Instruments/rpm-3.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.071</y-m>
+	    <z-m>0.226</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>RPM-4</name>
+	<path>Aircraft/victor/Models/Instruments/rpm-4.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.144</y-m>
+	    <z-m>0.226</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Temp-1</name>
+	<path>Aircraft/victor/Models/Instruments/jpt-1.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.144</y-m>
+	    <z-m>0.138</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Temp-2</name>
+	<path>Aircraft/victor/Models/Instruments/jpt-2.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.071</y-m>
+	    <z-m>0.138</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Temp-3</name>
+	<path>Aircraft/victor/Models/Instruments/jpt-3.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.071</y-m>
+	    <z-m>0.138</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Temp-4</name>
+	<path>Aircraft/victor/Models/Instruments/jpt-4.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.144</y-m>
+	    <z-m>0.138</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>OilPressure-1</name>
+	<path>Aircraft/victor/Models/Instruments/oil-1.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.144</y-m>
+	    <z-m>0.075</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>OilPressure-2</name>
+	<path>Aircraft/victor/Models/Instruments/oil-2.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>-0.071</y-m>
+	    <z-m>0.075</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>OilPressure-3</name>
+	<path>Aircraft/victor/Models/Instruments/oil-3.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.071</y-m>
+	    <z-m>0.075</z-m>
+	</offsets>
+    </model>
+
+    <model>
+	<name>OilPressure-4</name>
+	<path>Aircraft/victor/Models/Instruments/oil-4.xml</path>
+	<overlay>
+	    <animation n="1000">
+		<type>scale</type>
+		<x-factor>0.0</x-factor>
+		<x-offset>0.84</x-offset>
+		<y-factor>0.0</y-factor>
+		<y-offset>0.84</y-offset>
+		<z-factor>0.0</z-factor>
+		<z-offset>0.84</z-offset>
+	    </animation>
+	</overlay>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.144</y-m>
+	    <z-m>0.075</z-m>
+	</offsets>
+    </model>
+
+    <!-- 
+	======================
+	Pilot Instruments
+	======================
+    -->
+
+    <!-- Radar Altimeter -->
+    <model>
+	<name>Left Radar Altimeter</name>
+	<path>Aircraft/victor/Models/Instruments/radar-altimeter.xml</path>
+	<offsets>
+	    <x-m> 0.00</x-m>
+	    <y-m>-0.65</y-m>
+	    <z-m> 0.13</z-m>
+	</offsets>
+    </model>
+
+    <!-- Airspeed Indicator -->
+    <model>
+	<name>Left ASI</name>
+	<path>Aircraft/victor/Models/Instruments/asi-1.xml</path>
+	<offsets>
+	    <x-m> 0.00</x-m>
+	    <y-m>-0.56</y-m>
+	    <z-m> 0.13</z-m>
+	</offsets>
+    </model>
+
+    <!-- Altitude Indicator -->
+    <model>
+	<name>Left AI</name>
+	<path>Aircraft/victor/Models/Instruments/ai.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.450</y-m>
+	    <z-m> 0.140</z-m>
+	</offsets>
+    </model>
+
+    <!-- Vertical Speed Indicator -->
+    <model>
+	<name>Left VSI</name>
+	<path>Aircraft/victor/Models/Instruments/vsi.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.340</y-m>
+	    <z-m> 0.130</z-m>
+	</offsets>
+    </model>
+
+    <!-- G-force Indicator -->
+    <model>
+	<name>Left G-force</name>
+	<path>Aircraft/victor/Models/Instruments/gmeter.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.640</y-m>
+	    <z-m> 0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- Horizontal Situation Indicator -->
+    <model>
+	<name>Left HSI</name>
+	<path>Aircraft/victor/Models/Instruments/hsi.xml</path>
+	<offsets>
+	    <x-m> 0.005</x-m>
+	    <y-m>-0.550</y-m>
+	    <z-m> 0.034</z-m>
+	</offsets>
+    </model>
+
+    <!-- ILS Indicator -->
+    <model>
+	<name>Left ILS</name>
+	<path>Aircraft/victor/Models/Instruments/ILS.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.460</y-m>
+	    <z-m> 0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- Altimeter -->
+    <model>
+	<name>Left Alt</name>
+	<path>Aircraft/victor/Models/Instruments/altimeter-1.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.370</y-m>
+	    <z-m> 0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- Elevator Trim Indicator -->
+    <model>
+	<name>Left Elevator</name>
+	<path>Aircraft/victor/Models/Instruments/nose-pitch.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.720</y-m>
+	    <z-m> 0.000</z-m>
+	</offsets>
+    </model>
+
+    <!-- Distance Measuring Equipment Indicator -->
+    <model>
+	<name>Left DME</name>
+	<path>Aircraft/victor/Models/Instruments/dme.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.795</y-m>
+	    <z-m> 0.000</z-m>
+	</offsets>
+    </model>
+
+    <!-- Standby Attitude Indicator -->
+    <model>
+	<name>Left Standby AI</name>
+	<path>Aircraft/victor/Models/Instruments/standby_AI.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.750</y-m>
+	    <z-m>-0.080</z-m>
+	</offsets>
+    </model>
+
+    <!-- Mach Indicator -->
+    <model>
+	<name>Left Mach</name>
+	<path>Aircraft/victor/Models/Instruments/seavixen_mach.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m>-0.580</y-m>
+	    <z-m>-0.080</z-m>
+	</offsets>
+    </model>
+
+    <!-- Chronometer -->
+    <model>
+	<name>Left Clock</name>
+	<path>Aircraft/victor/Models/Instruments/chronometer.xml</path>
+	<offsets>
+	    <x-m> 0.00</x-m>
+	    <y-m>-0.42</y-m>
+	    <z-m>-0.07</z-m>
+	</offsets>
+    </model>
+
+    <!-- VSetting pilot -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/APsets/VSset.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m>-0.40 </y-m>
+	    <z-m> 0.29 </z-m>
+	    <pitch-deg> -2 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Altitude setting pilot -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/APsets/ALTset.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m>-0.35 </y-m>
+	    <z-m> 0.29 </z-m>
+	    <pitch-deg> -2 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- IASetting pilot -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/APsets/IASset.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m>-0.30 </y-m>
+	    <z-m> 0.29 </z-m>
+	    <pitch-deg> -2 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- AP switches pilot -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/APsets/APControl.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m>-0.35 </y-m>
+	    <z-m> 0.27 </z-m>
+	    <pitch-deg> -2 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Left Flaps Indicator-->
+    <model>
+	<name>Left Flaps</name>
+	<path>Aircraft/victor/Models/Instruments/flaps.xml</path>
+	<offsets>
+	    <x-m> 0.040 </x-m>
+	    <y-m>-0.570 </y-m>
+	    <z-m> 0.275 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Left Gears Indicator-->
+    <model>
+	<name>Left Gears</name>
+	<path>Aircraft/victor/Models/Instruments/gear.xml</path>
+	<offsets>
+	    <x-m> 0.040 </x-m>
+	    <y-m>-0.500 </y-m>
+	    <z-m> 0.275 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Radar Altimeter lights -->
+    <model>
+	<name>Pilot RA lights</name>
+	<path>Aircraft/victor/Models/Instruments/radar-altimeter-lights.xml</path>
+	<offsets>
+	    <x-m>-0.015 </x-m>
+	    <y-m>-0.720</y-m>
+	    <z-m> 0.070 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Marker Beacon -->
+    <model>
+	<name>Pilot MB</name>
+	<path>Aircraft/victor/Models/Instruments/marker-beacon.xml</path>
+	<offsets>
+	    <x-m> 0.000 </x-m>
+	    <y-m>-0.750 </y-m>
+	    <z-m> 0.130 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!--
+	====================== 
+	Co-pilot Instruments
+	======================
+    -->
+
+    <!-- Vertical Speed Indicator -->
+    <model>
+	<name>Right VSI</name>
+	<path>Aircraft/victor/Models/Instruments/vsi.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m> 0.340</y-m>
+	    <z-m> 0.130</z-m>
+	</offsets>
+    </model>
+
+    <!-- Airspeed Indicator -->
+    <model>
+	<name>Right ASI</name>
+	<path>Aircraft/victor/Models/Instruments/asi-2.xml</path>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.43</y-m>
+	    <z-m>0.13</z-m>
+	</offsets>
+    </model>
+
+    <!-- Altitude Indicator -->
+    <model>
+	<name>Right AI</name>
+	<path>Aircraft/victor/Models/Instruments/ai.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m> 0.540</y-m>
+	    <z-m> 0.140</z-m>
+	</offsets>
+    </model>
+
+    <!-- Radar Altimeter -->
+    <model>
+	<name>Right Radar Altimeter</name>
+	<path>Aircraft/victor/Models/Instruments/radar-altimeter.xml</path>
+	<offsets>
+	    <x-m>0.00</x-m>
+	    <y-m>0.65</y-m>
+	    <z-m>0.13</z-m>
+	</offsets>
+    </model>
+
+    <!-- Altimeter -->
+    <model>
+	<name>Right Alt</name>
+	<path>Aircraft/victor/Models/Instruments/altimeter-2.xml</path>
+	<offsets>
+	    <x-m>0.000</x-m>
+	    <y-m>0.370</y-m>
+	    <z-m>0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- ILS Indicator -->
+    <model>
+	<name>Right ILS</name>
+	<path>Aircraft/victor/Models/Instruments/ILS.xml</path>
+	<offsets>
+	    <x-m>0.000</x-m>
+	    <y-m>0.460</y-m>
+	    <z-m>0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- Horizontal Situation Indicator -->
+
+    <model>
+	<name>Right HSI</name>
+	<path>Aircraft/victor/Models/Instruments/hsi.xml</path>
+	<offsets>
+	    <x-m>0.000</x-m>
+	    <y-m>0.550</y-m>
+	    <z-m>0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- G-force Indicator -->
+    <model>
+	<name>Right G-force</name>
+	<path>Aircraft/victor/Models/Instruments/gmeter.xml</path>
+	<offsets>
+	    <x-m>0.000</x-m>
+	    <y-m>0.640</y-m>
+	    <z-m>0.035</z-m>
+	</offsets>
+    </model>
+
+    <!-- Elevator Trim Indicator -->
+    <model>
+	<name>Right Elevator</name>
+	<path>Aircraft/victor/Models/Instruments/nose-pitch.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m> 0.720</y-m>
+	    <z-m> 0.000</z-m>
+	</offsets>
+    </model>
+
+    <!-- Distance Measuring Equipment Indicator -->
+    <model>
+	<name>Right DME</name>
+	<path>Aircraft/victor/Models/Instruments/dme.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m> 0.795</y-m>
+	    <z-m> 0.000</z-m>
+	</offsets>
+    </model>
+
+    <!-- Standby Attitude Indicator -->
+    <model>
+	<name>Right Standby AI</name>
+	<path>Aircraft/victor/Models/Instruments/standby_AI.xml</path>
+	<offsets>
+	    <x-m> 0.000</x-m>
+	    <y-m> 0.750</y-m>
+	    <z-m>-0.080</z-m>
+	</offsets>
+    </model>
+
+    <!-- Chronometer -->
+    <model>
+	<name>Right Clock</name>
+	<path>Aircraft/victor/Models/Instruments/chronometer.xml</path>
+	<offsets>
+	    <x-m> 0.00</x-m>
+	    <y-m> 0.42</y-m>
+	    <z-m>-0.07</z-m>
+	</offsets>
+    </model>
+
+    <!-- Mach Indicator -->
+    <model>
+	<name>Right Mach</name>
+	<path>Aircraft/victor/Models/Instruments/seavixen_mach.xml</path>
+	<offsets>
+	    <x-m> 0.00</x-m>
+	    <y-m> 0.58</y-m>
+	    <z-m>-0.08</z-m>
+	</offsets>
+    </model>
+
+    <!-- Tacan switches -->
+    <model>
+	<name>Taan Switch</name>
+	<path>Aircraft/victor/Models/Instruments/Tacan/tacan.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m> 0.30 </y-m>
+	    <z-m> 0.28 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <model>
+	<name>Tacan Display</name>
+	<path>Aircraft/victor/Models/Instruments/Tacan/TACdisplay.xml</path>
+	<offsets>
+	    <x-m> 0.03 </x-m>
+	    <y-m> 0.42 </y-m>
+	    <z-m> 0.28 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Right Gears Indicator-->
+    <model>
+	<name>Left Gears</name>
+	<path>Aircraft/victor/Models/Instruments/gear.xml</path>
+	<offsets>
+	    <x-m> 0.040 </x-m>
+	    <y-m> 0.500 </y-m>
+	    <z-m> 0.275 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Right Flaps Indicator-->
+    <model>
+	<name>Right Flaps</name>
+	<path>Aircraft/victor/Models/Instruments/flaps.xml</path>
+	<offsets>
+	    <x-m> 0.040 </x-m>
+	    <y-m> 0.570 </y-m>
+	    <z-m> 0.275 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Radar Altimeter lights -->
+    <model>
+	<name>Copilot RA lights</name>
+	<path>Aircraft/victor/Models/Instruments/radar-altimeter-lights.xml</path>
+	<offsets>
+	    <x-m>-0.015 </x-m>
+	    <y-m> 0.720</y-m>
+	    <z-m> 0.070 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- Marker Beacon -->
+    <model>
+	<name>Copilot MB</name>
+	<path>Aircraft/victor/Models/Instruments/marker-beacon.xml</path>
+	<offsets>
+	    <x-m> 0.000 </x-m>
+	    <y-m> 0.750 </y-m>
+	    <z-m> 0.130 </z-m>
+	    <pitch-deg> 0 </pitch-deg>
+	</offsets>
+    </model>
+
+    <!-- ~~~~~~~~~~~~ Central controls ~~~~~~~~~~~~ -->
+
+    <!-- Standby Slip Indicator -->
+    <model>
+	<name>Slip</name>
+	<path>Aircraft/victor/Models/Instruments/slip.xml</path>
+	<offsets>
+	    <x-m> 0.03</x-m>
+	    <y-m>-0.14</y-m>
+	    <z-m> 0.32</z-m>
+	</offsets>
+    </model>
+
+    <!-- Armament Station Indicator -->
+    <model>
+	<name>armament</name>
+	<path>Aircraft/victor/Models/Instruments/armament-panel.xml</path>
+	<offsets>
+	    <x-m> 0.04</x-m>
+	    <y-m> 0.00</y-m>
+	    <z-m> 0.33</z-m>
+	</offsets>
+    </model>
+
+    <!-- E2B Standby Compass -->
+    <model>
+	<name>E2B</name>
+	<path>Aircraft/victor/Models/Instruments/e2b.xml</path>
+	<offsets>
+	    <x-m>-0.05</x-m>
+	    <y-m> 0.00</y-m>
+	    <z-m> 0.52</z-m>
+	</offsets>
+    </model>
+
+    <!-- Gear controls -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/undercarriage-up-down.xml</path>
+	<offsets>
+	    <x-m>0.000</x-m>
+	    <y-m>0.020</y-m>
+	    <z-m>0.065</z-m>
+	</offsets>
+    </model>
+
+    <!-- Tail Chute Controls -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/chute.xml</path>
+	<offsets>
+	    <x-m>0.020</x-m>
+	    <y-m>0.145</y-m>
+	    <z-m>0.300</z-m>
+	</offsets>
+    </model>
+
+    <!-- Consoles -->
+
+    <model>
+	<name>ConsolePortside</name>
+	<path>Aircraft/victor/Models/Instruments/console-portside.xml</path>
+	<offsets>
+	    <x-m>-0.10</x-m>
+	    <y-m>-0.85</y-m>
+	    <z-m>-0.35</z-m>
+	</offsets>
+	<animation>
+	    <type>rotate</type>
+	    <factor>80</factor>
+	    <center>
+		<x-m> 0.0</x-m>
+		<y-m> 0.0</y-m>
+		<z-m> 0.0</z-m>
+	    </center>
+	    <axis>
+		<x>0</x>
+		<y>0</y>
+		<z>1</z>
+	    </axis>
+	</animation>
+    </model>
+
+    <model>
+	<name>ConsoleStarboard</name>
+	<path>Aircraft/victor/Models/Instruments/console-starboard.xml</path>
+	<offsets>
+	    <x-m>-0.10</x-m>
+	    <y-m> 0.85</y-m>
+	    <z-m>-0.35</z-m>
+	</offsets>
+	<animation>
+	    <type>rotate</type>
+	    <factor>80</factor>
+	    <center>
+		<x-m> 0.0</x-m>
+		<y-m> 0.0</y-m>
+		<z-m> 0.0</z-m>
+	    </center>
+	    <axis>
+		<x>0</x>
+		<y>0</y>
+		<z>1</z>
+	    </axis>
+	</animation>
+    </model>
+
+    <!-- Lights Switches -->
+    <model>
+	<path>Aircraft/victor/Models/Instruments/Switches/lights-switches.xml</path>
+	<offsets>
+	    <x-m> 0 </x-m>
+	    <y-m> 0 </y-m>
+	    <z-m> 0 </z-m>
+	</offsets>
+    </model>
+
+    <!-- Master Caution Lights -->
+    <model>
+    <name>CautionL</name>
+        <path>Models/Instruments/master-caution.xml</path>
+        <offsets>
+            <x-m> 0.032</x-m>
+            <y-m>-0.480</y-m>
+            <z-m> 0.325</z-m>
+        </offsets>
+    </model>
+    <model>
+    <name>CautionR</name>
+        <path>Models/Instruments/master-caution.xml</path>
+        <offsets>
+            <x-m> 0.032</x-m>
+            <y-m> 0.480</y-m>
+            <z-m> 0.325</z-m>
+        </offsets>
+    </model>
+
+</PropertyList>

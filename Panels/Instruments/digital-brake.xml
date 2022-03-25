@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <name>Digital Speedbrake display</name>
+    <w-base>120</w-base>
+    <h-base>30</h-base>
+
+    <layers>
+
+	<layer>
+	    <name>background</name>
+	    <texture>
+		<path>Panels/Instruments/Textures/trans-orange-bg.rgb</path>
+		<x1>0.6</x1>
+		<y1>0.2</y1>
+		<x2>0.9</x2>
+		<y2>0.3</y2>
+	    </texture>
+	    <w>120</w>
+	    <h>30</h>
+	</layer>
+
+	<layer>
+	    <name>Title</name>
+	    <type>text</type>
+	    <point-size>16</point-size>
+	    <color>
+		<red>  0.875 </red>
+		<green>0.875 </green>
+		<blue> 0.875 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>literal</type>
+		    <text>SB: </text>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>-45</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-10</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+	<layer>
+	    <name>Flap pos display</name>
+	    <type>text</type>
+	    <font>led</font>
+	    <point-size>7</point-size>
+	    <color>
+		<red>  1.0 </red>
+		<green>1.0 </green>
+		<blue> 0.0 </blue>
+	    </color>
+	    <chunks>
+		<chunk>
+		    <type>number-value</type>
+		    <property>/surface-positions/speedbrake-pos-norm</property>
+		    <format>%1.1f</format>
+		</chunk>
+	    </chunks>
+	    <transformations>
+		<transformation>
+		    <type>x-shift</type>
+		    <offset>10</offset>
+		</transformation>
+		<transformation>
+		    <type>y-shift</type>
+		    <offset>-6</offset>
+		</transformation>
+	    </transformations>
+	</layer>
+
+    </layers>
+
+</PropertyList>

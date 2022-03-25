@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <name>flightdirector</name>
+    <modal>false</modal>
+    <layout>vbox</layout>
+    <pref-width>400</pref-width>
+
+    <empty><stretch type="bool">true</stretch></empty>
+    <text>
+	<label>Flight Management Controls</label>
+    </text>
+
+    <hrule>
+	<color>
+	    <red>  1.0</red>
+	    <green>0.0</green>
+	    <blue> 1.0</blue>
+	</color>
+	<pref-height>2</pref-height>
+    </hrule>
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <!-- Start of altitude settings -->
+
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Altitude Settings</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+
+	<!-- Top of Climb -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Top of Climb (ASL):</label>
+	</text>
+
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/climb-alt-ft</property>
+		<min> 8000</min>
+		<max> 15000</max>
+		<step>-1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/climb-alt-ft</property>
+		<min> 8000</min>
+		<max> 15000</max>
+		<step>-100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>0</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <equal type="bool">true</equal>
+	    <property>/instrumentation/fmc/climb-alt-ft</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>0</row>
+	    <col>4</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/climb-alt-ft</property>
+		<min> 8000</min>
+		<max> 15000</max>
+		<step>100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>5</col>
+	    <halign>left</halign>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/climb-alt-ft</property>
+		<min> 8000</min>
+		<max> 15000</max>
+		<step>1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+
+	<!-- Cruise altitude -->
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>Cruise (ASL):</label>
+	</text>
+
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-alt-ft</property>
+		<min>10000</min>
+		<max>55000</max>
+		<step>-1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.sync_cruise();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-alt-ft</property>
+		<min>10000</min>
+		<max>55000</max>
+		<step>-100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.sync_cruise();</script>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>1</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <equal type="bool">true</equal>
+	    <property>/instrumentation/fmc/cruise-alt-ft</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.sync_cruise();</script>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>1</row>
+	    <col>4</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-alt-ft</property>
+		<min>10000</min>
+		<max>55000</max>
+		<step>100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.sync_cruise();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>5</col>
+	    <halign>left</halign>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-alt-ft</property>
+		<min>10000</min>
+		<max>55000</max>
+		<step>1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.sync_cruise();</script>
+	    </binding>
+	</button>
+
+	<!-- Deceleration altitude -->
+	<text>
+	    <row>2</row>
+	    <col>0</col>
+	    <label>Deceleration (ASL):</label>
+	</text>
+
+	<button>
+	    <row>2</row>
+	    <col>1</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/deceleration-alt</property>
+		<min> 6000</min>
+		<max>16000</max>
+		<step>-1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>2</row>
+	    <col>2</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/deceleration-alt</property>
+		<min> 6000</min>
+		<max>16000</max>
+		<step>-100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>2</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <equal type="bool">true</equal>
+	    <property>/instrumentation/fmc/deceleration-alt</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>2</row>
+	    <col>4</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/deceleration-alt</property>
+		<min> 6000</min>
+		<max>16000</max>
+		<step>100</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+	<button>
+	    <row>2</row>
+	    <col>5</col>
+	    <halign>left</halign>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/deceleration-alt</property>
+		<min> 6000</min>
+		<max>16000</max>
+		<step>1000</step>
+		<wrap>false</wrap>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_altitudes();</script>
+	    </binding>
+	</button>
+
+    </group>
+
+    <!-- End of altitude settings -->
+
+    <empty><stretch type="bool">true</stretch></empty>
+
+    <!-- Start of speed settings -->
+
+    <group>
+	<layout>hbox</layout>
+
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+	<text>
+	    <label>Speed Settings</label>
+	</text>
+	<hrule>
+	    <stretch type="bool">true</stretch>
+	</hrule>
+    </group>
+
+    <group>
+	<layout>table</layout>
+
+	<!-- Cruise speed -->
+	<text>
+	    <row>0</row>
+	    <col>0</col>
+	    <label>Cruise speed (knots):</label>
+	</text>
+
+	<button>
+	    <row>0</row>
+	    <col>1</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-speed</property>
+		<min>250</min>
+		<max>500</max>
+		<step>-10</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>2</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-speed</property>
+		<min>250</min>
+		<max>500</max>
+		<step>-1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>0</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <equal type="bool">true</equal>
+	    <property>/instrumentation/fmc/cruise-speed</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_speeds();</script>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>0</row>
+	    <col>4</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-speed</property>
+		<min>250</min>
+		<max>500</max>
+		<step>1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>0</row>
+	    <col>5</col>
+	    <halign>left</halign>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-speed</property>
+		<min>250</min>
+		<max>500</max>
+		<step>10</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<!-- Cruise Mach-->
+	<text>
+	    <row>1</row>
+	    <col>0</col>
+	    <label>Cruise speed (mach):</label>
+	</text>
+
+	<button>
+	    <row>1</row>
+	    <col>1</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-mach</property>
+		<min>0.75</min>
+		<max>0.85</max>
+		<step>-0.01</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>2</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&lt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-mach</property>
+		<min>0.75</min>
+		<max>0.85</max>
+		<step>-0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+	<input>
+	    <row>1</row>
+	    <col>3</col>
+	    <pref-width>55</pref-width>
+	    <equal type="bool">true</equal>
+	    <property>/instrumentation/fmc/cruise-mach</property>
+	    <live type="bool">true</live>
+	    <binding>
+		<command>dialog-apply</command>
+	    </binding>
+	    <binding>
+		<command>nasal</command>
+		<script>victor.check_speeds();</script>
+	    </binding>
+	</input>
+
+	<button>
+	    <row>1</row>
+	    <col>4</col>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-mach</property>
+		<min>0.75</min>
+		<max>0.85</max>
+		<step>0.01</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+	<button>
+	    <row>1</row>
+	    <col>5</col>
+	    <halign>left</halign>
+	    <pref-width>25</pref-width>
+	    <pref-height>25</pref-height>
+	    <legend>&gt;&gt;</legend>
+	    <equal type="bool">true</equal>
+	    <binding>
+		<command>property-adjust</command>
+		<property>/instrumentation/fmc/cruise-mach</property>
+		<min>0.75</min>
+		<max>0.85</max>
+		<step>0.1</step>
+		<wrap>false</wrap>
+	    </binding>
+	</button>
+
+    </group>
+
+    <!-- End of speed settings -->
+
+    <empty><stretch type="bool">true</stretch></empty>
+    <hrule/>
+
+    <button>
+	<legend>Close</legend>
+	<default>true</default>
+	<key>Esc</key>
+	<binding>
+	    <command>dialog-close</command>
+	</binding>
+    </button>
+
+</PropertyList>

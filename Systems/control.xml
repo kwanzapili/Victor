@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+
+<system name="Aircraft controls">
+
+    <property value="1">fcs/yaw-damper-enable</property>
+
+    <channel name="Pitch">
+
+	<pure_gain name="/orientation/beta-deg">
+	    <description>
+		Copy beta degrees from FDM
+	    </description>
+	    <input>aero/beta-deg</input>
+	    <gain>1</gain>
+	</pure_gain>
+
+	<!-- zero elevator position in outopilot mode -->
+	<fcs_function name="fcs/elevator-auto-pos">
+	    <description>
+		Set the elevator position to 0 when autopilot is on
+	    </description>
+	    <function>
+		<table>
+		    <independentVar>fcs/pitch-trim-cmd-norm</independentVar>
+		    <tableData>
+			<!-- Zero except when elevator trim is > 50% -->
+			-1.00   -0.5
+			-0.50    0.0
+			0.00    0.0
+			0.50    0.0
+			1.00    0.5
+		    </tableData>
+		</table>
+	    </function>
+	    <clipto>
+		<min> -0.7 </min>
+		<max>  0.7 </max>
+	    </clipto>
+	</fcs_function>
+
+	<!-- Switch the auto-elevator control off -->
+	<switch name="/autopilot/internal/auto-elevator">
+	    <description> Disable auto-elevator control </description>
+	    <!-- it must be enabled elsewhere -->
+	    <default value="/autopilot/internal/auto-elevator"/>
+	    <!-- disable as soon as the pitch is NOT controlled by the autopilot -->
+	    <test logic="OR" value="0">
+		/instrumentation/fmc/roc-lock EQ 0
+	    </test>
+	</switch>
+
+	<summer name="Pitch Trim Sum">
+	    <input>fcs/elevator-cmd-norm</input>
+	    <input>fcs/pitch-trim-cmd-norm</input>
+	    <clipto>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </clipto>
+	</summer>
+
+	<aerosurface_scale name="fcs/elevator-pos-rad">
+	    <description>
+		Elevator Control
+	    </description>
+	    <input>fcs/pitch-trim-sum</input>
+	    <range>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<aerosurface_scale name="fcs/elevator-pos-norm">
+	    <description>
+		Elevator Normalization
+	    </description>
+	    <input>fcs/elevator-pos-rad</input>
+	    <domain>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </domain>
+	    <range>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </range>
+	</aerosurface_scale>
+
+    </channel>
+
+    <channel name="Roll">
+
+	<summer name="Roll Trim Sum">
+	    <input>fcs/aileron-cmd-norm</input>
+	    <input>fcs/roll-trim-cmd-norm</input>
+	    <clipto>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </clipto>
+	</summer>
+
+	<aerosurface_scale name="fcs/left-aileron-pos-rad">
+	    <description>
+		Left Aileron Control
+	    </description>
+	    <input>fcs/roll-trim-sum</input>
+	    <range>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<aerosurface_scale name="fcs/right-aileron-pos-rad">
+	    <description>
+		Right Aileron Control
+	    </description>
+	    <input>fcs/roll-trim-sum</input>
+	    <range>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<aerosurface_scale name="fcs/left-aileron-pos-norm">
+	    <description>
+		Left Aileron Normalization
+	    </description>
+	    <input>fcs/left-aileron-pos-rad</input>
+	    <domain>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </domain>
+	    <range>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<aerosurface_scale name="fcs/right-aileron-pos-norm">
+	    <description>
+		Right Aileron Normalization
+	    </description>
+	    <input>fcs/right-aileron-pos-rad</input>
+	    <domain>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </domain>
+	    <range>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </range>
+	</aerosurface_scale>
+
+    </channel>
+
+    <channel name="Yaw">
+
+	<summer name="Rudder Command Sum">
+	    <input>fcs/rudder-cmd-norm</input>
+	    <input>fcs/yaw-trim-cmd-norm</input>
+	    <clipto>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </clipto>
+	</summer>
+
+	<scheduled_gain name="Yaw Damper Rate">
+	    <input>velocities/r-aero-rad_sec</input>
+	    <table>
+		<independentVar lookup="row">velocities/ve-kts</independentVar>
+		<tableData>
+		    30     0.00
+		    60     2.00
+		</tableData>
+	    </table>
+	    <gain>fcs/yaw-damper-enable</gain>
+	</scheduled_gain>
+
+	<scheduled_gain name="Yaw Damper Final">
+	    <input>fcs/yaw-damper-rate</input>
+	    <table>
+		<independentVar>aero/qbar-psf</independentVar>
+		<tableData>
+		    2.9900    0.0000
+		    3.0000    1.0000
+		</tableData>
+	    </table>
+	</scheduled_gain>
+
+	<summer name="Rudder Sum">
+	    <input>fcs/rudder-command-sum</input>
+	    <input>fcs/yaw-damper-rate</input>
+	    <clipto>
+		<min> -1.1 </min>
+		<max>  1.1 </max>
+	    </clipto>
+	</summer>
+
+	<aerosurface_scale name="fcs/rudder-pos-rad">
+	    <description>
+		Rudder Control
+	    </description>
+	    <input>fcs/rudder-sum</input>
+	    <domain>
+		<min> -1.1 </min>
+		<max>  1.1 </max>
+	    </domain>
+	    <range>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </range>
+	</aerosurface_scale>
+
+	<aerosurface_scale name="fcs/rudder-pos-norm">
+	    <description>
+		Rudder Normalization
+	    </description>
+	    <input>fcs/rudder-pos-rad</input>
+	    <domain>
+		<min> -0.35 </min>
+		<max>  0.35 </max>
+	    </domain>
+	    <range>
+		<min> -1 </min>
+		<max>  1 </max>
+	    </range>
+	</aerosurface_scale>
+
+    </channel>
+
+    <channel name="Aeromechanical" execute="/instrumentation/fmc/flight-control-ground-mode" execrate="8">
+    <!--
+	Borrowed from 747-400:
+	switch to disable beta effect on ground which causes instability
+    -->
+	<switch name="aero/beta-switch">
+	    <description> Disable beta effect </description>
+	    <default value="1"/>
+	    <test logic="OR" value="0">
+		gear/unit[0]/WOW NE 0
+		gear/unit[1]/WOW NE 0
+		gear/unit[2]/WOW NE 0
+		gear/unit[3]/WOW NE 0
+		gear/unit[4]/WOW NE 0
+	    </test>
+	</switch>
+
+    </channel>
+
+</system>

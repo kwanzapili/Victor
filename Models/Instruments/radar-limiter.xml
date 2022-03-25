@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<!-- Radar Altimeter range settings -->
+
+<PropertyList>
+
+    <path>radar-limiter.ac</path>
+    <texture-path>Textures</texture-path>
+
+    <animation>
+	<type>knob</type>
+	<object-name>Switch</object-name>
+	<property>/controls/radar/altimeter/limiter-height-units</property>
+	<!-- Rotates 270 degrees from 50 to 500 -->
+	<factor>-0.6</factor>
+	<center>
+	    <x-m> 0.0</x-m>
+	    <y-m> 0.0</y-m>
+	    <z-m> 0.0</z-m>
+	</center>
+	<axis>
+	    <x>0</x>
+	    <y>0</y>
+	    <z>1</z>
+	</axis>
+
+	<action>
+	    <binding>
+		<command>dial-adjust</command>
+		<property>/controls/radar/altimeter/limiter-height-units</property>
+		<factor>50</factor>
+		<min>50</min>
+		<max>500</max>
+		<wrap>false</wrap>
+	    </binding>
+	</action>
+	<hovered>
+	    <binding>
+		<command>set-tooltip</command>
+		<label>RA range: %3d ft</label>
+		<property>/controls/radar/altimeter/limiter-height-ft</property>
+		<tooltip-id>rad_alt_range</tooltip-id>
+	    </binding>
+	</hovered>
+    </animation>
+
+    <!-- *** LoD *** -->
+    <animation>
+	<type>range</type>
+	<min-m>0</min-m>
+	<max-m>5</max-m>
+    </animation>
+
+    <effect>
+	<inherits-from>Effects/model-combined-deferred</inherits-from>
+	<parameters>
+	    <lightmap-enabled type="int">1</lightmap-enabled>
+	    <reflection-enabled type="int">1</reflection-enabled>
+	    <ambient-correction type="float">0.35</ambient-correction>
+	</parameters>
+	<object-name>Switch</object-name>
+	<object-name>Face</object-name>
+    </effect>
+
+</PropertyList>
