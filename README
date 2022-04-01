@@ -1,0 +1,304 @@
+Handley Page Victor Bomber/Tanker
+---------------------------------
+
+The Handley Page was one of the "V-Bombers", designed in the 1950s for long-range delivery of
+nuclear weapons, and one of the parts of the UK nuclear deterent during the cold war.
+The Victor was initially designef as a bomber bust was later modified for strategic
+reconnaissanceand others converted into tankers.
+
+The original FlightGear model of the victor was in fact a tanker, i.e. A Victor K2.
+This implementation models various operational variants:
+  * B.1   - Strategic bomber aircraft
+  * B.1A  - Strategic bomber aircraft, with Red Steer tail warning radar and ECM suite
+  * B.2   - Strategic bomber aircraft
+  * B.2RS - Blue Steel-capable aircraft with RCo.17 Conway 201 engines
+  * B(SR).2 - Strategic reconnaissance aircraft
+  * K.2   - In-flight refuelling tanker
+
+However, the body and appearance of the model is the K2 version is all cases. The only
+difference between bombers and tanksrs is that the drogues are disabled in the bombers.
+
+Aerodynamics
+------------
+
+This implementation has rather different flying characteristic from teh original version.
+The first thing you will notice is that this version is less eager to takeoff. It also
+requires higher flight and approach speeds.
+
+Instruments
+-----------
+
+Many instruments have been added to this version even when they are not really faithful
+to the real aircraft because they are simply copied from other aircraft. Some have buttons
+while others can only be adjusted via dialogs. e.g. avionics instruments.
+
+Armament
+--------
+
+The weapons available to the bomber versions depends on the variant selected in the
+"Misson" dialog inthe Victor menu. That dialog also offers the appropriate weapon
+selection. Once the parking brakes are realised, the weapon load cannot be changed.
+
+The control panel had several switches and LEDs. The top row has the switches for the
+weapons stations. To deploy a weapon, first switch the "Master Arm" on using the rightmost
+switch. The arm the station by flicking its switch, providing the station is loaded. Its
+LED will illuminate.
+
+Firing the weapon requires the plane to be stable, i.e. pitch and roll no greater than
+4 degrees. The plane should also be a safe elevation above ground. No target aiming is
+available. You will only get a report of what the weapon hit in the end and a view of
+its impact with sound effects. The impact and sound is much higher for nuclear weapons.
+
+Conventional bombs can be loaded if desired. However a full load of 48 bombs will be loaded
+- no partial loadding it available. You may jettison some of all of the remaining bombs
+using the "jettison" switch on the pilot's side console.
+
+Fuel System
+-----------
+
+The fuel system is heavily influenced by the real fuel system of an SR-71 but with its
+unique tanks system. The gain purpose of this fuel system is to maintain the CoG of
+the plane within safe limits. It does this automatically. The pilot can make further
+adjustments by activating forward and aft fuel transfers. This is available via a dialog
+"Fuel MgT" in the Victor menu.
+
+Refuelling can be accomplished on the ground as long as the aircaft is stationary with the
+barking brakes on. In the air, you will need to activate tanker operations then meet up
+with the tanker. Once contact is made, refuelling can commence. The tanker can be tracked
+automatically if the autopilot is on and the TACAN switch is at T/R or A/A.
+
+Refuelling is started or stopped by the refuelling lid switch (actually just a key press).
+
+Auto-Flight
+============
+
+The autoflfght is probably the most radical departure from the origianl model (as possibly
+from the real aircaft). It is based on the autoflight systems in various aircraft, e.g.
+707, A33X, A380, SR-71.
+
+Two separate auto-flight modes exist. The Flight Management Computer (FMC)
+runs the "managed" mode. In this mode, it determines all the lateral,
+vertical and speed parameters. The second mode is run by the Flight Director
+with input from the pilot. This is the "selected" mode. The pilot has a say
+in some or all the lateral, vertical or speed parameters.
+
+=== Managed Modes ===
+Lateral
+~~~~~~~
+    * LEVEL - wings are set to level (tries to maintains current heading)
+    * NAV - follow navigation course (from route manager)
+    * LOC - follow LOCalizer signal
+    * RUNWAY - align with runway heading
+
+Vertical
+~~~~~~~~
+    * CLB - climb at variable vertical and air speeds to the target height
+    * DES - descend at variable vertical and air speeds to the target height
+    * ALT - maintain altitude set by the FMC
+    * AGL - maintain set elevation above ground
+    * CRUISE - maintain cruise altitude (and cruise speed)
+    * LEVEL - maintain vertical speed at 0
+    * G/S - follow glideslope
+
+    Note that all the above modes control the airspeed via the throttles.
+    The pilot has no say in the selected airspeed.
+
+Speed
+~~~~~
+    * THR CLB - variable airspeed in vertical CLB, ALT, AGL or LEVEL modes
+    * THR DES - variable airspeed in vertical DES, ALT, AGL or LEVEL modes
+    * CRUISE - pilot set cruise speed used only in vertical CRUISE mode
+
+=== Selected Modes ===
+Lateral
+~~~~~~~
+    * HEADING - maintain heading set by pilot
+
+Vertical
+~~~~~~~~
+    * OP CLB - climb at variable vertical speed to the target height while
+        maintaining the set airspeed via pitch control
+    * OP DES - descend at variable vertical speed to the target height while
+        maintaining the set airspeed via pitch control
+    * V/S - maintain a constant vertical speed set by the pilot
+    * ALT - acquire or maintain the altitude set by the pilot
+    * PITCH - maintain a constant pitch set by the pilot
+
+    Note that unlike managed modes, some selected modes use pitch to control
+    airspeed without changing the throttle level (where possible). The pilot
+    can adjust the throttle levels are any time and the autopilot will adjust
+    the pitch to compensate and return to the set airspeed.
+
+Speed
+~~~~~
+    * SPEED - maintain a constant speed in knots set by the pilot
+    * MACH - maintain a constant Mach speeed set by the pilot
+
+
+=== Flight Stages and Phases ===
+The FMC divides the flight into several stages:
+        Takeoff ~ Initial Climb ~ Mission (with climb and descend parts) ~
+        Approach ~ Land
+The flight director divides the flight into phases (with some overlap with the
+flight stages)
+        Takeoff ~ Initial Climb ~ Cruise ~ Descend ~ Deceleration ~ Approach ~ Land
+
+The pilot can define the cruise altitude, cruise speed, and deceleration altitude
+in the "Autoflight" menu. All other pilot inputs are available in the
+"Autopilot" dialog. Switching between these two modes is done via the same dialog.
+Unless one needs to change altitude or direction, it is usually easier to use the
+managed modes.
+
+=== Autopilot ===
+The autopilot can only be engaged after the "Takeoff" stage is complete (above 400 ft).
+Initially, it starts in "selected" mode. The pilot can change the parameters and each
+mode separately in the "Autopilot" dialog. If "managed" mode is selected for any part,
+e..g lateral, then the pilot will no longer influence that part. If the route manager is
+set and active, then setting all parts to managed allows the plane to fly itself to the
+destination including descending and auto land will managing the speeds. At the approach
+phase , the pilot needs to enable both "LOC" and "APPR" when "NAV" and "G/S" are in range.
+However, if the "FD" button is selected and active, then the flight director will do this
+for you automatically.
+
+A word of caution on speeds. In managed modes, the appropriate speeds are determined by
+the FMC. However, it can only control the throttle and NOT the brakes. Therefore, if the
+plane is travelling too fast, it cannot reduce its speed. The pilot may need to apply
+the air brakes briefly to bring the speed back into line. This is more critical during
+the approach phase.
+
+The deceleration phase is supposed to reduce this problem by slowing down plane during
+descent to some acceptable speed before commencing the approach phase. If the
+deceleration altitude is not chosen carefully, there will not be enough time for the
+plane to slow down before reaching the approcch fixes. In this case, deploying the
+speedbrakes will be necssary. The default deceleration height is 1,000 ft above the
+(estimated) first approch fix. The pilot can change it in the "Autoflight" dialog.
+
+Autoland will usually be accomplished if both LOC and APPR are set, providing the
+localizer and glideslipe were successfully intercepted. The FMC estimates if touchdown
+will be acheived given the current sink rate and forwaed speed. If it judges that this will
+not be acheived, it will issue a "go-around" command and initiate a climb. Hence, it
+is important to make sure that the approach speed is being abserved. Use brakes as
+necessary. The flaps settings significantly affect the approach speed needed.
+
+
+Operation:
+----------
+* Before takeoff, set the desired climb altitude and cruise altitude for both the FMC
+  and FD modes. Also set the initial heading and speed.
+* Above 4000 ft, engage the autopilot once the speed to close to the AP speed
+* The AP will engage the following modes: HEADING, OP CLB and SPEED PITCH
+* It will then attempt to climb to the FD set altitude at the current throttle settings
+  while maintaining the set FD speed, All these parameters can be adjusted at any time.
+* Once the target altitude is reached, the vertical mode will shift to ALT HOLD and the
+  speed mode to SPEED THROTTLE.
+* At any stage, the pilot may engage managed modes and the FMC will take over those
+  sets of parameters (lateral, vertical or speed).
+* Some modes are mutually incompatible. Theh verical mode will always override an
+  incompatible speed mode. For example THR CLB vetical mode will enforce a THR CLB
+  speed mode regardless of the pilot's selection. Equally, no other vertical mode will
+  use THR CLB speed mode.
+* Before the Top-if-Descent point, the managed vertical modes must be selected if you
+  need a steady descent. Once the ToD point is used, a managed descent mode will be
+  activated to take the plane all the way to autoland.
+* Mach or KIAS are interhangely selected based on the estimate of the cross-over
+  altitude. Normally no manual intervention is required. The pilot may nonetheless select
+  either KIAS or Mach in the Autopilot dialog. However, in the approach phase, only KIAS
+  is used.
+* The drag chute may be prepared for deployment by opening itsdoor. It will then deploy
+  automatically when the plane touches down. Unlike in the real plane, this chute is
+  recoverable. It will be released in deployed incorrectly.
+
+
+Engines
+-------
+
+Starting the engines can be laborious. For this reason, an autostert facility has been
+provided.
+
+=== Manual Start ===
+    * Request the Palouste compressor starter => key "Ctrl-E"
+    * Turn ON the engine master switch => key "#"
+    * Turn ON the electric master switch => key "}"
+    * Fire the starter => key ")" or "s"
+    * The engine will spin up to a maximum of about 25% N2 (5.2% N1)
+    * The engine cut-off switch is triggered automatically at this stage
+    * Wait for the engine to to reach about 45% N2
+    * Select the next engine and fire the starter again => key ")" or "s"
+    * Wait for all engines to stabilise (~30% N1 and 60% N2)
+    * The external starter resources are automatically disconnected
+    * The engine will spin up to a maximum of about %25 N2 (%5.2 N1)
+
+=== Automatic Start ===
+    * Request the Palouste compressor starter => key "Ctrl-E"
+    * Either use the key "~" of select "Auto-start" in the victor menu
+    * The system will start each engine in turn, including the APU
+    * When all main engines are running, switch off the APU with key "Ctrl-F"
+      If this is not done, the APU will continue to use fuel for no benefit
+    * The external starter resources are automatically disconnected
+
+
+================= INSTALLATION =================
+This implementation of the Victor aircraft was never meant as a replacement of
+the original version. The main body of the oriignal files are the same; some
+have been modified; and then are several additions borrowed form various
+aircraft models. So think of this implementation as merely an experiment
+with the Victor aircraft.
+
+To try out this experiment you will need to install the original version first.
+Only then can you install the files from this version in the same directory
+as the original. Any conflicting files should be overwritten, in particular
+victor.xml and victor-set.xml. These two files are responsible for importing
+most of the new additional files.
+
+This model has some dependency on other aircraft models or addons which is
+simply reuses. In particular the lights and sound effects are largely implemented
+outside this model. So these will not work with a standalone model.
+
+Lights
+------
+
+The external lights use one of three schemes: Classic, ALS or Rembrandt. By default,
+the ALS scheme is selected but this is also influenced by a property value and the
+user shader configuration. The switch between Classic and non-Classic schemes can
+be accomplished by simply toggling a property (using the "L" key).
+
+A seperate installation of the lights model will be needed for this to work.
+
+Sounds
+------
+
+The model produces some sounds at certain events. These are mostly for entertainment
+value, but some may have some other useful value - the warning sounds for example.
+The aircraft model has a few self-contained sound files for its engines and landing
+gear. All other sound files are derived from other aircraft on the standard FlightGear
+sound files. The user can of-course change the default sounds in the sound configuration
+file.
+
+Currently, the model expects to find the following sound files in the standard FlightGear
+directory:
+  * gpu-startup and gpu-running - used by the external power source
+  * apu-start, apu-run, apu-stop - used by the APU engine
+  * starter_start - used by all engine when starting
+  * whine - used by the engines when running
+  * rumble and roll - used when the plane is on the ground
+  * gear-lck - used by the landing gear
+  * squeal - used when the plane lands
+  * flaps - used when the flaps move
+  * speedbrake - used when the speed brakes move
+  * speedbrake-wind - used when brakes are applied and the plane is moving
+  * wind1 - used when at all times
+  * rain-windshield and rain - used when it rains
+  * chute-deploy - used by the chute
+  * door_close - used by the doors
+  * control-lock - used by the doors
+  * click,  click-v3, and scroll - used by the knobs and dials
+  * switch - used by switches
+  * engine-crank - used by the engines when starting
+  * V1 - used by the annunciator
+  * stall and autopilot-disengage - used by warning signals
+  * aircraft-explode, aircraft-wings-detach, aircraft-crash, aircraft-water-crash,
+    aircraft-crack, aircraft-creaking - crash and stress system
+  * shlock, armament-release - used when weapons are released
+  * explosion, missile-hit, cruise-missile-launch - used when weapons deploy
+
+None of these are strictly necessary. The user may choose to disregard any or all of them.
