@@ -491,7 +491,7 @@
 		<command>property-adjust</command>
 		<property>/instrumentation/fmc/cruise-mach</property>
 		<min>0.75</min>
-		<max>0.85</max>
+		<max>0.95</max>
 		<step>-0.01</step>
 		<wrap>false</wrap>
 	    </binding>
@@ -507,7 +507,7 @@
 		<command>property-adjust</command>
 		<property>/instrumentation/fmc/cruise-mach</property>
 		<min>0.75</min>
-		<max>0.85</max>
+		<max>0.95</max>
 		<step>-0.1</step>
 		<wrap>false</wrap>
 	    </binding>
@@ -540,7 +540,7 @@
 		<command>property-adjust</command>
 		<property>/instrumentation/fmc/cruise-mach</property>
 		<min>0.75</min>
-		<max>0.85</max>
+		<max>0.95</max>
 		<step>0.01</step>
 		<wrap>false</wrap>
 	    </binding>
@@ -557,7 +557,7 @@
 		<command>property-adjust</command>
 		<property>/instrumentation/fmc/cruise-mach</property>
 		<min>0.75</min>
-		<max>0.85</max>
+		<max>0.95</max>
 		<step>0.1</step>
 		<wrap>false</wrap>
 	    </binding>

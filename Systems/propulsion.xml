@@ -383,6 +383,11 @@
 	<switch name="propulsion/active_engine">
 	    <description> Change active engine </description>
 	    <default value="propulsion/active_engine"/>
+	    <!-- do not interfere during shutdown -->
+	    <test  logic="AND" value="propulsion/active_engine">
+		propulsion/active_engine GE 0
+		/controls/engines/shutdown EQ 1
+	    </test>
 	    <test  logic="AND" value="-1">
 		<!-- engine 1 was selected but is now ready -->
 		propulsion/active_engine EQ 0

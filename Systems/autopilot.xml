@@ -446,7 +446,12 @@
 	    <condition>
 		<and>
 		    <!-- Gear[0] is for the front gear, gear[1]+[2] for the maingear. -->
-		    <not><property>gear/gear[0]/wow</property></not>
+		    <not><property>/gear/gear[0]/wow</property></not>
+		    <!-- runway heading mode drives the rudder seperately -->
+		    <not-equals>
+			<property>/autopilot/locks/heading</property>
+			<value>runway-heading</value>
+		    </not-equals>
 		    <property>/autopilot/internal/lateral-mode-engaged</property>
 		</and>
 	    </condition>
@@ -476,9 +481,7 @@
 		    <property>/autopilot/locks/heading</property>
 		    <value>runway-heading</value>
 		</equals>
-		<!-- this only applies when the aircraft has landed -->
-		<property>/instrumentation/fmc/flight-control-ground-mode</property>
-		<property>gear/gear[0]/wow</property>
+		<!-- this applies from flare until touchdown -->
 	    </condition>
 	</enable>
 	<input>
@@ -612,7 +615,7 @@
 	</input>
 	<!-- Default is to "sample" current vertical speed -->
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	</input>
 	<output>/autopilot/internal/target-climb-rate-fps</output>
     </filter>
@@ -645,7 +648,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	</input>
 	<reference>
 	    <property>/autopilot/internal/target-climb-rate-fps</property>
@@ -686,7 +689,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	    <scale>0.01</scale>	    <!-- scale down to get a higher value for Kp -->
 	</input>
 	<reference>
@@ -772,7 +775,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	</input>
 	<reference>
 	    <property>/autopilot/internal/gs-rate-of-climb-filtered</property>
@@ -786,7 +789,7 @@
 	    <alpha>0.1</alpha>
 	    <gamma>0.0</gamma>
 	    <Ti>2.5</Ti>
-	    <Td>0.0001</Td>
+	    <Td>0.001</Td>
 	    <u_min>/instrumentation/fmc/limit-pitch-deg-min</u_min>
 	    <u_max>/instrumentation/fmc/limit-pitch-deg-max</u_max>
 	</config>
@@ -806,7 +809,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	    <scale>0.01</scale>	    <!-- scale down to get a higher value for Kp -->
 	</input>
 	<reference>
@@ -852,7 +855,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	</input>
 	<reference>
 	    <property>/autopilot/internal/settings/vertical-speed-fps</property>
@@ -865,8 +868,8 @@
 	    <beta>1.0</beta>	<!-- input value weighting factor -->
 	    <alpha>0.1</alpha>	<!-- low pass filter weighting factor -->
 	    <gamma>0.0</gamma>	<!-- input value weighting factor for -->
-	    <Ti>1.5</Ti>	<!-- integrator time -->
-	    <Td>0.0001</Td>	<!-- derivator time -->
+	    <Ti>2.5</Ti>	<!-- integrator time -->
+	    <Td>0.001</Td>	<!-- derivator time -->
 	    <u_min>/instrumentation/fmc/limit-pitch-deg-min</u_min>
 	    <u_max>/instrumentation/fmc/limit-pitch-deg-max</u_max>
 	</config>
@@ -887,7 +890,7 @@
 	    </condition>
 	</enable>
 	<input>
-	    <property>velocities/vertical-speed-fps</property>
+	    <property>/velocities/vertical-speed-fps</property>
 	</input>
 	<reference>
 	    <property>/autopilot/internal/settings/vertical-speed-fps</property>
@@ -938,8 +941,8 @@
 	    <beta>1.0</beta>	<!-- input value weighting factor -->
 	    <alpha>0.1</alpha>	<!-- low pass filter weighting factor -->
 	    <gamma>0.0</gamma>	<!-- input value weighting factor for -->
-	    <Ti>0.5</Ti>	<!-- integrator time -->
-	    <Td>0.0001</Td>	<!-- derivator time -->
+	    <Ti>2.5</Ti>	<!-- integrator time -->
+	    <Td>0.001</Td>	<!-- derivator time -->
 	    <u_min>/instrumentation/fmc/limit-pitch-deg-min</u_min>
 	    <u_max>/instrumentation/fmc/limit-pitch-deg-max</u_max>
 	</config>

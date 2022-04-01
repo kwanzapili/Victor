@@ -803,8 +803,8 @@ var enginesDamaged = func {
     setprop("/controls/switches/autothrottle", FALSE);
 
     for (var i=0; i < 4; i = i+1) {
-	setprop("controls/engines/engine[" ~ i ~ "]/on-fire", TRUE);
-        setprop("sim/failure-manager/engines/engine[" ~ i ~ "]/failure-level", 1.0);
+	setprop("/controls/engines/engine[" ~ i ~ "]/on-fire", TRUE);
+        setprop("/sim/failure-manager/engines/engine[" ~ i ~ "]/failure-level", 1.0);
     }
     victor.centreFlightControls();
     victor.idleThrottle(5);

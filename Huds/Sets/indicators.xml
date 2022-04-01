@@ -24,7 +24,7 @@
 	<width>15</width>
 	<height>6</height>
 	<condition>
-	    <property>sim/alarms/terrain-warning</property>
+	    <property>/sim/alarms/terrain-warning</property>
 	    <not>
 		<property>/controls/gear/gear-down</property>
 	    </not>

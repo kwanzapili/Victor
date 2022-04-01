@@ -94,7 +94,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>autopilot/locks/passive-mode</property>
+		    <property>/autopilot/locks/passive-mode</property>
 		    <value>0</value>
 		</equals>
 	    </visible>
@@ -1410,7 +1410,7 @@
 	    <pref-height>25</pref-height>
 	    <pref-width>150</pref-width>
 	    <valign>top</valign>
-	    <property>instrumentation/tacan/switch-position</property>
+	    <property>/instrumentation/tacan/switch-position</property>
 	    <min>0</min>
 	    <max>4</max>
 	    <step>1</step>
@@ -1432,7 +1432,7 @@
 		<blue>  0.0 </blue>
 	    </color>
 	    <visible>
-		<property>instrumentation/flightdirector/tacan-arm</property>
+		<property>/instrumentation/flightdirector/tacan-arm</property>
 	    </visible>
 	</text>
 
@@ -1712,7 +1712,7 @@
 	    <col>1</col>
 	    <binding>
 		<command>property-adjust</command>
-		<property>instrumentation/flightdirector/pitch-deg</property>
+		<property>/instrumentation/flightdirector/pitch-deg</property>
 		<min>-10</min>
 		<max>20</max>
 		<step>-1</step>
@@ -1727,7 +1727,7 @@
 	    <col>2</col>
 	    <binding>
 		<command>property-adjust</command>
-		<property>instrumentation/flightdirector/pitch-deg</property>
+		<property>/instrumentation/flightdirector/pitch-deg</property>
 		<min>-10</min>
 		<max>20</max>
 		<step>-0.1</step>
@@ -1741,7 +1741,7 @@
 	    <pref-width>60</pref-width>
 	    <pref-height>25</pref-height>
 	    <format>%2.2f</format>
-	    <property>instrumentation/flightdirector/pitch-deg</property>
+	    <property>/instrumentation/flightdirector/pitch-deg</property>
 	    <live type="bool">true</live>
 	    <binding>
 		<command>dialog-apply</command>
@@ -1756,7 +1756,7 @@
 	    <legend>&gt;</legend>
 	    <binding>
 		<command>property-adjust</command>
-		<property>instrumentation/flightdirector/pitch-deg</property>
+		<property>/instrumentation/flightdirector/pitch-deg</property>
 		<min>-10</min>
 		<max>20</max>
 		<step>0.1</step>
@@ -1771,7 +1771,7 @@
 	    <legend>&gt;&gt;</legend>
 	    <binding>
 		<command>property-adjust</command>
-		<property>instrumentation/flightdirector/pitch-deg</property>
+		<property>/instrumentation/flightdirector/pitch-deg</property>
 		<min>-10</min>
 		<max>20</max>
 		<step>1</step>

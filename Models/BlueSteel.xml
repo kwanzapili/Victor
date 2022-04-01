@@ -8,7 +8,7 @@
 	<object-name>BlueSteel</object-name>
 	<condition>
 	    <greater-than>
-		<property>controls/armament/station[6]/units</property>
+		<property>/controls/armament/station[6]/units</property>
 		<value>0</value>
 	    </greater-than>
 	</condition>

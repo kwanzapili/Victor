@@ -32,7 +32,7 @@ var currentEngine   = props.globals.getNode("/controls/engines/starter-selected"
 var master	    = props.globals.getNode("/controls/engines/master");
 var starterEngaged  = props.globals.getNode("/controls/engines/starter-engaged");
 var startReq	    = props.globals.getNode("/controls/engines/start-required");
-var gear0Wow	    = props.globals.getNode("gear/gear[0]/wow");
+var gear0Wow	    = props.globals.getNode("/gear/gear[0]/wow");
 var EngineWaiting   = [ FALSE, FALSE, FALSE, FALSE ];
 var EngineLabel	    = ["Engine one", "Engine two", "Engine three", "Engine four", "APU" ];
 var apuSwitch	    = props.globals.getNode("/controls/APU/off-start-run");
@@ -158,8 +158,8 @@ var running_engines = func () {
 # Count of the number of engines with master switches in the ON position
 var numEngsStarted = func () {
     var count = 0;
-    for (var i=0; i < 4; i=i+1) {
-        count = count + getprop("/controls/engines/engine["~i~"]/master");
+    foreach (var eng; allEngines) {
+        count = count + getprop("/controls/engines/"~eng~"/master");
     }
     return count;
 }
@@ -264,6 +264,32 @@ var ShutdownClass = {
 	     }
 };
 
+##
+## APU Tank
+## --------
+## The APU uses a special collector tank exclusively. This tank holds a small
+## amount of fuel (~1 - 2 lbs), that is replenished automatically when the APU
+## is running. In order to starve the APU when it is switched off, we need to
+## set the valve of this tank to zero. When the APU is switched, we then
+## release the valve. Setting the priority to zero is like closing a valve
+## "at the tank".
+var APUtank = {
+    # index in the list of tanks
+    index: 16,
+    # default priority of the tank
+    priority: 8,
+
+    # close the value - set priority to zero
+    close: func {
+	       setprop("/fdm/jsbsim/propulsion/tank["~me.index~"]/priority", 0);
+	    },
+
+    # open the value - set the default priority
+    open: func {
+	      setprop("/fdm/jsbsim/propulsion/tank["~me.index~"]/priority", me.priority);
+	  }
+};
+
 ## manage the APU cuttoff command listener
 var apuCutoffListener = nil;
 
@@ -357,10 +383,14 @@ var monitorAPU = func (state) {
     }
     elsif (state == APUState.Start) {
         createAPUCutoffListener();
+        # open the valve in the collector tank
+        APUtank.open();
     }
     else {
         screen.log.write("APU is switched OFF");
         deleteAPUCutoffListener();
+        # close the value in the collector tank
+        APUtank.close();
     }
 }
 
@@ -709,8 +739,8 @@ var engStartWait = func () {
     var enabled = engStarterAvailable();
 
     if ( enabled ) {
-        for (var i=0; i < 4; i=i+1) {
-            setprop("/controls/engines/engine["~i~"]/master", ON);
+        foreach (var eng; allEngines) {
+            setprop("/controls/engines/"~eng~"/master", ON);
         }
 	# stop the timer
         engStartWaitTimer.stop();
@@ -753,6 +783,32 @@ var autoStart = func {
     # now wait for the APU power to be available
     if ( ! engStartWaitTimer.isRunning )
         engStartWaitTimer.start();
+}
+
+## Shutdown of all engines - only done on the ground
+var autoShutdown = func {
+    var wow = gear0Wow.getValue();
+    var gndspd = getprop("/velocities/groundspeed-kt");
+    if (wow == FALSE or gndspd > 1) {
+	screen.log.write("It is not safe to switch off the engines");
+	return;
+    }
+
+    var brakes = getprop("/controls/gear/brake-parking");
+    if ( brakes < 1 ) {
+	screen.log.write("Parking brakes must be ON before engine shutdown");
+	return;
+    }
+
+    var count = numEngsStarted();
+    if ( count == 0 ) {
+	setprop("/sim/messages/ground", "All engines are already off");
+	return;
+    }
+
+    foreach(var eng; allEngines) {
+	setprop("/controls/engines/"~eng~"/master", OFF);
+    }
 }
 
 

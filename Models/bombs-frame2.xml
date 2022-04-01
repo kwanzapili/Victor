@@ -2,17 +2,17 @@
 
 <PropertyList>
 
-<!-- Second frame of 16 bombs -->
+    <!-- Second frame of 16 bombs -->
 
     <model>
 	<name>Bombs-17-20</name>
 	<path>Aircraft/victor/Models/bomb.xml</path>
-       <condition>
-                <greater-than>
-                    <property>controls/armament/station[0]/units</property>
-                    <value>16</value>
-                </greater-than>
-        </condition>
+	<condition>
+	    <greater-than>
+		<property>/controls/armament/station[0]/units</property>
+		<value>16</value>
+	    </greater-than>
+	</condition>
 	<offsets>
 	    <x-m> 0.00</x-m>
 	    <y-m>-0.75</y-m>
@@ -23,12 +23,12 @@
     <model>
 	<name>Bombs-21-24</name>
 	<path>Aircraft/victor/Models/bomb.xml</path>
-       <condition>
-                <greater-than>
-                    <property>controls/armament/station[0]/units</property>
-                    <value>20</value>
-                </greater-than>
-        </condition>
+	<condition>
+	    <greater-than>
+		<property>/controls/armament/station[0]/units</property>
+		<value>20</value>
+	    </greater-than>
+	</condition>
 	<offsets>
 	    <x-m> 0.00</x-m>
 	    <y-m>-0.25</y-m>
@@ -39,12 +39,12 @@
     <model>
 	<name>Bombs-25-28</name>
 	<path>Aircraft/victor/Models/bomb.xml</path>
-       <condition>
-                <greater-than>
-                    <property>controls/armament/station[0]/units</property>
-                    <value>24</value>
-                </greater-than>
-        </condition>
+	<condition>
+	    <greater-than>
+		<property>/controls/armament/station[0]/units</property>
+		<value>24</value>
+	    </greater-than>
+	</condition>
 	<offsets>
 	    <x-m> 0.00</x-m>
 	    <y-m> 0.25</y-m>
@@ -55,12 +55,12 @@
     <model>
 	<name>Bombs-29-32</name>
 	<path>Aircraft/victor/Models/bomb.xml</path>
-       <condition>
-                <greater-than>
-                    <property>controls/armament/station[0]/units</property>
-                    <value>28</value>
-                </greater-than>
-        </condition>
+	<condition>
+	    <greater-than>
+		<property>/controls/armament/station[0]/units</property>
+		<value>28</value>
+	    </greater-than>
+	</condition>
 	<offsets>
 	    <x-m> 0.00</x-m>
 	    <y-m> 0.75</y-m>

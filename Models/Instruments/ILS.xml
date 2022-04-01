@@ -38,7 +38,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>LOCNeedle</object-name>
-	<property>instrumentation/nav[0]/heading-needle-deflection</property>
+	<property>/instrumentation/nav[0]/heading-needle-deflection</property>
 	<factor>-3.2</factor>
 	<center>
 	    <x-m>0.003</x-m>
@@ -56,7 +56,7 @@
 	<name>GSNeedle</name>
 	<type>rotate</type>
 	<object-name>GSNeedle</object-name>
-	<property>instrumentation/nav[0]/gs-needle-deflection</property>
+	<property>/instrumentation/nav[0]/gs-needle-deflection</property>
 	<min>-3.5</min>
 	<max>3.5</max>
 	<interpolation>
@@ -87,10 +87,10 @@
 	<condition>
 	    <or>
 		<not>
-		    <property>instrumentation/nav[0]/gs-in-range</property>
+		    <property>/instrumentation/nav[0]/gs-in-range</property>
 		</not>
 		<not>
-		    <property>instrumentation/nav[0]/has-gs</property>
+		    <property>/instrumentation/nav[0]/has-gs</property>
 		</not>
 	    </or>
 	</condition>
@@ -102,10 +102,10 @@
 	<condition>
 	    <or>
 		<not>
-		    <property>instrumentation/nav[0]/in-range</property>
+		    <property>/instrumentation/nav[0]/in-range</property>
 		</not>
 		<not>
-		    <property>instrumentation/nav[0]/nav-loc</property>
+		    <property>/instrumentation/nav[0]/nav-loc</property>
 		</not>
 	    </or>
 	</condition>

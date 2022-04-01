@@ -21,7 +21,7 @@
 	<name>needle</name>
 	<type>rotate</type>
 	<object-name>needle</object-name>
-	<property>instrumentation/radar-altimeter/radar-altitude-ft</property>
+	<property>/instrumentation/radar-altimeter/radar-altitude-ft</property>
 	<min>0</min>
 	<max>6000</max>
 	<offset>-5</offset>
@@ -68,7 +68,7 @@
 	<name>bug</name>
 	<type>rotate</type>
 	<object-name>bug</object-name>
-	<property>instrumentation/radar-altimeter/set-height-ft</property>
+	<property>/instrumentation/radar-altimeter/set-height-ft</property>
 	<min>0</min>
 	<max>6000</max>
 	<offset>-5</offset>
@@ -142,7 +142,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>Warning Altitude: %d ft</label>
-		<property>instrumentation/radar-altimeter/set-height-ft</property>
+		<property>/instrumentation/radar-altimeter/set-height-ft</property>
 		<tooltip-id>rad_alt_warn</tooltip-id>
 	    </binding>
 	</hovered>

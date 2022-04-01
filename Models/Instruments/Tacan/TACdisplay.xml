@@ -38,7 +38,7 @@
 	<object-name>Collection2</object-name>
 	<visible>true</visible>
 	<condition>
-	    <property>instrumentation/tacan/power-on</property>
+	    <property>/instrumentation/tacan/power-on</property>
 	</condition>
     </animation>
 

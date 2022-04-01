@@ -283,7 +283,7 @@ setlistener("/fdm/jsbsim/systems/electrical/power-available", func (n) {
 ## * Tank 11 followed Tank 10 and divided into A and B cells that ended at the rear
 ##   face of the bomb bay.
 ## * The last two tanks were 12 Port and 12 Starboard located aft of the bomb bay
-##   and extended down into the flash bomb bay. 
+##   and extended down into the flash bomb bay.
 ##
 ## The bomb bay had two cylindrical tanks, one forward and one aft, each with a
 ## capacity of 8,000lb.
@@ -299,7 +299,7 @@ setlistener("/fdm/jsbsim/systems/electrical/power-available", func (n) {
 ##
 ## The B (SR) 2 version was capable of carrying initially two 8,0001b bomb bay tanks
 ## along with various reconnaissance camera fits. After the deletion of the camera
-## crate an additional 8,0001b tank was fitted. 
+## crate an additional 8,0001b tank was fitted.
 ##
 ## The fuel system for the three-pointer tanker was vastly different to that of the
 ## bomber. The main fuselage and wing system was retained and only slightly modified.
@@ -309,7 +309,7 @@ setlistener("/fdm/jsbsim/systems/electrical/power-available", func (n) {
 ## and were to be used as collector tanks to feed the engines and the dispensing
 ## equipment. The fuselage and wings were fed into them. The fuel system was modified
 ## to accommodate the necessary changes and this ended up in combining all three systems
-## and, in theory, you could pump fuel from any tank to any other tank. 
+## and, in theory, you could pump fuel from any tank to any other tank.
 ##
 ## For our purpsoes, we will only model 16 tanks defined as follows:
 ##
@@ -517,16 +517,16 @@ var adf_switch = func (switch, power_btn) {
 
     # if power is off then switch it off
     if ( power_btn == OFF ) {
-	setprop("instrumentation/adf/mode", "off");
+	setprop("/instrumentation/adf/mode", "off");
     }
     elsif (switch == AdfKnob.OFF) {
-	setprop("instrumentation/adf/mode", "off");
+	setprop("/instrumentation/adf/mode", "off");
     } elsif (switch == AdfKnob.ANT) {
-	setprop("instrumentation/adf/mode", "ant");
+	setprop("/instrumentation/adf/mode", "ant");
     } elsif (switch == AdfKnob.ADF) {
-	setprop("instrumentation/adf/mode", "adf");
+	setprop("/instrumentation/adf/mode", "adf");
     } elsif (switch == AdfKnob.BFO) {
-	setprop("instrumentation/adf/mode", "bfo");
+	setprop("/instrumentation/adf/mode", "bfo");
     }
 }
 
@@ -562,20 +562,20 @@ var dme_switch = func (switch) {
 
     if (switch < 0 or switch > 3) {
 	switch = math.clamp(switch, 0, 3);
-	setprop("instrumentation/dme/switch-position", switch);
+	setprop("/instrumentation/dme/switch-position", switch);
     }
 
     if (switch == DmeKnob.OFF) {
-        setprop("instrumentation/dme/frequencies/source",
+        setprop("/instrumentation/dme/frequencies/source",
                 "instrumentation/dme/frequencies/selected-mhz");
     } elsif (switch == DmeKnob.NAV1) {
-        setprop("instrumentation/dme/frequencies/source",
+        setprop("/instrumentation/dme/frequencies/source",
                 "instrumentation/nav[0]/frequencies/selected-mhz");
     } elsif (switch == DmeKnob.HOLD) {
-        setprop("instrumentation/dme/frequencies/source",
+        setprop("/instrumentation/dme/frequencies/source",
                 "instrumentation/dme/frequencies/selected-mhz");
     } elsif (switch == DmeKnob.NAV2) {
-        setprop("instrumentation/dme/frequencies/source",
+        setprop("/instrumentation/dme/frequencies/source",
                 "instrumentation/nav[1]/frequencies/selected-mhz");
     }
 }
@@ -615,13 +615,13 @@ setlistener("instrumentation/dme/switch-position", func (n) {
 var TransponderKnob = { OFF: 0, STANDBY: 1, TEST: 2, GROUND: 3, ON: 4, ALT: 5 };
 
 var knobPosition = func (pos) {
-    setprop("instrumentation/transponder/inputs/knob-mode", pos);
+    setprop("/instrumentation/transponder/inputs/knob-mode", pos);
 };
 
 var TCASmodes = { OFF: 0, STANDBY: 1, TA: 2, AUTO: 3 };
 
 var tcasPosition = func (pos) {
-    setprop("instrumentation/tcas/inputs/mode", pos);
+    setprop("/instrumentation/tcas/inputs/mode", pos);
 };
 
 ## Connect TCAS to transponder cockpit switch
@@ -629,13 +629,13 @@ var syncTCAS = func (tp) {
     var pos = TCASmodes.OFF;
 
     # switch off test in case it was on
-    setprop("instrumentation/tcas/inputs/self-test", OFF);
+    setprop("/instrumentation/tcas/inputs/self-test", OFF);
 
     if (tp == TransponderKnob.OFF)		pos = TCASmodes.OFF;
     elsif (tp == TransponderKnob.STANDBY)	pos = TCASmodes.STANDBY;
     elsif (tp == TransponderKnob.TEST)	{
 	pos = TCASmodes.STANDBY;
-	setprop("instrumentation/tcas/inputs/self-test", ON);
+	setprop("/instrumentation/tcas/inputs/self-test", ON);
     }
     elsif (tp == TransponderKnob.GROUND)	pos = TCASmodes.STANDBY;
     elsif (tp == TransponderKnob.ON)		pos = TCASmodes.TA;
@@ -650,8 +650,8 @@ setlistener("instrumentation/transponder/inputs/knob-mode", func (n) {
 
 ## While testing the TCAS, do the same for the marker beacons
 setlistener("instrumentation/tcas/inputs/self-test", func (n) {
-    if ( n.getValue() ) setprop("instrumentation/marker-beacon/test", ON);
-    else	setprop("instrumentation/marker-beacon/test", OFF);
+    if ( n.getValue() ) setprop("/instrumentation/marker-beacon/test", ON);
+    else	setprop("/instrumentation/marker-beacon/test", OFF);
 }, 0, 0);
 
 
@@ -816,7 +816,9 @@ var calc_CAS_Mach =  func (eas) {
     result[0] = atmos.calculateFromTAS(alt, tas, "cas");
 
     # then Mach
-    result[1] = atmos.calculateFromTAS(alt, tas, "mach");
+    var limit = machLimit.getValue() - 0.005;	# do not exceed the Mach limit
+    var mach  = atmos.calculateFromTAS(alt, tas, "mach");
+    result[1] = (mach < limit) ? mach: limit;
 
     return result;
 };
@@ -900,7 +902,7 @@ setlistener("/instrumentation/annunciator/warning-signal", func (n) {
     if ( sig == Warning.clear ) { # clear the caution
 	setprop("/instrumentation/annunciator/master-caution", OFF);
     }
-    elsif ( sig == Warning.warn ) { # issue a temporary warning 
+    elsif ( sig == Warning.warn ) { # issue a temporary warning
 	caution();
     }
     elsif ( sig == Warning.critical ) { # set a caution that must be cleared by the crew
@@ -952,10 +954,10 @@ var init_cabin_env = func () {
 
 			# set the initial tmeperature
 			var temp = getprop("environment/temperature-degc");
-			setprop("instrumentation/pressurisation/target-cabin-temperature-degc", temp);
+			setprop("/instrumentation/pressurisation/target-cabin-temperature-degc", temp);
 			# assume the cockpit was kept overnight at standard temperatur ~15C or 59F
-			setprop("instrumentation/pressurisation/cabin-temperature-degc", 15);
-			setprop("controls/anti-ice/window-temperature-degc", 15);
+			setprop("/instrumentation/pressurisation/cabin-temperature-degc", 15);
+			setprop("/controls/anti-ice/window-temperature-degc", 15);
 		    });
     t.singleShot = TRUE;
     t.start();
@@ -1072,10 +1074,32 @@ var idleThrottle = func (time=3.0) {
     }
 }
 
+## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+## We need to override the throttle controls in FG "controls.nas" because
+## it automatically revs up or down all engines at once when the PageUp and
+## PageDown keys are pressed. This then ignites the docile APU engine
+## which ought to stay off. Therefore we must make sure that only the four
+## main engines are affected by the PageUp/PageDown keys.
+## --------------------------------------------------------------------------
+var adjustThrottle = func (step) {
+    var val = ctrlThottle0.getValue() + step;
+    val = val < 0.0 ? 0.0 : val > 1.0 ? 1.0 : val;
+    foreach(var eng; allEngines)
+    {
+	var engOn = getprop("/controls/engines/"~eng~"/master");
+	if ( engOn ) {
+	    setprop("/controls/engines/"~eng~"/throttle", val);
+	} else {
+	    setprop("/controls/engines/"~eng~"/throttle", 0);
+	}
+    }
+}
+
 ## Some systems only start after take off
 var airborne = func () {
     chute_door.enable(FALSE);
     cockpit_door.enable(FALSE);
+    setprop("/controls/radar/altimeter/limiter-active", ON);
 }
 
 var onground = func () {
@@ -1232,7 +1256,7 @@ var initialSetup = func () {
     # align the heading indicator to the magnetic compass
     # periodically re-adjust the Directional Gyro to the Wet Compass
     var magvar = 0 - getprop("/environment/magnetic-variation-deg");
-    setprop("instrumentation/heading-indicator-dg/align-deg", magvar);
+    setprop("/instrumentation/heading-indicator-dg/align-deg", magvar);
 
     # set the iniitial heading
     var hdg = getprop("/orientation/heading-deg");

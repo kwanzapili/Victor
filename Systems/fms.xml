@@ -188,7 +188,7 @@
 	    <test  logic="AND" value="1">
 		/autopilot/route-manager/active EQ 1
 		<!-- not after Localizer Approach (7) -->
-		/instrumentation/flightdirector/fd-phase LT 7
+		/instrumentation/flightdirector/fd-phase LE 7
 		<!-- not before Climb (2) -->
 		/instrumentation/flightdirector/fd-phase GE 2
 	    </test>
@@ -840,23 +840,11 @@
 		/instrumentation/flightdirector/decel-step EQ 1
 	    </test>
 
-	    <!--
-		abort deceleration if within range of LOCalizer or if we go below
-		the deceleration altitude somehow
-	    -->
-	    <test logic="AND" value="6">
-		/instrumentation/flightdirector/fd-phase EQ 5
-		<test logic="OR" value="1">
-		    /instrumentation/flightdirector/loc-nearby EQ 1
-		    fmc/descend-height-ft LT -1000
-		</test>
-	    </test>
-
 	    <!-- Localizer Approach (7) -->
 	    <test logic="AND" value="7">
 		/instrumentation/flightdirector/fd-phase EQ 6
 		/instrumentation/flightdirector/loc-nearby EQ 1
-		position/h-agl-ft LT 8000
+		position/h-agl-ft LT 7000
 	    </test>
 
 	    <!-- Final Approach (8) -->
@@ -1117,18 +1105,35 @@
 	    <test  logic="OR" value="-1">
 		/instrumentation/flightdirector/vertical-alt-mode EQ 0
 		/instrumentation/flightdirector/past-td EQ 0
-		/instrumentation/flightdirector/fd-phase NE 5
-	    </test>
-	    <!-- on initial entry to deceleration phase: level (0) -->
-	    <test  logic="AND" value="0">
-		/instrumentation/flightdirector/decel-step EQ -1
+		<!-- we cannot skip step 0 without touching step 1 -->
+		<test  logic="AND" value="1">
+		  /instrumentation/flightdirector/fd-phase NE 5
+		  /instrumentation/flightdirector/decel-step NE 0
+		</test>
 	    </test>
 	    <!-- switch to leave (1) once we have slowed down sufficiently -->
 	    <test  logic="AND" value="1">
 		/instrumentation/flightdirector/decel-step EQ 0
 		<!-- wait for LEVEL mode (11) -->
 		/instrumentation/flightdirector/vnav EQ 11
-		fmc/speed/speed-above-des-kt LT 2
+		fmc/speed/speed-above-des-kt LE 2
+	    </test>
+	    <!--
+		abort deceleration if within range of LOCalizer or if we go below
+		the deceleration altitude somehow
+	    -->
+	    <test logic="AND" value="1">
+		/instrumentation/flightdirector/fd-phase EQ 5
+		<test logic="OR" value="1">
+		    /instrumentation/flightdirector/loc-nearby EQ 1
+		    fmc/descend-height-ft LT -1000
+		</test>
+		/instrumentation/flightdirector/decel-step EQ 0
+		position/h-agl-ft LT 8000
+	    </test>
+	    <!-- on initial entry to deceleration phase: level (0) -->
+	    <test  logic="AND" value="0">
+		/instrumentation/flightdirector/fd-phase EQ 5
 	    </test>
 	</switch>
 
@@ -1142,6 +1147,10 @@
 		/instrumentation/flightdirector/past-td EQ 0
 		<!-- reset if DES mode (8) is set -->
 		/instrumentation/flightdirector/vnav EQ 8
+		<!--
+		reset when levelling off in the deceleration step level phase (0)
+		-->
+			/instrumentation/flightdirector/decel-step EQ 0
 	    </test>
 
 	    <!--
@@ -1150,12 +1159,12 @@
 	    -->
 	    <test value="1">
 		/instrumentation/flightdirector/vnav EQ 6
+		/instrumentation/flightdirector/fd-phase LT 4
 	    </test>
 
 	    <!--
-		2nd batch of signals at deceleration altitude:
+		2nd signal at deceleration altitude:
 		* the decelaration phase step is "leave"
-		* the phase shifted anyway the next phase due to a LOC signal
 	    -->
 
 	    <!-- Deceleration leave signal -->
@@ -1163,21 +1172,13 @@
 		/instrumentation/flightdirector/decel-step EQ 1
 		/instrumentation/flightdirector/fd-phase EQ 5
 	    </test>
-	    <!-- entered approach phase (6) without setting DES mode (8) -->
-	    <test  logic="AND" value="1">
-		/instrumentation/flightdirector/fd-phase EQ 6
-		<test  logic="AND" value="1">
-		    /instrumentation/flightdirector/vnav NE 8
-		    /instrumentation/flightdirector/vnav NE 10
-		</test>
-	    </test>
 
 	    <!--
 		3rd signal when above deceleration altitude but not descending
 	    -->
 	    <test value="1">
 		/instrumentation/flightdirector/fd-phase EQ 4
-		position/h-sl-ft GT /instrumentation/fmc/deceleration-alt
+		fmc/descend-height-ft GT 600
 	    </test>
 	</switch>
 

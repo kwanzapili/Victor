@@ -30,7 +30,7 @@
 	    <legend>Toggle Bomb Bay</legend>
 	    <enable>
 		<not-equals>
-		    <property>sim/armament/mission</property>
+		    <property>/sim/armament/mission</property>
 		    <value>Blue Steel</value>
 		</not-equals>
 	    </enable>

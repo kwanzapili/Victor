@@ -71,13 +71,11 @@
     <function name="IdleThrust">
 	<table>
 	    <independentVar lookup="row">atmosphere/density-altitude</independentVar>
-	    <independentVar lookup="column"> /controls/APU/run </independentVar>
 	    <tableData>
-	    		0	1
-		-10000	0	0.1
-		   0	0	0.1
-		30000	0	0.1
-		40000	0	0.0
+		-10000	0.1
+		   0	0.1
+		30000	0.1
+		40000	0.0
 	    </tableData>
 	</table>
     </function>
@@ -86,15 +84,13 @@
     <function name="MilThrust">
 	<table>
 	    <independentVar lookup="row">atmosphere/density-altitude</independentVar>
-	    <independentVar lookup="column"> /controls/APU/run </independentVar>
 	    <tableData>
-	    		0	1
-		-10000	0	1.260
-		   0	0	1.000
-		10000	0	0.740
-		20000	0	0.534
-		30000	0	0.372
-		50000	0	0.000
+		-10000	1.260
+		   0	1.000
+		10000	0.740
+		20000	0.534
+		30000	0.372
+		50000	0.000
 	    </tableData>
 	</table>
     </function>

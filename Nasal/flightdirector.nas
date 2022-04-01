@@ -1010,7 +1010,7 @@ var flare = func () {
 
 	# Retard happens at about 30 ft, by which point we should be sinking at about 10 fps.
 	# First estimate a time to reach 30 ft, then change the glide rate within that time
-	# period. It takes about 2 sec to sink 25 ft. We need teh inerpolation to avoid
+	# period. It takes about 2 sec to sink 25 ft. We need the inerpolation to avoid
 	# discontinuities in sink rate if there was a sudden change.
 	var elev = getprop("/position/gear-agl-ft");
 	var vel	 = velVertSpdFps.getValue();

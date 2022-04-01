@@ -656,23 +656,23 @@
 	<update-interval-secs type="double">10.0</update-interval-secs>
 	<enable>
 	    <condition>
-		<property>autopilot/route-manager/airborne</property>
+		<property>/autopilot/route-manager/airborne</property>
 	    </condition>
 	</enable>
 	<type>gain</type>
 	<gain>
-	    <property>consumables/fuel/total-use-lbs-per-min</property>
+	    <property>/consumables/fuel/total-use-lbs-per-min</property>
 	</gain>
 	<input>
 	    <!-- Use the route manager time if available -->
 	    <condition>
-		<property>autopilot/route-manager/active</property>
+		<property>/autopilot/route-manager/active</property>
 		<greater-than>
-		    <property>autopilot/route-manager/ete</property>
+		    <property>/autopilot/route-manager/ete</property>
 		    <value> 0 </value>
 		</greater-than>
 	    </condition>
-	    <property>autopilot/route-manager/ete</property>
+	    <property>/autopilot/route-manager/ete</property>
 	    <scale>0.016666667</scale>	<!-- to mins -->
 	</input>
 	<input>
@@ -695,10 +695,10 @@
 	<debug>false</debug>
 	<type>noise-spike</type>
 	<input>
-	    <property>instrumentation/pressurisation/target-cabin-temperature-degc</property>
+	    <property>/instrumentation/pressurisation/target-cabin-temperature-degc</property>
 	</input>
 	<output>
-	    <property>instrumentation/pressurisation/cabin-temperature-degc</property>
+	    <property>/instrumentation/pressurisation/cabin-temperature-degc</property>
 	</output>
 	<!-- the cockpit temperature control valve requires up to 10 sec to open or close -->
 	<max-rate-of-change>0.5</max-rate-of-change>
@@ -710,10 +710,10 @@
 	<debug>false</debug>
 	<type>noise-spike</type>
 	<input>
-	    <property>controls/anti-ice/window-heat-degc</property>
+	    <property>/controls/anti-ice/window-heat-degc</property>
 	</input>
 	<output>
-	    <property>controls/anti-ice/window-temperature-degc</property>
+	    <property>/controls/anti-ice/window-temperature-degc</property>
 	</output>
 	<!-- the coxkpit temperature control valve requires up to 10 sec to open or close -->
 	<max-rate-of-change>0.5</max-rate-of-change>
@@ -726,10 +726,10 @@
 	<debug>false</debug>
 	<input>instrumentation/pressurisation/target-cabin-pressure-psi</input>
 	<output>
-	    <property>instrumentation/pressurisation/cabin-pressure-psi</property>
+	    <property>/instrumentation/pressurisation/cabin-pressure-psi</property>
 	</output>
 	<max-rate-of-change>
-	    <property>controls/pressurization/cabin-pressure-rate-sec</property>
+	    <property>/controls/pressurization/cabin-pressure-rate-sec</property>
 	</max-rate-of-change>
     </filter>
 

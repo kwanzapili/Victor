@@ -23,7 +23,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>g-Needle1</object-name>
-	<property>instrumentation/accelerometer/g-load</property>
+	<property>/instrumentation/accelerometer/g-load</property>
 	<interpolation>
 	    <entry><ind>-4</ind><dep>-200</dep></entry>
 	    <entry><ind>-2</ind><dep>-156</dep></entry>
@@ -54,7 +54,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>g-Needle2</object-name>
-	<property>instrumentation/accelerometer/pilot-gmin</property>
+	<property>/instrumentation/accelerometer/pilot-gmin</property>
 	<interpolation>
 	    <entry><ind>-4</ind><dep>-200</dep></entry>
 	    <entry><ind>-2</ind><dep>-156</dep></entry>
@@ -77,7 +77,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>g-Needle3</object-name>
-	<property>instrumentation/accelerometer/pilot-gmax</property>
+	<property>/instrumentation/accelerometer/pilot-gmax</property>
 	<interpolation>
 	    <entry><ind>1</ind><dep>-90</dep></entry>
 	    <entry><ind>2</ind><dep>-68</dep></entry>

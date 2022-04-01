@@ -7,7 +7,7 @@
     <animation>
 	<type>knob</type>
 	<object-name>switch</object-name>
-	<property>controls/switches/chute</property>
+	<property>/controls/switches/chute</property>
 	<axis>
 	    <x>0</x>
 	    <y>-1</y>
@@ -21,7 +21,7 @@
 	<action>
 	    <binding>
 		<command>switch-adjust</command>
-		<property>controls/switches/chute</property>
+		<property>/controls/switches/chute</property>
 		<min>-1</min>
 		<max> 1</max>
 	    </binding>

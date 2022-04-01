@@ -55,6 +55,10 @@
 	<desc>Toggle APU on/off</desc>
     </key>
     <key>
+	<name>Ctrl-Q</name>
+	<desc>Switch off all main engines</desc>
+    </key>
+    <key>
 	<name>~</name>
 	<desc>Autostart</desc>
     </key>
@@ -169,18 +173,30 @@
     The parking brake is ON
 
     ========== Start Routine ==========
+    There are two types of start available: manual and automatic.
+
+    === Manual Start ===
     Request the Palouste compressor starter => key "Ctrl-E"
     Turn ON the engine master switch => key "#"
     Turn ON the electric master switch => key "}"
-    Fire the starter => key ")"
+    Fire the starter => key ")" or "s"
     The engine will spin up to a maximum of about 25% N2 (5.2% N1)
     The engine cutoff switch is triggered automatically at this stage
     Wait for the engine to to reach about 45% N2
-    Select the next engine and fire the starter again => key ")"
-    Wait for all engines to stablise (~30% N1 and 60% N2)
+    Select the next engine and fire the starter again => key ")" or "s"
+    Wait for all engines to stabilise (~30% N1 and 60% N2)
     The external starter resources are automatically disconnected
     The engine will spin up to a maximum of about %25 N2 (%5.2 N1)
-    Don't forget to close the hetch => key "d"
+
+    === Automatic Start ===
+    Request the Palouste compressor starter => key "Ctrl-E"
+    Either use the key "~" of select "Auto-start" in the victor menu
+    The system will start each engine in turn, including the APU
+    When all main engines are running, switch off the APU with key "Ctrl-F"
+    The external starter resources are automatically disconnected
+
+    === Taxi ===
+    Don't forget to close the hatch => key "d"
     Flaps as necessary
     Parking brake OFF (this also disconnects the external starter)
     Then use the throttle to accelerate
@@ -195,9 +211,126 @@
     Climb (above 24K ft):  300 knots
     Pattern:               200 knots
     Approach:              190 knots
-    Threshhold:            160 knots
+    Threshold:            160 knots
     Touch down:            135 knots
     Tail Chute:            235 knots
+
+    ========== Fuel ==========
+    The plane has partially filled tanks on startup. You can top this up on
+    the ground or in the air. Ground refuelling requires the parking brake
+    to be ON. Air refuelling requires tanker operations to be active and
+    close contact with the tanker. In both cases, make sure the refuelling
+    lid is open or no fuel will be taken on.
+
+    The plane normally manages the fuel distribution within the various tanks so
+    as to maintain a reasonable centre of gravity. You can assist this process by
+    activating forward or aft fuel transfers via the "Fuel Mgt" dialog.
+    Cross-feeding is also possible. It enasures equitable fuel levels in the four 
+    tank groups. In general, the CoG should be between 17% - 30%, depending on the
+    gross weight of the aircraft and payload.
+
+    ========== Auto-flight ==========
+    Two separate auto-flight modes exist. The Flight Management Computer (FMC)
+    runs the "managed" mode. In this mode, it determines all the lateral,
+    vertical and speed parameters. The second mode is run by the Flight Director
+    with input from the pilot. This is the "selected" mode. The pilot has a say
+    in some or all the lateral, vertical or speed parameters.
+
+    === Managed Modes ===
+    Lateral
+    ~~~~~~~
+    * LEVEL - wings are set to level (tries to maintains current heading)
+    * NAV - follow navigation course (from route manager)
+    * LOC - follow LOCalizer signal
+    * RUNWAY - align with runway heading
+
+    Vertical
+    ~~~~~~~~
+    * CLB - climb at variable vertical and air speeds to the target height
+    * DES - descend at variable vertical and air speeds to the target height
+    * ALT - maintain altitude set by the FMC
+    * AGL - maintain set elevation above ground
+    * CRUISE - maintain cruise altitude (and cruise speed)
+    * LEVEL - maintain vertical speed at 0
+    * G/S - follow glideslope
+
+    Note that all the above modes control the airspeed via the throttles.
+    The pilot has no say in the selected airspeed.
+
+    Speed
+    ~~~~~
+    * THR CLB - variable airspeed in vertical CLB, ALT, AGL or LEVEL modes
+    * THR DES - variable airspeed in vertical DES, ALT, AGL or LEVEL modes
+    * CRUISE - pilot set cruise speed used only in vertical CRUISE mode
+
+    === Selected Modes ===
+    Lateral
+    ~~~~~~~
+    * HEADING - maintain heading set by pilot
+
+    Vertical
+    ~~~~~~~~
+    * OP CLB - climb at variable vertical speed to the target height while
+    	maintaining the set airspeed via pitch control
+    * OP DES - descend at variable vertical speed to the target height while
+    	maintaining the set airspeed via pitch control
+    * V/S - maintain a constant vertical speed set by the pilot
+    * ALT - acquire or maintain the altitude set by the pilot
+    * PITCH - maintain a constant pitch set by the pilot
+
+    Note that unlike managed modes, some selected modes use pitch to control
+    airspeed without changing the throttle level (where possible). The pilot
+    can adjust the throttle levels are any time and the autopilot will adjust
+    the pitch to compensate and return to the set airspeed.
+
+    Speed
+    ~~~~~
+    * SPEED - maintain a constant speed in knots set by the pilot
+    * MACH - maintain a constant Mach speeed set by the pilot
+
+    === Flight Stages and Phases ===
+    The FMC divides the flight into several stages:
+    	Takeoff ~ Initial Climb ~ Mission (with climb and descend parts) ~
+    	Approach ~ Land
+    The flight director divides the flight into phases (with some overlap with the
+    flight stages)
+    	Takeoff ~ Initial Climb ~ Cruise ~ Descend ~ Deceleration ~ Approach ~ Land
+
+    The pilot can define the cruise altitude, cruise speed, and deceleration altitude
+    in the "Autoflight" menu. All other pilot inputs are available in the
+    "Autopilot" dialog.
+
+    === Autopilot ===
+    The autopilot can only be engaged after the "Takeoff" stage is complete (above 400 ft).
+    Initially, it starts in "selected" mode. The pilot can change the parameters and each
+    mode separately in the "Autopilot" dialog. If "managed" mode is selected for any part,
+    e..g lateral, then the pilot will no longer influence that part. If the route manager is
+    set and active, then setting all parts to managed allows the plane to fly itself to the
+    destination including descending and auto land will managing the speeds. At the approach
+    phase , the pilot needs to enable both "LOC" and "APPR" when "NAV" and "G/S" are in range.
+    However, if the "FD" button is selected and active, then the flight director will do this
+    for you automatically.
+
+    A word of caution on speeds. In managed modes, the appropriate speeds are determined by
+    the FMC. However, it can only control the throttle and NOT the brakes. Therefore, if the
+    plane is travelling too fast, it cannot reduce its speed. The pilot may need to apply
+    the air brakes briefly to bring the speed back into line. This is more critical during
+    the approach phase.
+
+    Autoland will usually be accomplished if both LOC and APPR are set, providing the
+    localizer and glideslipe were successfully intercepted. The FMC estimates if touchdown
+    will be acheived given the current sink rate and forwaed speed. If it judges that this will
+    not be acheived, it will issue a "go-around" command and initiate a climb. Hence, it
+    is important to make sure that the approach speed is being abserved. Use brakes as
+    necessary. The flaps settings significantly affect the approach speed needed.
+
+    ========== Armament ==========
+    The weapon load must be configured on ground before takeoff via the "Mission" menu.
+    Weapons can only be fired when the aircraft is a safe height above the ground and
+    reasonably stable i.e. manoeuvring. 
+    The "master arm" must be on and the selected weapon must be armed.
+    All these operations can be done on the control panel, "Mission" dialog or via key
+    presses.
 
    </text>
 

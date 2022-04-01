@@ -9,7 +9,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>Needle1</object-name>
-	<property>instrumentation/airspeed-indicator[1]/indicated-speed-kt</property>
+	<property>/instrumentation/airspeed-indicator[1]/indicated-speed-kt</property>
 	<interpolation>
 	    <entry><ind>0</ind><dep>0</dep></entry>
 	    <entry><ind>50</ind><dep>180</dep></entry>
@@ -37,7 +37,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>Needle2</object-name>
-	<property>instrumentation/airspeed-indicator[1]/indicated-speed-kt</property>
+	<property>/instrumentation/airspeed-indicator[1]/indicated-speed-kt</property>
 	<interpolation>
 	    <entry><ind>0</ind><dep>0</dep></entry>
 	    <entry><ind>100</ind><dep>36</dep></entry>

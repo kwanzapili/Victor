@@ -40,7 +40,7 @@
 	    </binding>
 	    <binding>
 		<command>property-toggle</command>
-		<property>controls/switches/master-avionics</property>
+		<property>/controls/switches/master-avionics</property>
 	    </binding>
 	    <default>true</default>
 	</button>
@@ -54,7 +54,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>controls/switches/master-avionics</property>
+		    <property>/controls/switches/master-avionics</property>
 		    <value>1</value>
 		</equals>
 	    </visible>
@@ -68,7 +68,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>controls/switches/master-avionics</property>
+		    <property>/controls/switches/master-avionics</property>
 		    <value>0</value>
 		</equals>
 	    </visible>
@@ -149,7 +149,7 @@
 		<blue> 1.0</blue>
 	    </color>
 	    <format>[ %4s ]</format>
-	    <property>instrumentation/adf/mode</property>
+	    <property>/instrumentation/adf/mode</property>
 	    <live type="bool">true</live>
 	</text>
 
@@ -160,7 +160,7 @@
 	    <pref-width>150</pref-width>
 	    <default-padding>0</default-padding>
 	    <valign>top</valign>
-	    <property>instrumentation/adf/func-knob</property>
+	    <property>/instrumentation/adf/func-knob</property>
 	    <min>0</min>
 	    <max>3</max>
 	    <step>1</step>
@@ -191,7 +191,7 @@
 	    <width>12</width>
 	    <height>12</height>
 	    <label>Power Switch</label>
-	    <property>instrumentation/comm[0]/power-switch</property>
+	    <property>/instrumentation/comm[0]/power-switch</property>
 	    <live type="bool">true</live>
 	    <binding>
 		<command>dialog-apply</command>
@@ -209,7 +209,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/comm[0]/power-btn</property>
+		    <property>/instrumentation/comm[0]/power-btn</property>
 		    <value type="bool">false</value>
 		</equals>
 	    </visible>
@@ -225,7 +225,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/comm[0]/power-btn</property>
+		    <property>/instrumentation/comm[0]/power-btn</property>
 		    <value type="bool">true</value>
 		</equals>
 	    </visible>
@@ -251,7 +251,7 @@
 	    <width>12</width>
 	    <height>12</height>
 	    <label>Power Switch</label>
-	    <property>instrumentation/comm[1]/power-switch</property>
+	    <property>/instrumentation/comm[1]/power-switch</property>
 	    <live type="bool">true</live>
 	    <binding>
 		<command>dialog-apply</command>
@@ -269,7 +269,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/comm[1]/power-btn</property>
+		    <property>/instrumentation/comm[1]/power-btn</property>
 		    <value type="bool">false</value>
 		</equals>
 	    </visible>
@@ -285,7 +285,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/comm[1]/power-btn</property>
+		    <property>/instrumentation/comm[1]/power-btn</property>
 		    <value type="bool">true</value>
 		</equals>
 	    </visible>
@@ -311,7 +311,7 @@
 	    <width>12</width>
 	    <height>12</height>
 	    <label>Power Switch</label>
-	    <property>instrumentation/nav[0]/power-switch</property>
+	    <property>/instrumentation/nav[0]/power-switch</property>
 	    <live type="bool">true</live>
 	    <binding>
 		<command>dialog-apply</command>
@@ -329,7 +329,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/nav[0]/power-btn</property>
+		    <property>/instrumentation/nav[0]/power-btn</property>
 		    <value type="bool">false</value>
 		</equals>
 	    </visible>
@@ -345,7 +345,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/nav[0]/power-btn</property>
+		    <property>/instrumentation/nav[0]/power-btn</property>
 		    <value type="bool">true</value>
 		</equals>
 	    </visible>
@@ -371,7 +371,7 @@
 	    <width>12</width>
 	    <height>12</height>
 	    <label>Power Switch</label>
-	    <property>instrumentation/nav[1]/power-switch</property>
+	    <property>/instrumentation/nav[1]/power-switch</property>
 	    <live type="bool">true</live>
 	    <binding>
 		<command>dialog-apply</command>
@@ -389,7 +389,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/nav[1]/power-btn</property>
+		    <property>/instrumentation/nav[1]/power-btn</property>
 		    <value type="bool">false</value>
 		</equals>
 	    </visible>
@@ -405,7 +405,7 @@
 	    </color>
 	    <visible>
 		<equals>
-		    <property>instrumentation/nav[1]/power-btn</property>
+		    <property>/instrumentation/nav[1]/power-btn</property>
 		    <value type="bool">true</value>
 		</equals>
 	    </visible>
@@ -450,11 +450,11 @@
 	    <visible>
 		<or>
 		    <equals>
-			<property>instrumentation/dme/switch-position</property>
+			<property>/instrumentation/dme/switch-position</property>
 			<value>0</value>
 		    </equals>
 		    <equals>
-			<property>instrumentation/dme/power-btn</property>
+			<property>/instrumentation/dme/power-btn</property>
 			<value type="bool">false</value>
 		    </equals>
 		</or>
@@ -473,11 +473,11 @@
 	    <visible>
 		<and>
 		    <equals>
-			<property>instrumentation/dme/switch-position</property>
+			<property>/instrumentation/dme/switch-position</property>
 			<value>1</value>
 		    </equals>
 		    <equals>
-			<property>instrumentation/dme/power-btn</property>
+			<property>/instrumentation/dme/power-btn</property>
 			<value type="bool">true</value>
 		    </equals>
 		</and>
@@ -496,11 +496,11 @@
 	    <visible>
 		<and>
 		    <equals>
-			<property>instrumentation/dme/switch-position</property>
+			<property>/instrumentation/dme/switch-position</property>
 			<value>2</value>
 		    </equals>
 		    <equals>
-			<property>instrumentation/dme/power-btn</property>
+			<property>/instrumentation/dme/power-btn</property>
 			<value type="bool">true</value>
 		    </equals>
 		</and>
@@ -519,11 +519,11 @@
 	    <visible>
 		<and>
 		    <equals>
-			<property>instrumentation/dme/switch-position</property>
+			<property>/instrumentation/dme/switch-position</property>
 			<value>3</value>
 		    </equals>
 		    <equals>
-			<property>instrumentation/dme/power-btn</property>
+			<property>/instrumentation/dme/power-btn</property>
 			<value type="bool">true</value>
 		    </equals>
 		</and>
@@ -538,7 +538,7 @@
 	    <pref-width>150</pref-width>
 	    <default-padding>0</default-padding>
 	    <valign>top</valign>
-	    <property>instrumentation/dme/switch-position</property>
+	    <property>/instrumentation/dme/switch-position</property>
 	    <min>0</min>
 	    <max>3</max>
 	    <step>1</step>

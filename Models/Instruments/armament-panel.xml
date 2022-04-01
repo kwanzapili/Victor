@@ -9,7 +9,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>rip-qty-x1</object-name>
-	<property>controls/armament/units</property>
+	<property>/controls/armament/units</property>
 	<factor>0.1</factor>
 	<axis><y>-1</y></axis>
     </animation>
@@ -17,7 +17,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>rip-qty-x10</object-name>
-	<property>controls/armament/units</property>
+	<property>/controls/armament/units</property>
 	<factor>0.01</factor>
 	<step>10</step>
 	<axis><y>-1</y></axis>
@@ -27,7 +27,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>rip-intvl-x1</object-name>
-	<property>controls/armament/station-select</property>
+	<property>/controls/armament/station-select</property>
 	<factor>0.1</factor>
 	<axis><y>-1</y></axis>
     </animation>
@@ -35,7 +35,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>rip-intvl-x10</object-name>
-	<property>controls/armament/station-select</property>
+	<property>/controls/armament/station-select</property>
 	<factor>0.01</factor>
 	<step>10</step>
 	<axis><y>-1</y></axis>

@@ -11,11 +11,11 @@
 	<condition>
 	    <and>
 		<greater-than>
-		    <property>controls/doors/bomb-bay/position-norm</property>
+		    <property>/controls/doors/bomb-bay/position-norm</property>
 		    <value>0.05</value>
 		</greater-than>
 		<greater-than>
-		    <property>controls/armament/station[5]/units</property>
+		    <property>/controls/armament/station[5]/units</property>
 		    <value>0</value>
 		</greater-than>
 	    </and>

@@ -75,7 +75,7 @@
 
     <key n="40">
 	<name>(</name>
-	<desc>Switch off on Selected Engine</desc>
+	<desc>Switch off selected engine</desc>
 	<binding n="0">
 	    <command>nasal</command>
 	    <script>starter.stopEngine();</script>
@@ -84,12 +84,86 @@
 
     <key n="41">
 	<name>)</name>
-	<desc>Fire Starter on Selected Engine</desc>
+	<desc>Start selected engine</desc>
 	<binding n="0">
 	    <command>nasal</command>
 	    <script>starter.startEngine();</script>
 	</binding>
     </key>
+
+    <!--
+	+++++++++++++++++++++++++++++++++++++++++++++++++++
+	The following items override the standard settings
+	+++++++++++++++++++++++++++++++++++++++++++++++++++
+    -->
+
+    <!-- starter key -->
+    <key n="115">
+	<name>s</name>
+	<desc>Start selected engine</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.startEngine()</script>
+	</binding>
+	<mod-up>
+	    <binding n="0">
+		<command>nasal</command>
+		<script>starter.engStarterAvailable()</script>
+	    </binding>
+	</mod-up>
+    </key>
+
+    <!-- throttle keys -->
+
+    <key n="51">
+	<name>3</name>
+	<desc>Decrease throttle</desc>
+	<repeatable type="bool">true</repeatable>
+	<binding>
+	    <command>nasal</command>
+	    <script>
+		victor.adjustThrottle(-0.01);
+	    </script>
+	</binding>
+    </key>
+
+    <key n="57">
+	<name>9</name>
+	<desc>Increase throttle</desc>
+	<repeatable type="bool">true</repeatable>
+	<binding>
+	    <command>nasal</command>
+	    <script>
+		victor.adjustThrottle(0.01);
+	    </script>
+	</binding>
+    </key>
+
+    <key n="360">
+	<name>PageUp</name>
+	<desc>Increase throttle</desc>
+	<repeatable type="bool">true</repeatable>
+	<binding>
+	    <command>nasal</command>
+	    <script>
+		victor.adjustThrottle(0.01);
+	    </script>
+	</binding>
+    </key>
+
+    <key n="361">
+	<name>PageDown</name>
+	<desc>Decrease throttle</desc>
+	<repeatable type="bool">true</repeatable>
+	<binding>
+	    <command>nasal</command>
+	    <script>
+		victor.adjustThrottle(-0.01);
+	    </script>
+	</binding>
+    </key>
+
+    <!-- ============================================================ -->
 
     <key n="125">
 	<name>}</name>
@@ -115,6 +189,15 @@
 	<binding n="0">
 	    <command>nasal</command>
 	    <script>starter.toggle_apu();</script>
+	</binding>
+    </key>
+
+    <key n="17">
+	<name>Ctrl-Q</name>
+	<desc>Shutdown main engines</desc>
+	<binding n="0">
+	    <command>nasal</command>
+	    <script>starter.autoShutdown();</script>
 	</binding>
     </key>
 
@@ -169,7 +252,7 @@
 	<desc>Toggle ALS Lights</desc>
 	<binding n="0">
 	    <command>property-toggle</command>
-	    <property>sim/rendering/als-lights</property>
+	    <property>/sim/rendering/als-lights</property>
 	</binding>
     </key>
 

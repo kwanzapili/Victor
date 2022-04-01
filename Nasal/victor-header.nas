@@ -203,11 +203,11 @@ BankLimits = { Heading: 45, Nav: 40, Tacan: 36, Approach: 15 };
 var headingMaxRoll	= BankLimits.Heading;
 var kpForAglClimbRate	= CLIMB_FACTOR / 60;	# needs to be in fps
 var kpForAltClimbRate	= CLIMB_FACTOR / 60;	# needs to be in fps
-var kpForAltHold	= 0.07;
+var kpForAltHold	= 0.15;
 # For Altitude-hold with throttle, the inputs are scaled down by 0.01 for this parameter
 var kpForAltThrottle	= 0.375;
 var kpForAoAHold	= -0.05;
-var kpForGSHold		= 0.07;
+var kpForGSHold		= 0.15;
 # For GS-hold with throttle, the inputs are scaled down by 0.01 for this parameter
 var kpForGSHoldThr	= 0.35;
 var kpForHeadingDeg	= -1 * headingMaxRoll / 20;
@@ -220,7 +220,7 @@ var kpForPitchHold	= -0.10;
 var kpForRollDeg	= -0.004;
 var kpForSpeedPitchDeg	= -0.5;		# assume 2kts difference yields a 1 degree change in pitch
 var kpForSpeedThrottle	= 0.075;	# avoid saturating the servo - align with noise filter
-var kpForVsHold		= 0.07;
+var kpForVsHold		= 0.15;
 # For VSpeed-hold with throttle, the inputs are scaled down by 0.001 for this parameter
 var kpForVsHoldThr	= 0.050;
 var tdForHeadingHold	= 0.0001;
@@ -368,6 +368,7 @@ var velAirSpdKts = props.globals.getNode("/velocities/airspeed-kt");
 var velGndSpdKt	 = props.globals.getNode("/velocities/groundspeed-kt");
 var velMach	 = props.globals.getNode("/velocities/mach");
 var velVertSpdFps = props.globals.getNode("/velocities/vertical-speed-fps");
+var machLimit	 = props.globals.getNode("/limits/mmo");
 
 var grossWeight	= props.globals.getNode("/fdm/jsbsim/inertia/weight-lbs");
 var crewWeight	= props.globals.getNode("/fdm/jsbsim/inertia/pointmass-weight-lbs[0]");
@@ -380,6 +381,7 @@ var shrikes34Weight = props.globals.getNode("/fdm/jsbsim/inertia/pointmass-weigh
 
 ## Engines
 var allEngines   = ['engine[0]', 'engine[1]', 'engine[2]', 'engine[3]'];
+var ctrlThottle0 = props.globals.getNode("/controls/engines/engine[0]/throttle");
 
 ## Armament
 var masterArm	= props.globals.getNode("/controls/armament/master-arm");
@@ -514,16 +516,16 @@ var init_params = func() {
     setprop("/instrumentation/fmc/bank-angle/limit-max", BankLimits.Heading);
     setprop("/instrumentation/fmc/bank-angle/limit-min", BankLimits.Heading * -1);
 
-    setprop("limits/max-vs-fps", MAX_VS_FPS);
-    setprop("limits/min-vs-fps", MIN_VS_FPS);
+    setprop("/limits/max-vs-fps", MAX_VS_FPS);
+    setprop("/limits/min-vs-fps", MIN_VS_FPS);
 
     # align the heading indicator to the magnetic compass
     # periodically re-adjust the Directional Gyro to the Wet Compass
-    var magvar = 0 - getprop("environment/magnetic-variation-deg");
+    var magvar = 0 - getprop("/environment/magnetic-variation-deg");
     setprop("/instrumentation/heading-indicator-dg/align-deg", magvar);
 
     ## clouds
-    setprop("environment/turbulence/use-cloud-turbulence", "true");
+    setprop("/environment/turbulence/use-cloud-turbulence", "true");
 
     # remove the listener
     removelistener(mainListener);

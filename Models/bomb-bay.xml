@@ -92,7 +92,7 @@
 	<path>Aircraft/victor/Models/Tallboy.xml</path>
         <condition>
                 <greater-than>
-                    <property>controls/armament/station[12]/units</property>
+                    <property>/controls/armament/station[12]/units</property>
                     <value>0</value>
                 </greater-than>
         </condition>
@@ -107,7 +107,7 @@
 	<path>Aircraft/victor/Models/Tallboy.xml</path>
         <condition>
                 <greater-than>
-                    <property>controls/armament/station[12]/units</property>
+                    <property>/controls/armament/station[12]/units</property>
                     <value>1</value>
                 </greater-than>
         </condition>

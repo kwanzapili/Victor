@@ -79,7 +79,7 @@
 	    <legend>Std Pressure</legend>
 	    <binding>
 		<command>nasal</command>
-		<script>vulcanb2.getQNH()</script>
+		<script>victor.getQNH()</script>
 	    </binding>
 	</button>
 
@@ -117,7 +117,7 @@
 	    <legend>SL Pressure</legend>
 	    <binding>
 		<command>nasal</command>
-		<script>vulcanb2.getQNH()</script>
+		<script>victor.getQNH()</script>
 	    </binding>
 	</button>
 
@@ -269,7 +269,7 @@
 	    </color>
 	    <label>0000 X</label> <!-- placeholder for width -->
 	    <format>%4.0f ft</format>
-	    <property>instrumentation/radar-altimeter/set-height-ft</property>
+	    <property>/instrumentation/radar-altimeter/set-height-ft</property>
 	    <live type="bool">true</live>
 	</text>
 

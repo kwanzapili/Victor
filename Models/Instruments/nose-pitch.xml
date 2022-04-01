@@ -7,7 +7,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>needle</object-name>
-	<property>instrumentation/attitude-indicator/indicated-pitch-deg</property>
+	<property>/instrumentation/attitude-indicator/indicated-pitch-deg</property>
 	<axis>
 	    <x>-1</x>
 	    <y> 0</y>

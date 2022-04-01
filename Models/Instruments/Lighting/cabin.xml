@@ -9,10 +9,10 @@ Copyright License:  GPL
 <PropertyList>
     <type>material</type>
     <condition>
-	<property>controls/lighting/cabin-lights</property>
+	<property>/controls/lighting/cabin-lights</property>
 	<!-- We must have enough electrical power -->
 	<greater-than>
-	    <property>systems/electrical/outputs/cabin-lights</property>
+	    <property>/systems/electrical/outputs/cabin-lights</property>
 	    <value> 100 </value>
 	</greater-than>
     </condition>

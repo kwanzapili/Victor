@@ -9,7 +9,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rpm-Needle1</object-name>
-	<property>engines/engine[2]/n1</property>
+	<property>/engines/engine[2]/n1</property>
 	<interpolation>
 	    <entry><ind>0</ind><dep>0</dep></entry>
 	    <entry><ind>100</ind><dep>270</dep></entry>
@@ -29,7 +29,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rpm-Needle2</object-name>
-	<property>engines/engine[2]/n1</property>
+	<property>/engines/engine[2]/n1</property>
 	<factor>36</factor>
 	<center>
 	    <x-m>0</x-m>

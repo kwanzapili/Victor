@@ -20,9 +20,9 @@
 	<object-name>flag</object-name>
 	<condition>
 	    <or>
-		<property>instrumentation/attitude-indicator/caged-flag</property>
+		<property>/instrumentation/attitude-indicator/caged-flag</property>
 		<less-than>
-		    <property>instrumentation/attitude-indicator/spin</property>
+		    <property>/instrumentation/attitude-indicator/spin</property>
 		    <value>0.8</value>
 		</less-than>
 	    </or>
@@ -43,7 +43,7 @@
     <animation> 
 	<type>rotate</type>
 	<object-name>wingline</object-name>
-	<property>instrumentation/attitude-indicator/indicated-roll-deg</property>
+	<property>/instrumentation/attitude-indicator/indicated-roll-deg</property>
 	<factor>-1</factor>
 	<min-deg>-30</min-deg>
 	<max-deg>30</max-deg>
@@ -57,7 +57,7 @@
     <animation> 
 	<type>rotate</type>
 	<object-name>horizon_line</object-name>
-	<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+	<property>/instrumentation/attitude-indicator/horizon-offset-deg</property>
 	<factor>-1</factor>
 	<min-deg>-10</min-deg>
 	<max-deg>10</max-deg>
@@ -71,7 +71,7 @@
     <animation> 
 	<type>knob</type>
 	<object-name>ai_offset_knob</object-name>
-	<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+	<property>/instrumentation/attitude-indicator/horizon-offset-deg</property>
 	<factor>-10</factor>
 	<axis> 
 	    <x>1</x>
@@ -86,7 +86,7 @@
 	<action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+		<property>/instrumentation/attitude-indicator/horizon-offset-deg</property>
 		<factor>1</factor>
 		<min>-10</min>
 		<max>10</max>                
@@ -97,7 +97,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>Horizon offset: %3d</label>
-		<property>instrumentation/attitude-indicator/horizon-offset-deg</property>
+		<property>/instrumentation/attitude-indicator/horizon-offset-deg</property>
 		<tooltip-id>horizon</tooltip-id>
 	    </binding>
 	</hovered>
@@ -106,7 +106,7 @@
     <animation> 
 	<type>rotate</type>
 	<object-name>bank_circle</object-name>
-	<property>instrumentation/attitude-indicator/indicated-roll-deg</property>
+	<property>/instrumentation/attitude-indicator/indicated-roll-deg</property>
 	<interpolation>
 	    <entry>
 		<ind>-90</ind>
@@ -132,7 +132,7 @@
     <animation> 
 	<type>translate</type>
 	<object-name>pitch_ladder</object-name>
-	<property>instrumentation/attitude-indicator/indicated-pitch-deg</property>
+	<property>/instrumentation/attitude-indicator/indicated-pitch-deg</property>
 	<interpolation> 
 	    <entry>
 		<ind>-180</ind>
@@ -181,7 +181,7 @@
     <animation> 
 	<type>translate</type>
 	<object-name>wingline</object-name>
-	<property>instrumentation/attitude-indicator/indicated-pitch-deg</property>
+	<property>/instrumentation/attitude-indicator/indicated-pitch-deg</property>
 	<interpolation> 
 	    <entry>
 		<ind>-180</ind>

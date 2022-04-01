@@ -40,8 +40,8 @@
 	<object-name>LampBlueON</object-name>
 	<condition>
 	    <or>
-		<property>instrumentation/marker-beacon/outer</property>
-		<property>instrumentation/marker-beacon/test</property>
+		<property>/instrumentation/marker-beacon/outer</property>
+		<property>/instrumentation/marker-beacon/test</property>
 	    </or>
 	</condition>
     </animation>
@@ -51,10 +51,10 @@
 	<condition>
 	    <and>
 		<not>
-		    <property>instrumentation/marker-beacon/outer</property>
+		    <property>/instrumentation/marker-beacon/outer</property>
 		</not>
 		<not>
-		    <property>instrumentation/marker-beacon/test</property>
+		    <property>/instrumentation/marker-beacon/test</property>
 		</not>
 	    </and>
 	</condition>
@@ -65,8 +65,8 @@
 	<object-name>LampAmberON</object-name>
 	<condition>
 	    <or>
-		<property>instrumentation/marker-beacon/middle</property>
-		<property>instrumentation/marker-beacon/test</property>
+		<property>/instrumentation/marker-beacon/middle</property>
+		<property>/instrumentation/marker-beacon/test</property>
 	    </or>
 	</condition>
     </animation>
@@ -76,10 +76,10 @@
 	<condition>
 	    <and>
 		<not>
-		    <property>instrumentation/marker-beacon/middle</property>
+		    <property>/instrumentation/marker-beacon/middle</property>
 		</not>
 		<not>
-		    <property>instrumentation/marker-beacon/test</property>
+		    <property>/instrumentation/marker-beacon/test</property>
 		</not>
 	    </and>
 	</condition>
@@ -90,8 +90,8 @@
 	<object-name>LampWhiteON</object-name>
 	<condition>
 	    <or>
-		<property>instrumentation/marker-beacon/inner</property>
-		<property>instrumentation/marker-beacon/test</property>
+		<property>/instrumentation/marker-beacon/inner</property>
+		<property>/instrumentation/marker-beacon/test</property>
 	    </or>
 	</condition>
     </animation>
@@ -101,10 +101,10 @@
 	<condition>
 	    <and>
 		<not>
-		    <property>instrumentation/marker-beacon/inner</property>
+		    <property>/instrumentation/marker-beacon/inner</property>
 		</not>
 		<not>
-		    <property>instrumentation/marker-beacon/test</property>
+		    <property>/instrumentation/marker-beacon/test</property>
 		</not>
 	    </and>
 	</condition>

@@ -8,7 +8,7 @@
 	<pitch-deg>0</pitch-deg>
     </offsets>
 
-	<!-- remove unwanted items -->
+    <!-- remove unwanted items -->
     <animation>
 	<type>select</type>
 	<object-name>PanelSurround</object-name>
@@ -61,19 +61,19 @@
 	<texture>camo-victor.png</texture>
     </animation>
 
-   <!-- Glass effects on the window panes -->
+    <!-- Glass effects on the window panes -->
     <effect>
-       <inherits-from>Effects/glass</inherits-from>
-        <object-name>interior.glass</object-name>
-        <object-name>cockpit.glass</object-name>
-   </effect>
+	<inherits-from>Effects/glass</inherits-from>
+	<object-name>interior.glass</object-name>
+	<object-name>cockpit.glass</object-name>
+    </effect>
 
     <!-- flight control surfaces -->
 
     <animation>
 	<type>rotate</type>
 	<object-name>raileron</object-name>
-	<property>surface-positions/right-aileron-pos-norm</property>
+	<property>/surface-positions/right-aileron-pos-norm</property>
 	<factor>20</factor>
 	<axis>
 	    <x1-m>24.16</x1-m>
@@ -88,7 +88,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>laileron</object-name>
-	<property>surface-positions/left-aileron-pos-norm</property>
+	<property>/surface-positions/left-aileron-pos-norm</property>
 	<factor>20</factor>
 	<axis>
 	    <x1-m>24.16</x1-m>
@@ -103,7 +103,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>relevator</object-name>
-	<property>surface-positions/elevator-pos-norm</property>
+	<property>/surface-positions/elevator-pos-norm</property>
 	<factor>15</factor>
 	<axis>
 	    <x1-m>31.04</x1-m>
@@ -118,7 +118,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lelevator</object-name>
-	<property>surface-positions/elevator-pos-norm</property>
+	<property>/surface-positions/elevator-pos-norm</property>
 	<factor>-15</factor>
 	<axis>
 	    <x1-m>31.04</x1-m>
@@ -133,7 +133,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rflapsext</object-name>
-	<property>surface-positions/flap-pos-norm</property>
+	<property>/surface-positions/flap-pos-norm</property>
 	<factor>-22</factor>
 	<axis>
 	    <x1-m>18.50</x1-m>
@@ -148,7 +148,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lflapsext</object-name>
-	<property>surface-positions/flap-pos-norm</property>
+	<property>/surface-positions/flap-pos-norm</property>
 	<factor>22</factor>
 	<axis>
 	    <x1-m>18.50</x1-m>
@@ -163,7 +163,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rflapsint</object-name>
-	<property>surface-positions/flap-pos-norm</property>
+	<property>/surface-positions/flap-pos-norm</property>
 	<factor>-35</factor>
 	<axis>
 	    <x1-m>17.46</x1-m>
@@ -178,7 +178,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lflapsint</object-name>
-	<property>surface-positions/flap-pos-norm</property>
+	<property>/surface-positions/flap-pos-norm</property>
 	<factor>35</factor>
 	<axis>
 	    <x1-m>17.46</x1-m>
@@ -193,7 +193,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rudder</object-name>
-	<property>surface-positions/rudder-pos-norm</property>
+	<property>/surface-positions/rudder-pos-norm</property>
 	<factor>-18</factor>
 	<offset-deg>0</offset-deg>
 	<axis>
@@ -235,7 +235,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>noseLandingGear</object-name>
-	<property>gear/gear[0]/position-norm</property>
+	<property>/gear/gear[0]/position-norm</property>
 	<center>
 	    <x-m>8.7594</x-m>
 	    <y-m>  0.0 </y-m>
@@ -262,7 +262,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lnosegear.door</object-name>
-	<property>gear/gear[0]/position-norm</property>
+	<property>/gear/gear[0]/position-norm</property>
 	<axis>
 	    <x1-m>8.459</x1-m>
 	    <y1-m>-0.498</y1-m>
@@ -290,7 +290,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rnosegear.door</object-name>
-	<property>gear/gear[0]/position-norm</property>
+	<property>/gear/gear[0]/position-norm</property>
 	<axis>
 	    <x1-m>8.459</x1-m>
 	    <y1-m>0.498</y1-m>
@@ -318,7 +318,7 @@
     <!-- steering -->
     <animation>
 	<type>rotate</type>
-	<property>gear/gear[0]/steering-norm</property>
+	<property>/gear/gear[0]/steering-norm</property>
 	<object-name>noseBogie</object-name>
 	<object-name>nosegear.strut</object-name>
 	<object-name>NoseLights</object-name>
@@ -333,7 +333,7 @@
 	once the nosewheel has left the ground -->
 	<condition>
 	    <equals>
-		<property>gear/gear[0]/wow</property>
+		<property>/gear/gear[0]/wow</property>
 		<value>true</value>
 	    </equals>
 	</condition>
@@ -343,7 +343,7 @@
     <animation>
 	<type>translate</type>
 	<object-name>noseWheelSet</object-name>
-	<property>gear/gear[0]/compression-norm</property>
+	<property>/gear/gear[0]/compression-norm</property>
 	<factor>0.2</factor>
 	<axis>
 	    <x>0</x>
@@ -358,7 +358,7 @@
     <animation>
 	<type>spin</type>
 	<object-name>noseWheelSet</object-name>
-	<property>gear/gear[0]/rollspeed-ms</property>
+	<property>/gear/gear[0]/rollspeed-ms</property>
 	<factor>26.7</factor>
 	<center>
 	    <x-m>8.7868</x-m>
@@ -416,7 +416,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rlg.strut1</object-name>
-	<property>gear/gear[3]/position-norm</property>
+	<property>/gear/gear[3]/position-norm</property>
 	<center>
 	    <x-m>15.6997</x-m>
 	    <y-m> 4.8285</y-m>
@@ -446,7 +446,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rlg.strut1</object-name>
-	<property>gear/gear[3]/position-norm</property>
+	<property>/gear/gear[3]/position-norm</property>
 	<center>
 	    <x-m>15.6997</x-m>
 	    <y-m> 4.8285</y-m>
@@ -477,7 +477,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rLandingGear</object-name>
-	<property>gear/gear[4]/position-norm</property>
+	<property>/gear/gear[4]/position-norm</property>
 	<center>
 	    <x-m>15.0</x-m>
 	    <y-m> 5.360 </y-m>
@@ -508,7 +508,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rlg.hinge</object-name>
-	<property>gear/gear[4]/position-norm</property>
+	<property>/gear/gear[4]/position-norm</property>
 	<center>
 	    <x-m>16.6525</x-m>
 	    <y-m> 4.8284</y-m>
@@ -543,7 +543,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rlgWheelSet</object-name>
-	<property>gear/gear[4]/position-norm</property>
+	<property>/gear/gear[4]/position-norm</property>
 	<center>
 	    <x-m>16.3555</x-m>
 	    <y-m> 4.8285</y-m>
@@ -574,7 +574,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rlg.door</object-name>
-	<property>gear/gear[4]/position-norm</property>
+	<property>/gear/gear[4]/position-norm</property>
 	<center>
 	    <x-m>15.5843</x-m>
 	    <y-m> 5.4132</y-m>
@@ -611,7 +611,7 @@
     <animation>
 	<type>spin</type>
 	<object-name>rlgFrontWheels</object-name>
-	<property>gear/gear[3]/rollspeed-ms</property>
+	<property>/gear/gear[3]/rollspeed-ms</property>
 	<factor>30</factor>
 	<center>
 	    <x-m>15.9949</x-m>
@@ -627,7 +627,7 @@
     <animation>
 	<type>spin</type>
 	<object-name>rlgRearWheels</object-name>
-	<property>gear/gear[4]/rollspeed-ms</property>
+	<property>/gear/gear[4]/rollspeed-ms</property>
 	<factor>30</factor>
 	<center>
 	    <x-m>16.7165</x-m>
@@ -686,7 +686,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>llg.strut1</object-name>
-	<property>gear/gear[1]/position-norm</property>
+	<property>/gear/gear[1]/position-norm</property>
 	<center>
 	    <x-m>15.6997</x-m>
 	    <y-m>-4.8285</y-m>
@@ -716,7 +716,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>llg.strut1</object-name>
-	<property>gear/gear[1]/position-norm</property>
+	<property>/gear/gear[1]/position-norm</property>
 	<center>
 	    <x-m>15.6997</x-m>
 	    <y-m>-4.8285</y-m>
@@ -747,7 +747,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lLandingGear</object-name>
-	<property>gear/gear[2]/position-norm</property>
+	<property>/gear/gear[2]/position-norm</property>
 	<center>
 	    <x-m>15.0</x-m>
 	    <y-m>-5.360 </y-m>
@@ -778,7 +778,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>llg.hinge</object-name>
-	<property>gear/gear[2]/position-norm</property>
+	<property>/gear/gear[2]/position-norm</property>
 	<center>
 	    <x-m>16.6525</x-m>
 	    <y-m>-4.8284</y-m>
@@ -813,7 +813,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>llgWheelSet</object-name>
-	<property>gear/gear[2]/position-norm</property>
+	<property>/gear/gear[2]/position-norm</property>
 	<center>
 	    <x-m>16.3555</x-m>
 	    <y-m>-4.8285</y-m>
@@ -844,7 +844,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>llg.door</object-name>
-	<property>gear/gear[2]/position-norm</property>
+	<property>/gear/gear[2]/position-norm</property>
 	<center>
 	    <x-m>15.5843</x-m>
 	    <y-m>-5.4132</y-m>
@@ -882,7 +882,7 @@
     <animation>
 	<type>spin</type>
 	<object-name>llgFrontWheels</object-name>
-	<property>gear/gear[1]/rollspeed-ms</property>
+	<property>/gear/gear[1]/rollspeed-ms</property>
 	<factor>30</factor>
 	<center>
 	    <x-m>15.9949</x-m>
@@ -898,7 +898,7 @@
     <animation>
 	<type>spin</type>
 	<object-name>llgRearWheels</object-name>
-	<property>gear/gear[2]/rollspeed-ms</property>
+	<property>/gear/gear[2]/rollspeed-ms</property>
 	<factor>30</factor>
 	<center>
 	    <x-m>16.7165</x-m>
@@ -919,7 +919,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>l.speedbrake</object-name>
-	<property>surface-positions/speedbrake-pos-norm</property>
+	<property>/surface-positions/speedbrake-pos-norm</property>
 	<interpolation>
 	    <entry>
 		<ind>0</ind>
@@ -949,7 +949,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>lspeedbrake.ram1</object-name>
-	<property>surface-positions/speedbrake-pos-norm</property>
+	<property>/surface-positions/speedbrake-pos-norm</property>
 	<interpolation>
 	    <entry>
 		<ind>0</ind>
@@ -979,7 +979,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>r.speedbrake</object-name>
-	<property>surface-positions/speedbrake-pos-norm</property>
+	<property>/surface-positions/speedbrake-pos-norm</property>
 	<interpolation>
 	    <entry>
 		<ind>0</ind>
@@ -1009,7 +1009,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>rspeedbrake.ram1</object-name>
-	<property>surface-positions/speedbrake-pos-norm</property>
+	<property>/surface-positions/speedbrake-pos-norm</property>
 	<interpolation>
 	    <entry>
 		<ind>0</ind>
@@ -1045,11 +1045,11 @@
 	<type>select</type>
 	<object-name>RightBBDoor</object-name>
 	<object-name>LeftBBDoor</object-name>
-	<property>controls/doors/bomb-bay/position-norm</property>
+	<property>/controls/doors/bomb-bay/position-norm</property>
 	<condition>
 	    <not>
 		<equals>
-		    <property>sim/armament/mission</property>
+		    <property>/sim/armament/mission</property>
 		    <value>BlueSteel</value>
 		</equals>
 	    </not>
@@ -1059,7 +1059,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>RightBBDoor</object-name>
-	<property>controls/doors/bomb-bay/position-norm</property>
+	<property>/controls/doors/bomb-bay/position-norm</property>
 	<axis>
 	    <x1-m>20.2265</x1-m>
 	    <y1-m>0.7717</y1-m>
@@ -1088,7 +1088,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>LeftBBDoor</object-name>
-	<property>controls/doors/bomb-bay/position-norm</property>
+	<property>/controls/doors/bomb-bay/position-norm</property>
 	<axis>
 
 	    <x1-m>20.2265</x1-m>
@@ -1118,7 +1118,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>CockpitDoor</object-name>
-	<property>controls/doors/cockpit-door/position-norm</property>
+	<property>/controls/doors/cockpit-door/position-norm</property>
 	<axis>
 	    <x1-m>5.4033</x1-m>
 	    <y1-m>-1.1229</y1-m>
@@ -1147,7 +1147,7 @@
 	<type>rotate</type>
 	<object-name>ChuteDoor_0</object-name>
 	<object-name>ChuteDoor_1</object-name>
-	<property>controls/doors/chute-door/position-norm</property>
+	<property>/controls/doors/chute-door/position-norm</property>
 	<axis>
 	    <x1-m>29.80</x1-m>
 	    <y1-m>-1.00</y1-m>
@@ -1177,7 +1177,7 @@
 	<object-name>Chute</object-name>
 	<condition>
 	    <greater-than>
-		<property>controls/flight/chute-pos-norm</property>
+		<property>/controls/flight/chute-pos-norm</property>
 		<value>0.1</value>
 	    </greater-than>
 	</condition>
@@ -1186,7 +1186,7 @@
     <animation>
 	<type>scale</type>
 	<object-name>Chute</object-name>
-	<property>controls/flight/chute-pos-norm</property>
+	<property>/controls/flight/chute-pos-norm</property>
 	<center>
 	    <x-m>31.00</x-m>
 	    <y-m> 0.00</y-m>
@@ -1204,11 +1204,11 @@
 	<type>select</type>
 	<object-name>rfuel.hose</object-name>
 	<object-name>lfuel.hose</object-name>
-	<property>controls/refuelling/drogues/position-norm</property>
+	<property>/controls/refuelling/drogues/position-norm</property>
 	<condition>
 	    <property>/sim/variant/tanker</property>
 	    <equals>
-		<property>controls/refuelling/drogues/position-norm</property>
+		<property>/controls/refuelling/drogues/position-norm</property>
 		<value>0.0</value>
 	    </equals>
 	</condition>
@@ -1221,7 +1221,7 @@
 	<condition>
 	    <property>/sim/variant/tanker</property>
 	    <greater-than>
-		<property>controls/refuelling/drogues/position-norm</property>
+		<property>/controls/refuelling/drogues/position-norm</property>
 		<value>0.01</value>
 	    </greater-than>
 	</condition>
@@ -1231,7 +1231,7 @@
 	<type>scale</type>
 	<object-name>Leftrefuel-hose</object-name>
 	<object-name>Rightrefuel-hose</object-name>
-	<property>controls/refuelling/drogues/position-norm</property>
+	<property>/controls/refuelling/drogues/position-norm</property>
 	<center>
 	    <x-m>21.00</x-m>
 	    <y-m> 0.00</y-m>
@@ -1275,10 +1275,10 @@
 	<condition>
 	    <and>
 		<less-than>
-		    <property>controls/engines/engine[0]/throttle/</property>
+		    <property>/controls/engines/engine[0]/throttle/</property>
 		    <value>0.1</value>
 		</less-than>
-		<property>engines/engine[0]/running</property>
+		<property>/engines/engine[0]/running</property>
 	    </and>
 	</condition>
     </model>
@@ -1294,10 +1294,10 @@
 	<condition>
 	    <and>
 		<less-than>
-		    <property>controls/engines/engine[1]/throttle/</property>
+		    <property>/controls/engines/engine[1]/throttle/</property>
 		    <value>0.1</value>
 		</less-than>
-		<property>engines/engine[1]/running</property>
+		<property>/engines/engine[1]/running</property>
 	    </and>
 	</condition>
     </model>
@@ -1313,10 +1313,10 @@
 	<condition>
 	    <and>
 		<less-than>
-		    <property>controls/engines/engine[2]/throttle/</property>
+		    <property>/controls/engines/engine[2]/throttle/</property>
 		    <value>0.1</value>
 		</less-than>
-		<property>engines/engine[2]/running</property>
+		<property>/engines/engine[2]/running</property>
 	    </and>
 	</condition>
     </model>
@@ -1332,10 +1332,10 @@
 	<condition>
 	    <and>
 		<less-than>
-		    <property>controls/engines/engine[3]/throttle/</property>
+		    <property>/controls/engines/engine[3]/throttle/</property>
 		    <value>0.1</value>
 		</less-than>
-		<property>engines/engine[3]/running</property>
+		<property>/engines/engine[3]/running</property>
 	    </and>
 	</condition>
     </model>
@@ -1397,27 +1397,27 @@
     </model>
 
     <!-- Lights -->
-
+<!--
     <model>
-        <name>ExtLights</name>
-        <path>Lights/extlights.xml</path>
-        <offsets>
-            <x-m>0.0</x-m>
-            <y-m>0.0</y-m>
-            <z-m>2.6</z-m>
-        </offsets>
+	<name>ExtLights</name>
+	<path>Lights/extlights.xml</path>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.0</y-m>
+	    <z-m>2.6</z-m>
+	</offsets>
     </model>
 
     <model>
-        <name>NoseLights</name>
-        <path>Lights/noselights.xml</path>
-        <offsets>
-            <x-m>0.0</x-m>
-            <y-m>0.0</y-m>
-            <z-m>2.6</z-m>
-        </offsets>
+	<name>NoseLights</name>
+	<path>Lights/noselights.xml</path>
+	<offsets>
+	    <x-m>0.0</x-m>
+	    <y-m>0.0</y-m>
+	    <z-m>2.6</z-m>
+	</offsets>
     </model>
-
+-->
 </PropertyList>
 
 

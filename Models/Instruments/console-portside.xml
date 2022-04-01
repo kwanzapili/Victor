@@ -329,7 +329,7 @@
 
     <model>
 	<name>Limit</name>
-	<path>Aircraft/vulcanb2/Models/Instruments/radar-limiter.xml</path>
+	<path>Aircraft/victor/Models/Instruments/radar-limiter.xml</path>
 	<offsets>
 	    <x-m> 0.130</x-m>
 	    <y-m>-0.015</y-m>
@@ -341,7 +341,7 @@
 
     <model>
 	<name>EmergencyJettison</name>
-	<path>Aircraft/vulcanb2/Models/Instruments/emergency-bomb-jettison.xml</path>
+	<path>Aircraft/victor/Models/Instruments/Switches/emergency-bomb-jettison.xml</path>
 	<offsets>
 	    <x-m>0.24</x-m>
 	    <y-m>0.03</y-m>
@@ -351,7 +351,7 @@
 
     <model>
 	<name>EmergencyBombBayDoors</name>
-	<path>Aircraft/vulcanb2/Models/Instruments/emergency-bomb-door.xml</path>
+	<path>Aircraft/victor/Models/Instruments/Switches/emergency-bomb-door.xml</path>
 	<offsets>
 	    <x-m>0.24</x-m>
 	    <y-m>0.01</y-m>
@@ -361,7 +361,7 @@
 
     <model>
 	<name>BombBayDoors</name>
-	<path>Aircraft/vulcanb2/Models/Instruments/bomb-door-switch.xml</path>
+	<path>Aircraft/victor/Models/Instruments/Switches/bomb-door-switch.xml</path>
 	<offsets>
 	    <x-m> 0.24</x-m>
 	    <y-m>-0.01</y-m>
@@ -382,7 +382,7 @@
 	    <red>  0.5</red>
 	    <green>0.5</green>
 	    <blue> 0.5</blue>
-	    <factor-prop>controls/lighting/panel-norm</factor-prop>
+	    <factor-prop>/controls/lighting/panel-norm</factor-prop>
 	</emission>
 	<shininess>100</shininess>
     </animation>

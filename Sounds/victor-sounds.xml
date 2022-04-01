@@ -29,7 +29,7 @@
 		    <value>0</value>
 		</greater-than>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>once</mode>
@@ -55,14 +55,14 @@
 		    <value>0.98</value>
 		</greater-than>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
 	    <reference-dist>20</reference-dist>
 	    <max-dist>100</max-dist>
 	    <position>
-		<x>-1.00 </x>
+		<x>10.00 </x>
 		<y> 0.10 </y>
 		<z>-0.15 </z>
 	    </position>
@@ -80,7 +80,7 @@
 		    <property>/controls/electric/external-power</property>
 		</not>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>once</mode>
@@ -137,19 +137,19 @@
 		    <value>2</value>
 		</equals>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
 	    <reference-dist>20</reference-dist>
 	    <max-dist>100</max-dist>
 	    <volume>
-		<property>engines/engine[4]/n1</property>
+		<property>/engines/engine[4]/n1</property>
 		<factor>0.04</factor>
 		<min>0.2</min>
 	    </volume>
 	    <pitch>
-		<property>engines/engine[4]/n2</property>
+		<property>/engines/engine[4]/n2</property>
 		<factor>0.1</factor>
 		<offset>-0.5</offset>
 		<min>-1.0</min>
@@ -211,7 +211,7 @@
 		<and>
 		    <property>/engines/engine[0]/starter</property>
 		    <not>
-			<property>sim/crashed</property>
+			<property>/sim/crashed</property>
 		    </not>
 		</and>
 	    </condition>
@@ -219,10 +219,10 @@
 	    <reference-dist>25</reference-dist>
 	    <max-dist>100</max-dist>
 	    <volume>
-		<property>controls/engines/engine[0]/starter-sound</property>
+		<property>/controls/engines/engine[0]/starter-sound</property>
 	    </volume>
 	    <pitch>
-		<property>engines/engine[0]/n1</property>
+		<property>/engines/engine[0]/n1</property>
 		<factor>0.1</factor>
 		<offset>-0.5</offset>
 		<min>-1.0</min>
@@ -250,18 +250,18 @@
 		<property>/engines/engine[0]/running</property>
 		<or>
 		    <not>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 		    </not>
 		    <and>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 			<greater-than>
-			    <property>controls/doors/cockpit-door/position-norm</property>
+			    <property>/controls/doors/cockpit-door/position-norm</property>
 			    <value>0.1</value>
 			</greater-than>
 		    </and>
 		</or>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -294,10 +294,10 @@
 	    <name>internal whine1</name>
 	    <path>Sounds/whine.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<property>/engines/engine[0]/running</property>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -340,9 +340,9 @@
 			<property>/engines/engine[0]/n1</property>
 			<value>5</value>
 		    </greater-than>
-			<not>
-		    <property>sim/crashed</property>
-		</not>
+		    <not>
+			<property>/sim/crashed</property>
+		    </not>
 		</and>
 	    </condition>
 	    <mode>looped</mode>
@@ -382,7 +382,7 @@
 		<and>
 		    <property>/engines/engine[1]/starter</property>
 		    <not>
-			<property>sim/crashed</property>
+			<property>/sim/crashed</property>
 		    </not>
 		</and>
 	    </condition>
@@ -390,10 +390,10 @@
 	    <reference-dist>25</reference-dist>
 	    <max-dist>100</max-dist>
 	    <volume>
-		<property>controls/engines/engine[1]/starter-sound</property>
+		<property>/controls/engines/engine[1]/starter-sound</property>
 	    </volume>
 	    <pitch>
-		<property>engines/engine[1]/n1</property>
+		<property>/engines/engine[1]/n1</property>
 		<factor>0.1</factor>
 		<offset>-0.5</offset>
 		<min>-1.0</min>
@@ -421,18 +421,18 @@
 		<property>/engines/engine[1]/running</property>
 		<or>
 		    <not>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 		    </not>
 		    <and>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 			<greater-than>
-			    <property>controls/doors/cockpit-door/position-norm</property>
+			    <property>/controls/doors/cockpit-door/position-norm</property>
 			    <value>0.1</value>
 			</greater-than>
 		    </and>
 		</or>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -465,10 +465,10 @@
 	    <name>internal whine2</name>
 	    <path>Sounds/whine.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<property>/engines/engine[1]/running</property>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -511,9 +511,9 @@
 			<property>/engines/engine[1]/n1</property>
 			<value>5</value>
 		    </greater-than>
-		<not>
-		    <property>sim/crashed</property>
-		</not>
+		    <not>
+			<property>/sim/crashed</property>
+		    </not>
 		</and>
 	    </condition>
 	    <mode>looped</mode>
@@ -553,7 +553,7 @@
 		<and>
 		    <property>/engines/engine[2]/starter</property>
 		    <not>
-			<property>sim/crashed</property>
+			<property>/sim/crashed</property>
 		    </not>
 		</and>
 	    </condition>
@@ -561,10 +561,10 @@
 	    <reference-dist>25</reference-dist>
 	    <max-dist>100</max-dist>
 	    <volume>
-		<property>controls/engines/engine[2]/starter-sound</property>
+		<property>/controls/engines/engine[2]/starter-sound</property>
 	    </volume>
 	    <pitch>
-		<property>engines/engine[2]/n1</property>
+		<property>/engines/engine[2]/n1</property>
 		<factor>0.1</factor>
 		<offset>-0.5</offset>
 		<min>-1.0</min>
@@ -592,18 +592,18 @@
 		<property>/engines/engine[2]/running</property>
 		<or>
 		    <not>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 		    </not>
 		    <and>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 			<greater-than>
-			    <property>controls/doors/cockpit-door/position-norm</property>
+			    <property>/controls/doors/cockpit-door/position-norm</property>
 			    <value>0.1</value>
 			</greater-than>
 		    </and>
 		</or>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -636,10 +636,10 @@
 	    <name>internal whine3</name>
 	    <path>Sounds/whine.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<property>/engines/engine[2]/running</property>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -682,9 +682,9 @@
 			<property>/engines/engine[2]/n1</property>
 			<value>5</value>
 		    </greater-than>
-		<not>
-		    <property>sim/crashed</property>
-		</not>
+		    <not>
+			<property>/sim/crashed</property>
+		    </not>
 		</and>
 	    </condition>
 	    <mode>looped</mode>
@@ -723,7 +723,7 @@
 		<and>
 		    <property>/engines/engine[3]/starter</property>
 		    <not>
-			<property>sim/crashed</property>
+			<property>/sim/crashed</property>
 		    </not>
 		</and>
 	    </condition>
@@ -731,10 +731,10 @@
 	    <reference-dist>25</reference-dist>
 	    <max-dist>100</max-dist>
 	    <volume>
-		<property>controls/engines/engine[3]/starter-sound</property>
+		<property>/controls/engines/engine[3]/starter-sound</property>
 	    </volume>
 	    <pitch>
-		<property>engines/engine[3]/n1</property>
+		<property>/engines/engine[3]/n1</property>
 		<factor>0.1</factor>
 		<offset>-0.5</offset>
 		<min>-1.0</min>
@@ -762,18 +762,18 @@
 		<property>/engines/engine[3]/running</property>
 		<or>
 		    <not>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 		    </not>
 		    <and>
-			<property>sim/current-view/internal</property>
+			<property>/sim/current-view/internal</property>
 			<greater-than>
-			    <property>controls/doors/cockpit-door/position-norm</property>
+			    <property>/controls/doors/cockpit-door/position-norm</property>
 			    <value>0.0</value>
 			</greater-than>
 		    </and>
 		</or>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -806,10 +806,10 @@
 	    <name>internal whine4</name>
 	    <path>Sounds/whine.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<property>/engines/engine[3]/running</property>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -852,7 +852,7 @@
 		    <value>5</value>
 		</greater-than>
 		<not>
-		    <property>sim/crashed</property>
+		    <property>/sim/crashed</property>
 		</not>
 	    </condition>
 	    <mode>looped</mode>
@@ -888,7 +888,7 @@
 	    <name>rumble</name>
 	    <path>Sounds/rumble.wav</path>
 	    <condition>
-		<not><property>sim/current-view/internal</property></not>
+		<not><property>/sim/current-view/internal</property></not>
 		<or>
 		    <property>/gear/gear[0]/wow</property>
 		    <property>/gear/gear[1]/wow</property>
@@ -909,7 +909,7 @@
 	    <name>roll on runway</name>
 	    <path>Sounds/roll.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<or>
 		    <property>/gear/gear[0]/wow</property>
 		    <property>/gear/gear[1]/wow</property>
@@ -925,7 +925,7 @@
 		<z>-2.1</z>
 	    </position>
 	    <volume>
-		<property>velocities/groundspeed-kt</property>
+		<property>/velocities/groundspeed-kt</property>
 		<type>log</type>
 		<factor>0.025</factor>
 	    </volume>
@@ -1020,7 +1020,7 @@
 	<brake>
 	    <name>speedbrake</name>
 	    <path>Sounds/speedbrake.wav</path>
-	    <property>surface-positions/speedbrake-pos-norm</property>
+	    <property>/surface-positions/speedbrake-pos-norm</property>
 	    <mode>in-transit</mode>
 	    <reference-dist>30</reference-dist>
 	    <max-dist>100</max-dist>
@@ -1047,7 +1047,7 @@
 	    <name>wind</name>
 	    <path>Sounds/wind1.wav</path>
 	    <condition>
-		<not><property>sim/current-view/internal</property></not>
+		<not><property>/sim/current-view/internal</property></not>
 		<greater-than>
 		    <property>/velocities/airspeed-kt</property>
 		    <value>5</value>
@@ -1078,14 +1078,14 @@
 	    <name>rain_int</name>
 	    <path>Sounds/rain-windshield.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<or>
 		    <greater-than>
-			<property>environment/rain-norm</property>
+			<property>/environment/rain-norm</property>
 			<value>0.2</value>
 		    </greater-than>
 		    <greater-than>
-			<property>environment/snow-norm</property>
+			<property>/environment/snow-norm</property>
 			<value>0.2</value>
 		    </greater-than>
 		</or>
@@ -1111,7 +1111,7 @@
 	    <path>Sounds/rain.wav</path>
 	    <condition>
 		<not>
-		    <property>sim/current-view/internal</property>
+		    <property>/sim/current-view/internal</property>
 		</not>
 		<greater-than>
 		    <property>/environment/rain-norm</property>
@@ -1131,15 +1131,15 @@
 	    <name>brake wind</name>
 	    <path>Sounds/speedbrake-wind.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<greater-than>
-		    <property>surface-positions/speedbrake-pos-norm</property>
+		    <property>/surface-positions/speedbrake-pos-norm</property>
 		    <value>0.5</value>
 		</greater-than>
 	    </condition>
 	    <mode>looped</mode>
 	    <volume>
-		<property>velocities/airspeed-kt</property>
+		<property>/velocities/airspeed-kt</property>
 		<factor>0.001</factor>
 	    </volume>
 	</brake-wind>
@@ -1149,13 +1149,13 @@
 	    <path>Sounds/speedbrake-wind.wav</path>
 	    <condition>
 		<greater-than>
-		    <property>controls/flight/chute-pos-norm</property>
+		    <property>/controls/flight/chute-pos-norm</property>
 		    <value>0.5</value>
 		</greater-than>
 	    </condition>
 	    <mode>looped</mode>
 	    <volume>
-		<property>velocities/airspeed-kt</property>
+		<property>/velocities/airspeed-kt</property>
 		<factor>0.001</factor>
 	    </volume>
 	</chute-wind>
@@ -1230,7 +1230,7 @@
 	<locks>
 	    <name>baydoor_lock</name>
 	    <path>Sounds/control-lock.wav</path>
-	    <property>sim/sound/effects/bay-lock</property>
+	    <property>/sim/sound/effects/bay-lock</property>
 	    <mode>once</mode>
 	    <reference-dist>10</reference-dist>
 	    <pitch>
@@ -1340,7 +1340,7 @@
 	    <path>Sounds/control-lock.wav</path>
 	    <condition>
 		<equals>
-		    <property>sim/sound/effects/chute-switch</property>
+		    <property>/sim/sound/effects/chute-switch</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1378,8 +1378,8 @@
 	    <name>click switch</name>
 	    <path>Sounds/click.wav</path>
 	    <condition>
-		<property>sim/sound/effects/click</property>
-		<property>sim/current-view/internal</property>
+		<property>/sim/sound/effects/click</property>
+		<property>/sim/current-view/internal</property>
 	    </condition>
 	    <mode>once</mode>
 	    <type>avionics</type>
@@ -1393,8 +1393,8 @@
 	    <name>knob scroll</name>
 	    <path>Sounds/scroll.wav</path>
 	    <condition>
-		<property>sim/sound/effects/scroll</property>
-		<property>sim/current-view/internal</property>
+		<property>/sim/sound/effects/scroll</property>
+		<property>/sim/current-view/internal</property>
 	    </condition>
 	    <mode>once</mode>
 	    <type>avionics</type>
@@ -1408,8 +1408,8 @@
 	    <name>toggle switch</name>
 	    <path>Sounds/click-v3.wav</path>
 	    <condition>
-		<property>sim/sound/effects/switch</property>
-		<property>sim/current-view/internal</property>
+		<property>/sim/sound/effects/switch</property>
+		<property>/sim/current-view/internal</property>
 	    </condition>
 	    <mode>once</mode>
 	    <type>avionics</type>
@@ -1438,9 +1438,13 @@
 	    <path>Sounds/engine-crank.wav</path>
 	    <condition>
 		<property>/controls/engines/starter-engaged</property>
-		<not>
-		    <property>/controls/engines/shutdown</property>
-		</not>
+		<or>
+		    <property>/controls/engines/engine[0]/starter</property>
+		    <property>/controls/engines/engine[1]/starter</property>
+		    <property>/controls/engines/engine[2]/starter</property>
+		    <property>/controls/engines/engine[3]/starter</property>
+		    <property>/controls/engines/engine[4]/starter</property>
+		</or>
 	    </condition>
 	    <mode>once</mode>
 	    <type>avionics</type>
@@ -1454,7 +1458,7 @@
 	<v1>
 	    <name>v1</name>
 	    <path>Sounds/V1.wav</path>
-	    <property>instrumentation/annunciator/V1</property>
+	    <property>/instrumentation/annunciator/V1</property>
 	    <mode>once</mode>
 	    <type>avionics</type>
 	    <volume>
@@ -1465,7 +1469,7 @@
 	<caution>
 	    <name>caution</name>
 	    <path>Sounds/autopilot-disengage.wav</path>
-	    <property>instrumentation/annunciator/master-caution</property>
+	    <property>/instrumentation/annunciator/master-caution</property>
 	    <mode>once</mode>
 	    <type>avionics</type>
 	    <volume>
@@ -1485,7 +1489,7 @@
 	    <path>Sounds/aircraft-explode.wav</path>
 	    <condition>
 		<equals>
-		    <property>damage/sounds/explode-on</property>
+		    <property>/damage/sounds/explode-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1506,7 +1510,7 @@
 	    <path>Sounds/aircraft-wings-detach.wav</path>
 	    <condition>
 		<equals>
-		    <property>damage/sounds/detach-on</property>
+		    <property>/damage/sounds/detach-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1526,7 +1530,7 @@
 	    <path>Sounds/aircraft-crash.wav</path>
 	    <condition>
 		<equals>
-		    <property>damage/sounds/crash-on</property>
+		    <property>/damage/sounds/crash-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1546,7 +1550,7 @@
 	    <path>Sounds/aircraft-water-crash.wav</path>
 	    <condition>
 		<equals>
-		    <property>damage/sounds/water-crash-on</property>
+		    <property>/damage/sounds/water-crash-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1565,9 +1569,9 @@
 	    <name>aircraft-crack</name>
 	    <path>Sounds/aircraft-crack.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<equals>
-		    <property>damage/sounds/crack-on</property>
+		    <property>/damage/sounds/crack-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1578,7 +1582,7 @@
 		<z>0.01</z>
 	    </position>
 	    <volume>
-		<property>damage/sounds/crack-volume</property>
+		<property>/damage/sounds/crack-volume</property>
 		<factor>1</factor>
 	    </volume>
 	</aircraft-crack>
@@ -1587,9 +1591,9 @@
 	    <name>aircraft-creaking</name>
 	    <path>Sounds/aircraft-creaking.wav</path>
 	    <condition>
-		<property>sim/current-view/internal</property>
+		<property>/sim/current-view/internal</property>
 		<equals>
-		    <property>damage/sounds/creaking-on</property>
+		    <property>/damage/sounds/creaking-on</property>
 		    <value>1</value>
 		</equals>
 	    </condition>
@@ -1600,7 +1604,7 @@
 		<z>0.01</z>
 	    </position>
 	    <volume>
-		<property>damage/sounds/creaking-volume</property>
+		<property>/damage/sounds/creaking-volume</property>
 		<factor>1</factor>
 	    </volume>
 	</aircraft-creaking>
@@ -1612,11 +1616,11 @@
 	    <name>bomb-explosion</name>
 	    <path>Sounds/explosion.wav</path>
 	    <condition>
-		<property>sim/sound/armament/explosion</property>
+		<property>/sim/sound/armament/explosion</property>
 	    </condition>
 	    <mode>looped</mode>
 	    <volume>
-		<property>sim/sound/armament/explosion-volume</property>
+		<property>/sim/sound/armament/explosion-volume</property>
 		<factor>1</factor>
 	    </volume>
 	</explosion>
@@ -1625,11 +1629,11 @@
 	    <name>missile-hit</name>
 	    <path>Sounds/missile-hit.wav</path>
 	    <condition>
-		<property>sim/sound/armament/missile-hit</property>
+		<property>/sim/sound/armament/missile-hit</property>
 	    </condition>
 	    <mode>once</mode>
 	    <volume>
-		<property>sim/sound/armament/explosion-volume</property>
+		<property>/sim/sound/armament/explosion-volume</property>
 		<factor>1</factor>
 	    </volume>
 	</explosion>
@@ -1639,7 +1643,7 @@
 	    <name>detach-weapon</name>
 	    <path>Sounds/armament-release.wav</path>
 	    <condition>
-		<property>sim/sound/armament/armament-release</property>
+		<property>/sim/sound/armament/armament-release</property>
 	    </condition>
 	    <mode>once</mode>
 	    <pitch>
@@ -1655,8 +1659,8 @@
 	    <name>shrike-fired</name>
 	    <path>Sounds/missile.wav</path>
 	    <condition>
-		<property>sim/sound/armament/missile-fired</property>
-		<not><property>sim/sound/armament/cruise-missile</property></not>
+		<property>/sim/sound/armament/missile-fired</property>
+		<not><property>/sim/sound/armament/cruise-missile</property></not>
 	    </condition>
 	    <mode>once</mode>
 	    <reference-dist>50</reference-dist>
@@ -1666,7 +1670,7 @@
 		<z>-0.7 </z>
 	    </position>
 	    <volume>
-		<property>sim/sound/armament/missile-volume</property>
+		<property>/sim/sound/armament/missile-volume</property>
 		<factor>1.0</factor>
 	    </volume>
 	</missile>
@@ -1675,8 +1679,8 @@
 	    <name>cruise-missile-launch</name>
 	    <path>Sounds/cruise-missile-launch.wav</path>
 	    <condition>
-		<property>sim/sound/armament/missile-fired</property>
-		<property>sim/sound/armament/cruise-missile</property>
+		<property>/sim/sound/armament/missile-fired</property>
+		<property>/sim/sound/armament/cruise-missile</property>
 	    </condition>
 	    <mode>once</mode>
 	    <reference-dist>50</reference-dist>
@@ -1686,7 +1690,7 @@
 		<z>-0.7 </z>
 	    </position>
 	    <volume>
-		<property>sim/sound/armament/missile-volume</property>
+		<property>/sim/sound/armament/missile-volume</property>
 		<factor>1.0</factor>
 	    </volume>
 	</missile>
@@ -1696,7 +1700,7 @@
 	    <name>proble-contact</name>
 	    <path>Sounds/shlock.wav</path>
 	    <condition>
-		<property>systems/refuel/contact</property>
+		<property>/systems/refuel/contact</property>
 	    </condition>
 	    <mode>once</mode>
 	    <position>

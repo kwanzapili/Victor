@@ -23,7 +23,7 @@ var repair_electrical = func () {
     if ( acpower == TRUE and RepairCount < 4) {
 	RepairCount = RepairCount + 1;
 	var t = maketimer(RepairCount, func {
-		setprop("sim/failure-manager/systems/electrical/failure-level", 0.0);
+		setprop("/sim/failure-manager/systems/electrical/failure-level", 0.0);
 		});
 	t.singleShot = TRUE;
 	t.start();
@@ -112,7 +112,7 @@ var gear_damaged = func () {
     var condition = 1 - level;
     setprop("/damage/controls/gear-condition", condition);
     if (level > fail)
-	setprop("sim/failure-manager/controls/gear/failure-level", level);
+	setprop("/sim/failure-manager/controls/gear/failure-level", level);
 };
 
 setlistener("sim/failure-manager/controls/gear/failure-level", gear_damaged, 0, 0);

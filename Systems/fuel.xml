@@ -18,6 +18,7 @@
 
     For our purpsoes, we will only model 16 tanks:
 	2 x 5 wing tanks, 4 fuselage and 2 bomb bay tanks
+	We also added a small collector tank for use by the APU.
     ******************************************************************************
 -->
 
@@ -42,8 +43,8 @@
 
 	Fuselage Tanks (should be 8)
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Engines                      Capacity
-	Tank Name       1       2       3       4      APU     (lb)
+	Engines                      				Capacity
+	Tank Name       1       2       3       4      APU     	(lb)
 	Fuselage 7      X               X               X       8,000
 	Fuselage 8+9            X               X       X       8,026
 	Fuselage 10+11  X       X       X       X       X       9,000
@@ -61,17 +62,17 @@
 
 	The groups are linked to the engines that the tanks feed. So these are
 	essentially the wing tanks:
-	    Group    Engine   Tanks
-	    1         1       P1, P5
-	    2         2       P3+4, P6
-	    3         3       S1, S5
-	    4         4       S3+4, S6
+	Group    Engine   Tanks
+	1         1       P1, P5
+	2         2       P3+4, P6
+	3         3       S1, S5
+	4         4       S3+4, S6
 
 	The tank pairs are in the form (Fore, Aft). The fore tank only does aft
 	transfers while the aft tank only does forward transfers.
 	Wing:	    (P1 ~ P5), (P3+4 ~ P6), (S1 ~ S5), (S3+4 ~ S6)
 	Fuselage:   (F7 ~ F12), (F5+9 ~ F10+11)
-	Bom bay:    (Fore ~ Aft)
+	Bomb bay:    (Fore ~ Aft)
 
 	Mapping to tank numbers:
 	Name	P1  P3+4  P5   P6  PUW  S1  S3+4  S5   S6  SUW  F7  F8+9  F10+11  F12  BBF  BBA
@@ -85,6 +86,8 @@
     <property value="500"> systems/fuel/cross-feed-stop </property>
     <!-- cross-feed transfer rate from any tank is 60 lb/min (1 pps) -->
     <property value="1"> systems/fuel/cross-feed-pps </property>
+    <!-- maximum flow rate into APU tank -->
+    <property value="1"> systems/propulsion/APU/tank-feed-pps </property>
 
     <channel name="Fuel Contents" execrate="8" >
 
@@ -163,38 +166,52 @@
 	    </test>
 	</switch>
 
+	<!--
+	    This switch operates the APU fuel supply. It is switched ON here, but must
+	    be switched OFF in the "APU Tank" channel.
+	-->
+	<switch name="systems/fuel/apu-on">
+	    <description>
+		Enable APU fuel supply
+	    </description>
+	    <default value="systems/fuel/apu-on"/>
+	    <test logic="OR" value="1">
+		/controls/APU/run EQ 1
+	    </test>
+	</switch>
+
     </channel>
 
     <!--
 	This channel manages the contents of the small APU collector tank is is only
-	needed when the APU is running. FIXME add exec
+	needed when the APU is running.
     -->
-    <channel name="APU Tank" execrate="2" >
-	<!--
-	    The APU collector tank [16] will has a capacity of 2 lb. This enables it to feed
-	    the APU for up to 10 sec without being replenished (the maximum flow rate at full
-	    power is 0.208 lb/s). The actual contents are kept nealy constant (at 2 lb content)
-	    by a step-controlled input flow rate (0 or 0.5 pps here). The "ON" value of this step
-	    flow rate must be a bit higher than the maximum" fuel-flow-rate-pps" needed by the
-	    APU at full power.
+    <channel name="APU Tank" execute="systems/fuel/apu-on" execrate="4" >
+    <!--
+	The APU collector tank [16] will has a capacity of 2 lb. This enables it to feed
+	the APU for up to 10 sec without being replenished (the maximum flow rate at full
+	power is 0.208 lb/s). The actual contents are kept above 50% (at 1 - 2 lb content)
+	by a step-controlled input flow rate (0 or 1 pps here). The "ON" value of this step
+	flow rate must be higher than the maximum" fuel-flow-rate-pps" needed by the
+	APU at full power.
 
-	    The collector tank [16] content is a compromise. A large content is secure but it gives
-	    an excessive delay between the moment when the 'true' tank runs out of fuel and the
-	    APU effectively stops running.
+	The collector tank [16] content is a compromise. A large content is secure but it gives
+	an excessive delay between the moment when the 'true' tank runs out of fuel and the
+	APU effectively stops running.
 
-	    The tank is supplied by the fuselage and bomb bay tanks in this order:
-		Tank  Name            Priority
-		14    Bomb Bay Fore	1
-		15    Bomb Bay Aft	2
-		10    Fuselage 7		3
-		11    Fuselage 8+9	4
-		13    Fuselage 12		5
-		12    Fuselage 10+11	6
-	-->
+	The tank is supplied by the fuselage and bomb bay tanks in this order:
+	    Tank  Name            Priority
+	    14    Bomb Bay Fore	1
+	    15    Bomb Bay Aft	2
+	    10    Fuselage 7	3
+	    11    Fuselage 8+9	4
+	    13    Fuselage 12	5
+	    12    Fuselage 10+11	6
+    -->
 
-	<!--
-	    start the feed when the tank contents fall below 0.75 and stop it when full
-	-->
+    <!--
+	start the feed when the tank contents fall below 0.75 and stop it when full
+    -->
 	<switch name="systems/propulsion/APU/tank-valve">
 	    <default value="systems/propulsion/APU/tank-valve"/>
 	    <!-- disable if tank is full -->
@@ -241,176 +258,184 @@
 	    </test>
 	</switch>
 
-	<!--
-	    Each tank has two related properties: tank-X-16[0] and tank-X-16[1].
-		* tank-X-16[0] is the current transfer rate from tank X
-		* tank-X-16[1] is the prior transfer rate from tank X if it needs
-		    to be stopped, or otherwise 0
-	    Therefore, the net transfer rate from tank X will be given by:
-		tank-X-16-pps = tank-X-16[0] - tank-X-16[1]
-	    Note that tank-X-16[1] is only non-zero for one cycle when the
-	    transfer is being terminated.
-	-->
-
-	<!-- set prior rates that need to be reversed -->
-
-	<switch name="systems/fuel/tank[13]/tank-14-16[1]">
-	    <description> Reset flow from tank 14 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[13]/tank-14-16[0]">
-		systems/propulsion/APU/feed-tank NE 13
-		systems/propulsion/APU/prior-tank EQ 13
-	    </test>
-	</switch>
-
-	<switch name="systems/fuel/tank[14]/tank-15-16[1]">
-	    <description> Reset flow from tank 15 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[14]/tank-15-16[0]">
-		systems/propulsion/APU/feed-tank NE 14
-		systems/propulsion/APU/prior-tank EQ 14
-	    </test>
-	</switch>
-
-	<switch name="systems/fuel/tank[9]/tank-10-16[1]">
-	    <description> Reset flow from tank 10 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[9]/tank-10-16[0]">
-		systems/propulsion/APU/feed-tank NE 9
-		systems/propulsion/APU/prior-tank EQ 9
-	    </test>
-	</switch>
-
-	<switch name="systems/fuel/tank[10]/tank-11-16[1]">
-	    <description> Reset flow from tank 11 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[10]/tank-11-16[0]">
-		systems/propulsion/APU/feed-tank NE 10
-		systems/propulsion/APU/prior-tank EQ 10
-	    </test>
-	</switch>
-
-	<switch name="systems/fuel/tank[12]/tank-13-16[1]">
-	    <description> Reset flow from tank 13 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[12]/tank-13-16[0]">
-		systems/propulsion/APU/feed-tank NE 12
-		systems/propulsion/APU/prior-tank EQ 12
-	    </test>
-	</switch>
-
-	<switch name="systems/fuel/tank[11]/tank-12-16[1]">
-	    <description> Reset flow from tank 12 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="systems/fuel/tank[11]/tank-12-16[0]">
-		systems/propulsion/APU/feed-tank NE 11
-		systems/propulsion/APU/prior-tank EQ 11
-	    </test>
-	</switch>
-
 	<!-- assign the inflow -->
 	<switch name="propulsion/tank[16]/external-flow-rate-pps">
 	    <default value="0"/>
-	    <test value="1">
+	    <test value="systems/propulsion/APU/tank-feed-pps">
 		systems/propulsion/APU/feed-tank GT 0
 		systems/propulsion/APU/tank-valve EQ 1
 		/controls/APU/run EQ 1
 	    </test>
 	</switch>
 
-	<!-- define the deduction source -->
+	<!--
+	    Each tank has two related properties: tank-X-apu-prior and tank-X-apu-pps.
+	    They both hold the current transfer rate to the APU tank. However they are
+	    updated sperately starting with tank-X-apu-pps. Before tank-X-apu-prior
+	    is updated, the difference between this two properties is added/subtracted
+	    to "external-flow-rate-pps". This difference is only non-zero for a moment
+	    (either negative or positive) because once tank-X-apu-prior is updated, the
+	    difference reverts to zero. Hence, we can use "pulses" to initiate and
+	    terminate the transfers.
+	-->
 
-	<switch name="systems/fuel/tank[13]/tank-14-16[0]">
-	    <description> Current flow from tank 14 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
-		systems/propulsion/APU/feed-tank EQ 13
-	    </test>
-	</switch>
+	<!-- ====== Tank 15 ====== -->
 
-	<switch name="systems/fuel/tank[14]/tank-15-16[0]">
-	    <description> Current flow from tank 15 into tank 16 </description>
+	<switch name="systems/fuel/tank[14]/tank-15-apu-pps">
+	    <description> Net flow from tank 15 into APU tank </description>
 	    <default value="0"/>
+	    <!-- the tank is selected -->
 	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
 		systems/propulsion/APU/feed-tank EQ 14
 	    </test>
 	</switch>
 
-	<switch name="systems/fuel/tank[9]/tank-10-16[0]">
-	    <description> Current flow from tank 10 into tank 16 </description>
+	<summer name="propulsion/tank[14]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 15 </description>
+	    <input> -systems/fuel/tank[14]/tank-15-apu-pps </input>
+	    <input> systems/fuel/tank[14]/tank-15-apu-prior </input>
+	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[14]/tank-15-apu-prior">
+	    <description> Prior net flow from tank 15 into APU tank </description>
+	    <input> systems/fuel/tank[14]/tank-15-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- ====== Tank 16 ====== -->
+
+	<switch name="systems/fuel/tank[15]/tank-16-apu-pps">
+	    <description> Net flow from tank 16 into APU tank </description>
 	    <default value="0"/>
+	    <!-- the tank is selected -->
 	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
-		systems/propulsion/APU/feed-tank EQ 9
+		systems/propulsion/APU/feed-tank EQ 15
 	    </test>
 	</switch>
 
-	<switch name="systems/fuel/tank[10]/tank-11-16[0]">
-	    <description> Current flow from tank 11 into tank 16 </description>
+	<summer name="propulsion/tank[15]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 16 </description>
+	    <input> -systems/fuel/tank[15]/tank-16-apu-pps </input>
+	    <input> systems/fuel/tank[15]/tank-16-apu-prior </input>
+	    <input> propulsion/tank[15]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[15]/tank-16-apu-prior">
+	    <description> Prior net flow from tank 16 into APU tank </description>
+	    <input> systems/fuel/tank[15]/tank-16-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- ====== Tank 11 ====== -->
+
+	<switch name="systems/fuel/tank[10]/tank-11-apu-pps">
+	    <description> Net flow from tank 11 into APU tank </description>
 	    <default value="0"/>
+	    <!-- the tank is selected -->
 	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
 		systems/propulsion/APU/feed-tank EQ 10
 	    </test>
 	</switch>
 
-	<switch name="systems/fuel/tank[12]/tank-13-16[0]">
-	    <description> Current flow from tank 13 into tank 16 </description>
-	    <default value="0"/>
-	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
-		systems/propulsion/APU/feed-tank EQ 12
-	    </test>
-	</switch>
+	<summer name="propulsion/tank[10]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 11 </description>
+	    <input> -systems/fuel/tank[10]/tank-11-apu-pps </input>
+	    <input> systems/fuel/tank[10]/tank-11-apu-prior </input>
+	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
+	</summer>
 
-	<switch name="systems/fuel/tank[11]/tank-12-16[0]">
-	    <description> Current flow from tank 12 into tank 16 </description>
+	<pure_gain name="systems/fuel/tank[10]/tank-11-apu-prior">
+	    <description> Prior net flow from tank 11 into APU tank </description>
+	    <input> systems/fuel/tank[10]/tank-11-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- ====== Tank 12 ====== -->
+
+	<switch name="systems/fuel/tank[11]/tank-12-apu-pps">
+	    <description> Net flow from tank 12 into APU tank </description>
 	    <default value="0"/>
+	    <!-- the tank is selected -->
 	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
 		systems/propulsion/APU/feed-tank EQ 11
 	    </test>
 	</switch>
 
-	<!-- substract the outflow of each engine -->
+	<summer name="propulsion/tank[11]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 12 </description>
+	    <input> -systems/fuel/tank[11]/tank-12-apu-pps </input>
+	    <input> systems/fuel/tank[11]/tank-12-apu-prior </input>
+	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[11]/tank-12-apu-prior">
+	    <description> Prior net flow from tank 12 into APU tank </description>
+	    <input> systems/fuel/tank[11]/tank-12-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!-- ====== Tank 14 ====== -->
+
+	<switch name="systems/fuel/tank[13]/tank-14-apu-pps">
+	    <description> Net flow from tank 14 into APU tank </description>
+	    <default value="0"/>
+	    <!-- the tank is selected -->
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 13
+	    </test>
+	</switch>
 
 	<summer name="propulsion/tank[13]/external-flow-rate-pps">
 	    <description> Adjusted net flow from tank 14 </description>
-	    <input> -systems/fuel/tank[13]/tank-14-16[0] </input>
-	    <input>  systems/fuel/tank[13]/tank-14-16[1] </input>
+	    <input> -systems/fuel/tank[13]/tank-14-apu-pps </input>
+	    <input> systems/fuel/tank[13]/tank-14-apu-prior </input>
 	    <input> propulsion/tank[13]/external-flow-rate-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[14]/external-flow-rate-pps">
-	    <description> Adjusted net flow from tank 15 </description>
-	    <input> -systems/fuel/tank[14]/tank-15-16[0] </input>
-	    <input>  systems/fuel/tank[14]/tank-15-16[1] </input>
-	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
-	</summer>
+	<pure_gain name="systems/fuel/tank[13]/tank-14-apu-prior">
+	    <description> Prior net flow from tank 14 into APU tank </description>
+	    <input> systems/fuel/tank[13]/tank-14-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
-	<summer name="propulsion/tank[9]/external-flow-rate-pps">
-	    <description> Adjusted net flow from tank 10 </description>
-	    <input> -systems/fuel/tank[9]/tank-10-16[0] </input>
-	    <input>  systems/fuel/tank[9]/tank-10-16[1] </input>
-	    <input> propulsion/tank[9]/external-flow-rate-pps </input>
-	</summer>
+	<!-- ====== Tank 13 ====== -->
 
-	<summer name="propulsion/tank[10]/external-flow-rate-pps">
-	    <description> Adjusted net flow from tank 11 </description>
-	    <input> -systems/fuel/tank[10]/tank-11-16[0] </input>
-	    <input>  systems/fuel/tank[10]/tank-11-16[1] </input>
-	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
-	</summer>
+	<switch name="systems/fuel/tank[12]/tank-13-apu-pps">
+	    <description> Net flow from tank 13 into APU tank </description>
+	    <default value="0"/>
+	    <!-- the tank is selected -->
+	    <test logic="AND" value="propulsion/tank[16]/external-flow-rate-pps">
+		systems/propulsion/APU/feed-tank EQ 12
+	    </test>
+	</switch>
 
 	<summer name="propulsion/tank[12]/external-flow-rate-pps">
 	    <description> Adjusted net flow from tank 13 </description>
-	    <input> -systems/fuel/tank[12]/tank-13-16[0] </input>
-	    <input>  systems/fuel/tank[12]/tank-13-16[1] </input>
+	    <input> -systems/fuel/tank[12]/tank-13-apu-pps </input>
+	    <input> systems/fuel/tank[12]/tank-13-apu-prior </input>
 	    <input> propulsion/tank[12]/external-flow-rate-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[11]/external-flow-rate-pps">
-	    <description> Adjusted net flow from tank 12 </description>
-	    <input> -systems/fuel/tank[11]/tank-12-16[0] </input>
-	    <input>  systems/fuel/tank[11]/tank-12-16[1] </input>
-	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
-	</summer>
+	<pure_gain name="systems/fuel/tank[12]/tank-13-apu-prior">
+	    <description> Prior net flow from tank 13 into APU tank </description>
+	    <input> systems/fuel/tank[12]/tank-13-apu-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
+	<!--
+	    this switch is the last item so that fuel to the APU is turned off
+	    when no lonfger needed, after stopping the transfers
+	-->
+	<switch name="systems/fuel/apu-on">
+	    <description>
+		Disable APU fuel supply
+	    </description>
+	    <default value="systems/fuel/apu-on"/>
+	    <test logic="OR" value="0">
+		/controls/APU/run EQ 0
+	    </test>
+	</switch>
 
     </channel>
 
@@ -492,10 +517,10 @@
 
 	<!--
 	    A-A refuelling states:
-	    0 (Off) -> lid closed, no tanker
-	    1 (Ready) -> lid open, tanker close, no contact
-	    2 (Connected) -> lid open, tanker close, contact made
-	    3 (Disconnected) -> lid closed, tanker close
+		0 (Off) -> lid closed, no tanker
+		1 (Ready) -> lid open, tanker close, no contact
+		2 (Connected) -> lid open, tanker close, contact made
+		3 (Disconnected) -> lid closed, tanker close
 	-->
 	<switch name="systems/refuel/aar-state">
 	    <description>
@@ -2128,12 +2153,25 @@
 	    <input> systems/fuel/tank[4]/fwd-flow-5-1-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[0]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[0]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 1 </description>
 	    <input> systems/fuel/tank[0]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[0]/fwd-inflow-pps </input>
 	    <input>-systems/fuel/tank[0]/aft-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[0]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 1 </description>
+	    <input> systems/fuel/tank[0]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[0]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[0]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[0]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 1  </description>
+	    <input> systems/fuel/tank[0]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 2 =========== -->
 
@@ -2152,12 +2190,25 @@
 	    <input> systems/fuel/tank[4]/fwd-flow-5-2-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[1]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[1]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 2 </description>
 	    <input> systems/fuel/tank[1]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[1]/fwd-inflow-pps </input>
 	    <input>-systems/fuel/tank[1]/aft-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[1]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 2 </description>
+	    <input> systems/fuel/tank[1]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[1]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[1]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[1]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 2  </description>
+	    <input> systems/fuel/tank[1]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 3 =========== -->
 
@@ -2171,12 +2222,25 @@
 	    <input>-systems/fuel/group[0]/tank-3-9 </input>
 	</summer>
 
-	<summer name="propulsion/tank[2]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[2]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 3 </description>
 	    <input> systems/fuel/tank[2]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[0]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[2]/fwd-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[2]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 3 </description>
+	    <input> systems/fuel/tank[2]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[2]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[2]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[2]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 3  </description>
+	    <input> systems/fuel/tank[2]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 4 =========== -->
 
@@ -2190,12 +2254,25 @@
 	    <input>-systems/fuel/group[1]/tank-4-9 </input>
 	</summer>
 
-	<summer name="propulsion/tank[3]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[3]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 4 </description>
 	    <input> systems/fuel/tank[3]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[1]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[3]/fwd-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[3]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 4 </description>
+	    <input> systems/fuel/tank[3]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[3]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[3]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[3]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 4  </description>
+	    <input> systems/fuel/tank[3]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 5 =========== -->
 
@@ -2211,11 +2288,24 @@
 	    <input>-systems/fuel/tank[4]/fwd-flow-5-2-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[4]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[4]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 5 </description>
 	    <input> systems/fuel/tank[4]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[4]/fwd-inflow-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[4]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 5 </description>
+	    <input> systems/fuel/tank[4]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[4]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[4]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[4]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 5  </description>
+	    <input> systems/fuel/tank[4]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 6 =========== -->
 
@@ -2234,12 +2324,25 @@
 	    <input> systems/fuel/tank[9]/fwd-flow-10-6-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[5]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[5]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 6 </description>
 	    <input> systems/fuel/tank[5]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[5]/fwd-inflow-pps </input>
 	    <input>-systems/fuel/tank[5]/aft-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[5]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 6 </description>
+	    <input> systems/fuel/tank[5]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[5]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[5]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[5]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 6  </description>
+	    <input> systems/fuel/tank[5]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 7 =========== -->
 
@@ -2258,12 +2361,25 @@
 	    <input> systems/fuel/tank[9]/fwd-flow-10-7-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[6]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[6]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 7 </description>
 	    <input> systems/fuel/tank[6]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[6]/fwd-inflow-pps </input>
 	    <input>-systems/fuel/tank[6]/aft-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[6]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 7 </description>
+	    <input> systems/fuel/tank[6]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[6]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[6]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[6]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 7  </description>
+	    <input> systems/fuel/tank[6]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 8 =========== -->
 
@@ -2277,12 +2393,25 @@
 	    <input>-systems/fuel/group[2]/tank-8-9 </input>
 	</summer>
 
-	<summer name="propulsion/tank[7]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[7]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 8 </description>
 	    <input> systems/fuel/tank[7]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[5]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[7]/fwd-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[7]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 8 </description>
+	    <input> systems/fuel/tank[7]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[7]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[7]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[7]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 8  </description>
+	    <input> systems/fuel/tank[7]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 9 =========== -->
 
@@ -2296,12 +2425,25 @@
 	    <input>-systems/fuel/group[3]/tank-9-8 </input>
 	</summer>
 
-	<summer name="propulsion/tank[8]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[8]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 9 </description>
 	    <input> systems/fuel/tank[8]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[6]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[8]/fwd-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[8]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 9 </description>
+	    <input> systems/fuel/tank[8]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[8]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[8]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[8]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 9  </description>
+	    <input> systems/fuel/tank[8]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 10 =========== -->
 
@@ -2317,51 +2459,128 @@
 	    <input>-systems/fuel/tank[9]/fwd-flow-10-7-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[9]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[9]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 10 </description>
 	    <input> systems/fuel/tank[9]/cross-feed-pps </input>
 	    <input> systems/fuel/tank[9]/fwd-inflow-pps </input>
 	</summer>
 
+	<summer name="propulsion/tank[9]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 10 </description>
+	    <input> systems/fuel/tank[9]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[9]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[9]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[9]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 10  </description>
+	    <input> systems/fuel/tank[9]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
 	<!-- =========== Tank 11 =========== -->
 
-	<summer name="propulsion/tank[10]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[10]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 11 </description>
 	    <input> systems/fuel/tank[12]/fwd-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[10]/aft-flow-rate-pps </input>
 	</summer>
 
+	<summer name="propulsion/tank[10]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 11 </description>
+	    <input> systems/fuel/tank[10]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[10]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[10]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 11  </description>
+	    <input> systems/fuel/tank[10]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
 	<!-- =========== Tank 12 =========== -->
 
-	<summer name="propulsion/tank[11]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[11]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 12 </description>
 	    <input> systems/fuel/tank[13]/fwd-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[11]/aft-flow-rate-pps </input>
 	</summer>
 
+	<summer name="propulsion/tank[11]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 12 </description>
+	    <input> systems/fuel/tank[11]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[11]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[11]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 12  </description>
+	    <input> systems/fuel/tank[11]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
 	<!-- =========== Tank 13 =========== -->
 
-	<summer name="propulsion/tank[12]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[12]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 13 </description>
 	    <input> systems/fuel/tank[10]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[12]/fwd-flow-rate-pps </input>
 	</summer>
 
+	<summer name="propulsion/tank[12]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 13 </description>
+	    <input> systems/fuel/tank[12]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[12]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[12]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[12]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 13  </description>
+	    <input> systems/fuel/tank[12]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
+
 	<!-- =========== Tank 14 =========== -->
 
-	<summer name="propulsion/tank[13]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[13]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 14 </description>
 	    <input> systems/fuel/tank[11]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[13]/fwd-flow-rate-pps </input>
 	</summer>
 
+	<summer name="propulsion/tank[13]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 14 </description>
+	    <input> systems/fuel/tank[13]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[13]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[13]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[13]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 14  </description>
+	    <input> systems/fuel/tank[13]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 15 =========== -->
 
-	<summer name="propulsion/tank[14]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[14]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 15 </description>
 	    <input>-systems/fuel/tank[14]/aft-flow-rate-pps </input>
 	</summer>
+
+	<summer name="propulsion/tank[14]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 15 </description>
+	    <input> systems/fuel/tank[14]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[14]/prior-flow-rate-pps </input>
+	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
+	</summer>
+
+	<pure_gain name="systems/fuel/tank[14]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 15  </description>
+	    <input> systems/fuel/tank[14]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
 	<!-- =========== Tank 16 =========== -->
 
@@ -2370,44 +2589,24 @@
 	    <input> systems/fuel/tank[15]/fwd-flow-16-10-pps </input>
 	</summer>
 
-	<summer name="propulsion/tank[15]/external-flow-rate-pps">
+	<summer name="systems/fuel/tank[15]/current-flow-rate-pps">
 	    <description> Net flow to or from tank 16 </description>
 	    <input> systems/fuel/tank[14]/aft-flow-rate-pps </input>
 	    <input>-systems/fuel/tank[15]/fwd-flow-rate-pps </input>
 	</summer>
 
-	<!-- FIXME remove after debugging -->
-	<summer name="systems/propulsion/total-cross-feed-rate-pps">
-	    <input> systems/fuel/tank[0]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[1]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[2]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[3]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[4]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[5]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[6]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[7]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[8]/cross-feed-pps </input>
-	    <input> systems/fuel/tank[9]/cross-feed-pps </input>
-	</summer>
-
-	<summer name="systems/propulsion/total-external-rate-pps">
-	    <input> propulsion/tank[0]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[1]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[2]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[3]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[4]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[5]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[6]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[7]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[8]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[9]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[10]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[11]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[12]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[13]/external-flow-rate-pps </input>
-	    <input> propulsion/tank[14]/external-flow-rate-pps </input>
+	<summer name="propulsion/tank[15]/external-flow-rate-pps">
+	    <description> Adjusted net flow from tank 16 </description>
+	    <input> systems/fuel/tank[15]/current-flow-rate-pps </input>
+	    <input> -systems/fuel/tank[15]/prior-flow-rate-pps </input>
 	    <input> propulsion/tank[15]/external-flow-rate-pps </input>
 	</summer>
+
+	<pure_gain name="systems/fuel/tank[15]/prior-flow-rate-pps">
+	    <description> Prior net flow to or from tank 16  </description>
+	    <input> systems/fuel/tank[15]/current-flow-rate-pps </input>
+	    <gain> 1 </gain>
+	</pure_gain>
 
     </channel>
 

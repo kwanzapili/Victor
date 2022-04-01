@@ -94,8 +94,8 @@
 	<input>
 	    <expression>
 		<difference>
-		    <property>sim/time/elapsed-sec</property>
-		    <property>sim/armament/weapons/impact-time</property>
+		    <property>/sim/time/elapsed-sec</property>
+		    <property>/sim/armament/weapons/impact-time</property>
 		</difference>
 	    </expression>
 	    <abs type="bool">true</abs>
@@ -114,7 +114,7 @@
 	    <condition>
 		<property>/instrumentation/fmc/flight-control-flight-mode</property>
 		<less-than>
-		    <property>sim/armament/weapons/time-lapse</property>
+		    <property>/sim/armament/weapons/time-lapse</property>
 		    <value>400</value>
 		</less-than>
 	    </condition>
@@ -124,9 +124,9 @@
 	<input>
 	    <expression>
 		<product>
-		    <property>sim/armament/weapons/yield-ktn</property>
+		    <property>/sim/armament/weapons/yield-ktn</property>
 		    <table>
-			<property>sim/armament/weapons/time-lapse</property>
+			<property>/sim/armament/weapons/time-lapse</property>
 			<entry><ind>0</ind><dep>0.0</dep></entry>
 			<entry><ind>2</ind><dep>0.5</dep></entry>
 			<entry><ind>10</ind><dep>0.9</dep></entry>
@@ -138,7 +138,7 @@
 	    </expression>
 	</input>
 	<output>
-	    <property>sim/armament/weapons/effect</property>
+	    <property>/sim/armament/weapons/effect</property>
 	</output>
 	<min> 0.3</min>
 	<max>20.0</max>

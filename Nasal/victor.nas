@@ -419,12 +419,12 @@ var selectedStnStatus = func () {
     var armed	= getprop("controls/armament/station["~stn~"]/armed");
     var avail	= getprop("controls/armament/station["~stn~"]/units");
     var suffix	= " / "~avail;
-    if (avail == 0)	setprop("controls/armament/status", "Empty");
-    elsif ( armed )	setprop("controls/armament/status", "Armed"~suffix);
-    else		setprop("controls/armament/status", "Unarmed"~suffix);
+    if (avail == 0)	setprop("/controls/armament/status", "Empty");
+    elsif ( armed )	setprop("/controls/armament/status", "Armed"~suffix);
+    else		setprop("/controls/armament/status", "Unarmed"~suffix);
 
-    setprop("controls/armament/units", avail);
-    setprop("controls/armament/current-weapon", WpnInfo[stn].name);
+    setprop("/controls/armament/units", avail);
+    setprop("/controls/armament/current-weapon", WpnInfo[stn].name);
 }
 
 ## Unload the armament load from a given station reducing the corresponding weight
@@ -468,13 +468,13 @@ var loadStation = func (stn) {
 var armStation = func (stn) {
     var n = getprop("controls/armament/station["~stn~"]/units");
     if ( n > 0 )
-	setprop("controls/armament/station["~stn~"]/armed", TRUE);
+	setprop("/controls/armament/station["~stn~"]/armed", TRUE);
     selectedStnStatus();
 }
 
 ## Disarm a station
 var disarmStation = func (stn) {
-    setprop("controls/armament/station["~stn~"]/armed", FALSE);
+    setprop("/controls/armament/station["~stn~"]/armed", FALSE);
     selectedStnStatus();
 }
 
@@ -522,7 +522,7 @@ var toggleArmed = func() {
 ## Disarm all stations
 var disarmAll = func () {
     for (var j = 0; j < NumStns; j += 1) {
-	setprop("controls/armament/station["~j~"]/armed", FALSE);
+	setprop("/controls/armament/station["~j~"]/armed", FALSE);
     }
     screen.log.write("Sir, master arm is now OFF");
     selectedStnStatus();
@@ -547,15 +547,15 @@ var unloadWeapons = func () {
     }
 
     for (var j = 0; j < NumStns; j += 1) {
-	setprop("controls/armament/station["~j~"]/units", 0);
-	setprop("controls/armament/station["~j~"]/jettison-all", TRUE);
-	setprop("controls/armament/station["~j~"]/release-all", TRUE);
-	setprop("controls/armament/station["~j~"]/armed", FALSE);
+	setprop("/controls/armament/station["~j~"]/units", 0);
+	setprop("/controls/armament/station["~j~"]/jettison-all", TRUE);
+	setprop("/controls/armament/station["~j~"]/release-all", TRUE);
+	setprop("/controls/armament/station["~j~"]/armed", FALSE);
     }
     bombsWeight.setValue(0);
     shrikes12Weight.setValue(0);
     shrikes34Weight.setValue(0);
-    setprop("controls/armament/status", "Empty");
+    setprop("/controls/armament/status", "Empty");
 }
 
 var ShrikesFlexible = TRUE;	# whether we have flexibility in shrikes loading
@@ -624,7 +624,7 @@ var missionArmament = func () {
     }
 
     # reset bay doors
-    setprop("controls/doors/bb-door-pos", BayPos.Closed);
+    setprop("/controls/doors/bb-door-pos", BayPos.Closed);
 
     var mission = selMission.getValue();
 
@@ -651,7 +651,7 @@ var missionArmament = func () {
     elsif (mission == "Blue Steel") {
 	setprop("/controls/armament/main-weapon", "Blue Steel");
 	# we need to lock the bay doors from use
-	setprop("controls/doors/bb-door-pos", BayPos.Locked);
+	setprop("/controls/doors/bb-door-pos", BayPos.Locked);
     }
     elsif (mission == "Blue Danube") {
 	setprop("/controls/armament/main-weapon", "Blue Danube");
@@ -745,9 +745,9 @@ var toggle_shrikes = func () {
 
 ## Simulate the release sound of the armament
 var detachSound = func () {
-    setprop("sim/sound/armament/armament-release", ON);
+    setprop("/sim/sound/armament/armament-release", ON);
     var t = maketimer(2.0, func {
-	    setprop("sim/sound/armament/armament-release", OFF);
+	    setprop("/sim/sound/armament/armament-release", OFF);
 	    });
     t.singleShot = TRUE;
     t.start();
@@ -758,16 +758,16 @@ var missileSound = func (stn) {
     # different sound from shrikes and Blue Steel
     if (stn ==  WpnInfo[WpnIndex.BS].station) {
 	var vol = 1.0;
-	setprop("sim/sound/armament/cruise-missile", ON);
+	setprop("/sim/sound/armament/cruise-missile", ON);
     } else {
 	var vol = 0.8;
-	setprop("sim/sound/armament/cruise-missile", OFF);
+	setprop("/sim/sound/armament/cruise-missile", OFF);
     }
-    setprop("sim/sound/armament/missile-volume", vol);
-    setprop("sim/sound/armament/missile-fired", ON);
+    setprop("/sim/sound/armament/missile-volume", vol);
+    setprop("/sim/sound/armament/missile-fired", ON);
     # shrikes sound for 7 s 27 ms, Blue Steel for 4 s 778 ms
     var t = maketimer(7.5, func {
-	    setprop("sim/sound/armament/missile-fired", OFF);
+	    setprop("/sim/sound/armament/missile-fired", OFF);
 	    });
     t.singleShot = TRUE;
     t.start();
@@ -776,10 +776,10 @@ var missileSound = func (stn) {
 ## Pull and release the trigger after a given time
 var pullTrigger = func (stn, time=0.2) {
     var is_bomb = WpnInfo[stn].inbay;
-    setprop("controls/armament/station["~stn~"]/trigger", TRUE);
+    setprop("/controls/armament/station["~stn~"]/trigger", TRUE);
     detachSound();
     var t = maketimer(time, func {
-	    setprop("controls/armament/station["~stn~"]/trigger", FALSE);
+	    setprop("/controls/armament/station["~stn~"]/trigger", FALSE);
 	    updateArmsWeight();
 	    updateStation(stn);
 	    });
@@ -823,7 +823,7 @@ var fireWeapon = func () {
 
 ## Fire from a given station
 var fireStation = func (stn) {
-    setprop("controls/armament/station-select", stn);
+    setprop("/controls/armament/station-select", stn);
     fireWeapon();
 }
 
@@ -831,7 +831,7 @@ var fireStation = func (stn) {
 var changeStation = func (step) {
     var n = step + selStation.getValue();
     n = math.clamp(n, 0, NumStns - 1);
-    setprop("controls/armament/station-select", n);
+    setprop("/controls/armament/station-select", n);
     selectedStnStatus();
 
     var avail = getprop("controls/armament/station["~n~"]/units");
@@ -857,10 +857,10 @@ var explosion = func (distance, yield)
     blast_factor = math.clamp(blast_factor, 1, 6);
     var time = 4.3381 * blast_factor;
 
-    setprop("sim/sound/armament/explosion-volume", vol);
-    setprop("sim/sound/armament/explosion", ON);
+    setprop("/sim/sound/armament/explosion-volume", vol);
+    setprop("/sim/sound/armament/explosion", ON);
     var t = maketimer(time, func {
-		setprop("sim/sound/armament/explosion", OFF);
+		setprop("/sim/sound/armament/explosion", OFF);
 	    });
     t.singleShot = TRUE;
     t.start();
@@ -874,10 +874,10 @@ var missileHit = func (distance, yield)
     vol = math.clamp(vol, 0.5, 1.0);
 
     # a full blast lasts for 1 s 100 ms
-    setprop("sim/sound/armament/explosion-volume", vol);
-    setprop("sim/sound/armament/missile-hit", ON);
+    setprop("/sim/sound/armament/explosion-volume", vol);
+    setprop("/sim/sound/armament/missile-hit", ON);
     var t = maketimer(1.2, func {
-		setprop("sim/sound/armament/missile-hit", OFF);
+		setprop("/sim/sound/armament/missile-hit", OFF);
 	    });
     t.singleShot = TRUE;
     t.start();
@@ -912,7 +912,7 @@ setlistener("sim/ai/aircraft/impact/bomb", func (n) {
     var weapon	= getprop(impact ~ "/name");
     var yield	= getYield(weapon);
     var time	= simTime.getValue();
-    setprop("sim/armament/weapons/impact-time", time);
+    setprop("/sim/armament/weapons/impact-time", time);
 
     if (solid) {
 	var long = getprop(impact ~ "/impact/longitude-deg");
@@ -923,7 +923,7 @@ setlistener("sim/ai/aircraft/impact/bomb", func (n) {
 	var distance = geo.aircraft_position().direct_distance_to(location) / 1000;
 	var ltext = "Bomb of type "~weapon~" hit " ~ name ~ " target";
 	screen.log.write(ltext);
-	setprop("sim/armament/weapons/yield-ktn", yield);
+	setprop("/sim/armament/weapons/yield-ktn", yield);
 	geo.put_model("Aircraft/victor/Models/Effects/Armament/bomb.xml", lat, long);
 	explosion(distance, yield);
     } else {
@@ -942,7 +942,7 @@ setlistener("sim/ai/aircraft/impact/missile", func (n) {
     var weapon	= getprop(impact ~ "/name");
     var yield	= getYield(weapon);
     var time	= simTime.getValue();
-    setprop("sim/armament/weapons/impact-time", time);
+    setprop("/sim/armament/weapons/impact-time", time);
 
     if (solid) {
 	var long = getprop(impact ~ "/impact/longitude-deg");
@@ -953,7 +953,7 @@ setlistener("sim/ai/aircraft/impact/missile", func (n) {
 	var distance = geo.aircraft_position().direct_distance_to(location) / 1000;
 	var ltext = "Bomb of type "~weapon~" hit " ~ name ~ " target";
 	screen.log.write(ltext);
-	setprop("sim/armament/weapons/yield-ktn", yield);
+	setprop("/sim/armament/weapons/yield-ktn", yield);
 	geo.put_model("Aircraft/victor/Models/Effects/Armament/missile.xml", lat, long);
 	missileHit(distance, yield);
     } else {
@@ -1011,7 +1011,7 @@ var init_mission = func () {
 
 
     # initiliase variables
-    setprop("controls/gear/brake-parking", 1);
+    setprop("/controls/gear/brake-parking", 1);
     cockpit_door.open();
 
     # init weapons information

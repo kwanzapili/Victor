@@ -44,7 +44,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>alt-Needle1</object-name>
-	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<property>/instrumentation/altimeter[0]/indicated-altitude-ft</property>
 	<factor>0.036</factor>
 	<center>
 	    <x-m>0</x-m>
@@ -62,7 +62,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>inHG1</object-name>
-	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<property>/instrumentation/altimeter[0]/setting-inhg</property>
 	<factor>0.01</factor>
 	<step>10</step>
 	<axis>
@@ -74,7 +74,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>inHG2</object-name>
-	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<property>/instrumentation/altimeter[0]/setting-inhg</property>
 	<factor>0.1</factor>
 	<step>1</step>
 	<axis>
@@ -86,7 +86,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>inHG3</object-name>
-	<property>instrumentation/altimeter[0]/setting-inhg</property>
+	<property>/instrumentation/altimeter[0]/setting-inhg</property>
 	<factor>1.0</factor>
 	<step>0.1</step>
 	<axis>
@@ -112,7 +112,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>feet1</object-name>
-	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<property>/instrumentation/altimeter[0]/indicated-altitude-ft</property>
 	<factor>0.00001</factor>
 	<step>10000</step>
 	<axis>
@@ -125,7 +125,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>feet2</object-name>
-	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<property>/instrumentation/altimeter[0]/indicated-altitude-ft</property>
 	<factor>0.0001</factor>
 	<step>1000</step>
 	<axis>
@@ -138,7 +138,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>feet3</object-name>
-	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<property>/instrumentation/altimeter[0]/indicated-altitude-ft</property>
 	<factor>0.001</factor>
 	<step>100</step>
 	<axis>
@@ -151,7 +151,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>feet4</object-name>
-	<property>instrumentation/altimeter[0]/indicated-altitude-ft</property>
+	<property>/instrumentation/altimeter[0]/indicated-altitude-ft</property>
 	<factor>0.01</factor>
 	<step>10</step>
 	<axis>
@@ -185,7 +185,7 @@
 	<action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/altimeter[0]/setting-inhg</property>
+		<property>/instrumentation/altimeter[0]/setting-inhg</property>
 		<factor>0.01</factor>
 		<min>26.0</min>
 		<max>33.0</max>

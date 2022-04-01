@@ -921,7 +921,7 @@
 	<type> JP-1 </type>
     </tank>
 
-	<!-- ~~~~~~~ APU collector tank ~~~~~~~ -->
+    <!-- ~~~~~~~ APU collector tank ~~~~~~~ -->
     <tank type="FUEL" number="16">
 	<location unit="IN">
 	    <x> 500 </x>
@@ -1936,7 +1936,7 @@
 </aerodynamics>
 
 <external_reactions>
-<!-- the magnitude is set in the drag-chute system file -->
+    <!-- the magnitude is set in the drag-chute system file -->
     <force name="chute" frame="WIND">
 	<location unit="M">
 	    <x> 32.0 </x>

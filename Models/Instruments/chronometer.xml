@@ -11,7 +11,7 @@
 	<object-name>mask</object-name>
 	<condition>
 	    <less-than>
-		<property>systems/electrical/outputs/leds</property>
+		<property>/systems/electrical/outputs/leds</property>
 		<value>24</value>
 	    </less-than>
 	</condition>
@@ -20,7 +20,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>h10</object-name>
-	<property>instrumentation/clock/indicated-hour</property>
+	<property>/instrumentation/clock/indicated-hour</property>
 	<factor>0.01</factor>
 	<offset>0</offset>
 	<step>10</step>
@@ -39,7 +39,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>h1</object-name>
-	<property>instrumentation/clock/indicated-hour</property>
+	<property>/instrumentation/clock/indicated-hour</property>
 	<factor>0.1</factor>
 	<offset>0</offset>
 	<step>1</step>
@@ -58,7 +58,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>m10</object-name>
-	<property>instrumentation/clock/indicated-min</property>
+	<property>/instrumentation/clock/indicated-min</property>
 	<factor>0.01</factor>
 	<offset>0</offset>
 	<step>10</step>
@@ -77,7 +77,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>m1</object-name>
-	<property>instrumentation/clock/indicated-min</property>
+	<property>/instrumentation/clock/indicated-min</property>
 	<factor>0.1</factor>
 	<offset>0</offset>
 	<step>1</step>
@@ -96,7 +96,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>s10</object-name>
-	<property>sim/time/utc/second</property>
+	<property>/sim/time/utc/second</property>
 	<factor>0.01</factor>
 	<offset>0</offset>
 	<step>10</step>
@@ -115,7 +115,7 @@
     <animation>
 	<type>textranslate</type>
 	<object-name>s1</object-name>
-	<property>sim/time/utc/second</property>
+	<property>/sim/time/utc/second</property>
 	<factor>0.1</factor>
 	<offset>0</offset>
 	<step>1</step>

@@ -9,7 +9,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>segments</object-name>
-	<property>instrumentation/magnetic-compass/indicated-heading-deg</property>
+	<property>/instrumentation/magnetic-compass/indicated-heading-deg</property>
 	<center>
 	    <x-m>0</x-m>
 	    <y-m>0</y-m>

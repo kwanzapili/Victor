@@ -143,7 +143,7 @@
 	<object-name>Circle.073</object-name>
 	<condition include="Instruments/Lighting/led-powered.xml">
 	    <greater-than>
-		<property>surface-positions/speedbrake-pos-norm</property>
+		<property>/surface-positions/speedbrake-pos-norm</property>
 		<value>0.05</value>
 	    </greater-than>
 	</condition>
@@ -160,7 +160,7 @@
 	<object-name>Circle.074</object-name>
 	<condition include="Instruments/Lighting/led-powered.xml">
 	    <greater-than>
-		<property>surface-positions/speedbrake-pos-norm</property>
+		<property>/surface-positions/speedbrake-pos-norm</property>
 		<value>0.5</value>
 	    </greater-than>
 	</condition>
@@ -224,7 +224,7 @@
 	<object-name>Circle.066</object-name>
 	<object-name>Circle.065</object-name>
 	<condition include="Instruments/Lighting/led-powered.xml">
-	    <property>sim/alarms/terrain-warning</property>
+	    <property>/sim/alarms/terrain-warning</property>
 	</condition>
 	<emission>
 	    <red>   0.7 </red>
@@ -301,7 +301,7 @@
 	    <interval-sec>0.2</interval-sec>
 	    <binding>
 		<command>switch-toggle</command>
-		<property>controls/armament/trigger-guard</property>
+		<property>/controls/armament/trigger-guard</property>
 	    </binding>
 	</action>
 	<hovered>
@@ -317,7 +317,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>Circle.040</object-name>
-	<property>controls/armament/trigger-guard</property>
+	<property>/controls/armament/trigger-guard</property>
 	<factor> 160 </factor>
 	<center>
 	    <x-m> 0.005 </x-m>
@@ -464,7 +464,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red1</object-name>
-	<property>controls/armament/station[1]/armed</property>
+	<property>/controls/armament/station[1]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -502,7 +502,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green2</object-name>
-	<property>controls/armament/station[2]/armed</property>
+	<property>/controls/armament/station[2]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -540,7 +540,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red3</object-name>
-	<property>controls/armament/station[3]/armed</property>
+	<property>/controls/armament/station[3]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -578,7 +578,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green4</object-name>
-	<property>controls/armament/station[4]/armed</property>
+	<property>/controls/armament/station[4]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -609,7 +609,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[0]/id</property>
+		<property>/controls/armament/station[0]/id</property>
 		<tooltip-id>station0</tooltip-id>
 	    </binding>
 	</hovered>
@@ -617,7 +617,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red5</object-name>
-	<property>controls/armament/station[0]/armed</property>
+	<property>/controls/armament/station[0]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -648,7 +648,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[5]/id</property>
+		<property>/controls/armament/station[5]/id</property>
 		<tooltip-id>station5</tooltip-id>
 	    </binding>
 	</hovered>
@@ -656,7 +656,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green6</object-name>
-	<property>controls/armament/station[5]/armed</property>
+	<property>/controls/armament/station[5]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -687,7 +687,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[6]/id</property>
+		<property>/controls/armament/station[6]/id</property>
 		<tooltip-id>station6</tooltip-id>
 	    </binding>
 	</hovered>
@@ -695,7 +695,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red7</object-name>
-	<property>controls/armament/station[6]/armed</property>
+	<property>/controls/armament/station[6]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -727,14 +727,14 @@
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
 		<tooltip-id>station7</tooltip-id>
-		<property>controls/armament/station[7]/id</property>
+		<property>/controls/armament/station[7]/id</property>
 	    </binding>
 	</hovered>
     </animation>
     <animation>
 	<type>rotate</type>
 	<object-name>green8</object-name>
-	<property>controls/armament/station[7]/armed</property>
+	<property>/controls/armament/station[7]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -765,7 +765,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[8]/id</property>
+		<property>/controls/armament/station[8]/id</property>
 		<tooltip-id>station8</tooltip-id>
 	    </binding>
 	</hovered>
@@ -773,7 +773,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red9</object-name>
-	<property>controls/armament/station[8]/armed</property>
+	<property>/controls/armament/station[8]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -804,7 +804,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[9]/id</property>
+		<property>/controls/armament/station[9]/id</property>
 		<tooltip-id>station9</tooltip-id>
 	    </binding>
 	</hovered>
@@ -812,7 +812,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green10</object-name>
-	<property>controls/armament/station[9]/armed</property>
+	<property>/controls/armament/station[9]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -843,7 +843,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[10]/id</property>
+		<property>/controls/armament/station[10]/id</property>
 		<tooltip-id>station10</tooltip-id>
 	    </binding>
 	</hovered>
@@ -851,7 +851,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red11</object-name>
-	<property>controls/armament/station[10]/armed</property>
+	<property>/controls/armament/station[10]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -882,7 +882,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[11]/id</property>
+		<property>/controls/armament/station[11]/id</property>
 		<tooltip-id>station11</tooltip-id>
 	    </binding>
 	</hovered>
@@ -890,7 +890,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green12</object-name>
-	<property>controls/armament/station[11]/armed</property>
+	<property>/controls/armament/station[11]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -921,7 +921,7 @@
 	    <binding>
 		<command>set-tooltip</command>
 		<label>(Dis)Arm Station %i</label>
-		<property>controls/armament/station[12]/id</property>
+		<property>/controls/armament/station[12]/id</property>
 		<tooltip-id>station12</tooltip-id>
 	    </binding>
 	</hovered>
@@ -929,7 +929,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>red13</object-name>
-	<property>controls/armament/station[12]/armed</property>
+	<property>/controls/armament/station[12]/armed</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -953,7 +953,7 @@
 	    <interval-sec>0.2</interval-sec>
 	    <binding>
 		<command>switch-toggle</command>
-		<property>controls/armament/master-arm</property>
+		<property>/controls/armament/master-arm</property>
 	    </binding>
 	</action>
 	<hovered>
@@ -967,7 +967,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>green14</object-name>
-	<property>controls/armament/master-arm</property>
+	<property>/controls/armament/master-arm</property>
 	<factor> -60 </factor>
 	<center>
 	    <x-m> 0.0280 </x-m>
@@ -1627,7 +1627,7 @@
     <!-- Mach Indicator -->
     <model>
 	<name>Left Mach</name>
-	<path>Aircraft/victor/Models/Instruments/seavixen_mach.xml</path>
+	<path>Aircraft/victor/Models/Instruments/mach-meter-1.xml</path>
 	<offsets>
 	    <x-m> 0.000</x-m>
 	    <y-m>-0.580</y-m>
@@ -1880,7 +1880,7 @@
     <!-- Mach Indicator -->
     <model>
 	<name>Right Mach</name>
-	<path>Aircraft/victor/Models/Instruments/seavixen_mach.xml</path>
+	<path>Aircraft/victor/Models/Instruments/mach-meter-1.xml</path>
 	<offsets>
 	    <x-m> 0.00</x-m>
 	    <y-m> 0.58</y-m>
@@ -2076,22 +2076,22 @@
 
     <!-- Master Caution Lights -->
     <model>
-    <name>CautionL</name>
-        <path>Models/Instruments/master-caution.xml</path>
-        <offsets>
-            <x-m> 0.032</x-m>
-            <y-m>-0.480</y-m>
-            <z-m> 0.325</z-m>
-        </offsets>
+	<name>CautionL</name>
+	<path>Models/Instruments/master-caution.xml</path>
+	<offsets>
+	    <x-m> 0.032</x-m>
+	    <y-m>-0.480</y-m>
+	    <z-m> 0.325</z-m>
+	</offsets>
     </model>
     <model>
-    <name>CautionR</name>
-        <path>Models/Instruments/master-caution.xml</path>
-        <offsets>
-            <x-m> 0.032</x-m>
-            <y-m> 0.480</y-m>
-            <z-m> 0.325</z-m>
-        </offsets>
+	<name>CautionR</name>
+	<path>Models/Instruments/master-caution.xml</path>
+	<offsets>
+	    <x-m> 0.032</x-m>
+	    <y-m> 0.480</y-m>
+	    <z-m> 0.325</z-m>
+	</offsets>
     </model>
 
 </PropertyList>

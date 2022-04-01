@@ -19,10 +19,10 @@
 	<object-name>Fin</object-name>      
 	<object-name>Marking</object-name>      
 	<condition>
-		<greater-than>
-		    <property>controls/doors/bomb-bay/position-norm</property>
-		    <value>0.05</value>
-		</greater-than>
+	    <greater-than>
+		<property>/controls/doors/bomb-bay/position-norm</property>
+		<value>0.05</value>
+	    </greater-than>
 	</condition>
     </animation>
 

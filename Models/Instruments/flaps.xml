@@ -26,7 +26,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>needle</object-name>
-	<property>surface-positions/flap-pos-norm</property>
+	<property>/surface-positions/flap-pos-norm</property>
 	<offset-deg>180</offset-deg>
 	<factor>180</factor>
 	<axis>

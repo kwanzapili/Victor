@@ -93,7 +93,7 @@
 	    <repeatable>false</repeatable>
 	    <binding>
 		<command>nasal</command>
-		<script>controls.gearDown(-1.0);</script>
+		<script>/controls.gearDown(-1.0);</script>
 	    </binding>
 	</action>
 	<hovered>
@@ -112,7 +112,7 @@
 	<type>material</type>
 	<condition>
 	    <equals>
-		<property>gear/gear[0]/position-norm</property>
+		<property>/gear/gear[0]/position-norm</property>
 		<value>1</value>
 	    </equals>
 	</condition>
@@ -185,7 +185,7 @@
 	    <repeatable>false</repeatable>
 	    <binding>
 		<command>nasal</command>
-		<script>controls.gearDown(1);</script>
+		<script>/controls.gearDown(1);</script>
 	    </binding>
 	</action>
 	<hovered>

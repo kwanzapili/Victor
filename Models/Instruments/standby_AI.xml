@@ -31,7 +31,7 @@
 	<type>rotate</type>
 	<object-name>bankline</object-name>
 	<object-name>horizonline</object-name>
-	<property>instrumentation/master-reference-gyro/indicated-roll-deg</property>
+	<property>/instrumentation/master-reference-gyro/indicated-roll-deg</property>
 	<axis> 
 	    <x>1</x>
 	    <y>0</y>
@@ -42,7 +42,7 @@
     <animation> 
 	<type>translate</type>
 	<object-name>horizonline</object-name>
-	<property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+	<property>/instrumentation/master-reference-gyro/indicated-pitch-deg</property>
 	<interpolation> 
 	    <entry>
 		<ind>-180</ind>
@@ -94,11 +94,11 @@
 	<condition>
 	    <and>
 		<greater-than>
-		    <property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+		    <property>/instrumentation/master-reference-gyro/indicated-pitch-deg</property>
 		    <value type="int">-40</value>
 		</greater-than>
 		<less-than>
-		    <property>instrumentation/master-reference-gyro/indicated-pitch-deg</property>
+		    <property>/instrumentation/master-reference-gyro/indicated-pitch-deg</property>
 		    <value type="int">40</value>
 		</less-than>
 	    </and>
@@ -109,7 +109,7 @@
 	<type>select</type>
 	<object-name>flag</object-name>
 	<condition>
-	    <property>instrumentation/master-reference-gyro/off-flag</property>
+	    <property>/instrumentation/master-reference-gyro/off-flag</property>
 	</condition>
     </animation>
 

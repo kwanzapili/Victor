@@ -30,9 +30,9 @@ setlistener("/fdm/jsbsim/systems/chute/chute-switch-cmd", func (n) {
     else		chute_switch.close();
 
     # plsy a sound
-    setprop("sim/sound/effects/chute-switch", TRUE);
+    setprop("/sim/sound/effects/chute-switch", TRUE);
     var t = maketimer(1.0, func {
-                        setprop("sim/sound/effects/chute-switch", FALSE);
+                        setprop("/sim/sound/effects/chute-switch", FALSE);
                     });
     t.singleShot = TRUE;
     t.start();
@@ -102,9 +102,9 @@ var lock_sound = func (pos) {
 
     if (play == FALSE) return;
 
-    setprop("sim/sound/effects/bay-lock", TRUE);
+    setprop("/sim/sound/effects/bay-lock", TRUE);
     var t = maketimer(1.0, func {
-			setprop("sim/sound/effects/bay-lock", FALSE);
+			setprop("/sim/sound/effects/bay-lock", FALSE);
 		    });
     t.singleShot = TRUE;
     t.start();
@@ -130,9 +130,9 @@ var toggle_bb_doors = func {
     var doorPos = getprop("controls/doors/bb-door-pos");
 
     if (doorPos == BayPos.Open) { # Open to Closed
-	setprop("controls/doors/bb-door-pos", BayPos.Closed);
+	setprop("/controls/doors/bb-door-pos", BayPos.Closed);
     } elsif (doorPos == BayPos.Closed) {
-	setprop("controls/doors/bb-door-pos", BayPos.Open);
+	setprop("/controls/doors/bb-door-pos", BayPos.Open);
     } else { # (doorPos == BayPos.Locked) doors cannot be operated
 	screen.log.write("Sir, bay doors are locked");
     }
@@ -155,9 +155,9 @@ var emerg_toggle_bb_doors = func (openbay) {
     if (doorPos == BayPos.Locked) {     # doors cannot be operated
 	screen.log.write("Sir, bay doors cannot be opened");
     } elsif (openbay == TRUE) {
-	setprop("controls/doors/bb-door-pos", BayPos.Open);
+	setprop("/controls/doors/bb-door-pos", BayPos.Open);
     } else {
-	setprop("controls/doors/bb-door-pos", BayPos.Closed);
+	setprop("/controls/doors/bb-door-pos", BayPos.Closed);
     }
 }
 
@@ -176,7 +176,7 @@ var jettisonBomb = func () {
 
     if (avail < 1 or keepon == OFF) {
 	jettisonBombTimer.stop();
-	setprop("controls/doors/emergency-bb-jettison-pos", OFF);
+	setprop("/controls/doors/emergency-bb-jettison-pos", OFF);
     } elsif ( safe ) {
 	pullTrigger(stn, 0.2);
     }
@@ -205,7 +205,7 @@ var jettison_bombs = func () {
     if (stn < 0) return;        # nothing found
 
     if ( WpnInfo[stn].inbay ) {
-        setprop("controls/armament/station-select", stn);
+        setprop("/controls/armament/station-select", stn);
         jettisonBombTimer.start();
     }
 }
@@ -221,9 +221,9 @@ var emerg_jettison = func (jettison) {
 	logprint(LOG_INFO, "Emergency jettison of all loaded bombs!");
 	if ( jettison == FALSE ) {
 	    jettisonTimer.stop();     # abort jettison
-	    setprop("controls/doors/emergency-bb-door-pos", OFF);
+	    setprop("/controls/doors/emergency-bb-door-pos", OFF);
 	} else {
-	    setprop("controls/doors/emergency-bb-door-pos", ON);
+	    setprop("/controls/doors/emergency-bb-door-pos", ON);
 	    jettisonTimer.start();
 	}
     }

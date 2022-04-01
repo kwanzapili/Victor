@@ -80,7 +80,7 @@
 	    The radar altimeter outputs a warning signal via "/sim/alarms/rad-alt-warning".
 	    The output is only reliable if the AGL is within the RA maximum range.
 	    So we define a property with the following states:
-	    { Off: -2, Red: -1, Amber: 0, Green: 1, Test: 2 }.
+	    	{ Off: -2, Red: -1, Amber: 0, Green: 1, Test: 2 }.
 	    These states will define the status of the lights.
 	-->
 

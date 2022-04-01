@@ -294,7 +294,7 @@ var reset_vnav = func () {
 	var armMode = victorFMS.evaluateArmedVertical();
 	setVNAV(VNAV.OFF);
 	setprop("/instrumentation/flightdirector/vnav-arm", armMode);
-	setprop("instrumentation/flightdirector/alt-acquire-mode", OFF);
+	setprop("/instrumentation/flightdirector/alt-acquire-mode", OFF);
     }
 }
 
@@ -368,7 +368,7 @@ var set_speed_mode = func (n) {
 ## ---------------------------------------
 var check_speeds = func () {
     var mach = getprop("/instrumentation/fmc/cruise-mach");
-    mach = (mach < 0.75) ? 0.75 : (mach > 0.85) ? 0.85 : mach;
+    mach = (mach < 0.75) ? 0.75 : (mach > 0.95) ? 0.95 : mach;
     setprop("/instrumentation/fmc/cruise-mach", mach);
 
     var speed = getprop("/instrumentation/fmc/cruise-speed");
@@ -1315,7 +1315,7 @@ var WaypointSwitch = {
 			# regardless of managed mode
 			   if (makeTurn == TRUE) {
 			       currentWaypointIndex += 1;
-			       setprop("autopilot/route-manager/current-wp", currentWaypointIndex);
+			       setprop("/autopilot/route-manager/current-wp", currentWaypointIndex);
 			       me.waypointIdPrev = waypointId;
 			   }
 		       }
@@ -1498,17 +1498,14 @@ var start_descent = func () {
 ## Respond to changes in deceleration phase steps
 var decel_step = func () {
     var step = getprop("/instrumentation/flightdirector/decel-step");
-
     if (step == DecelPhase.Level) {
-	# delayed level off
-	var t = maketimer(0.5, func {
-		    set_altitude();
-		    setVNAV(VNAV.LEVEL);
-		    # reset descend arm
-		    setprop("/instrumentation/flightdirector/descend-arm", OFF);
-		});
-	t.singleShot = TRUE;
-	t.start();
+	# level off
+	setVNAV(VNAV.LEVEL);
+	set_altitude();
+	# normally "descend-arm" will be reset in JSBSim, but we make sure
+	# it is off so that it will trigger descent mode when set ON
+	setprop("/instrumentation/flightdirector/descend-arm", FALSE);
+
     } elsif (step == DecelPhase.Leave) {
 	# exit from the level
     } elsif (step == DecelPhase.Acquire) {

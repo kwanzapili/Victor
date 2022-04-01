@@ -42,13 +42,6 @@
 	    </author>
 	</authors>
 
-	<maintainers>
-	    <maintainer n="0">
-		<name>Kwanza</name>
-		<email>kwanza@chui.kilavuka.nyumbani</email>
-	    </maintainer>
-	</maintainers >
-
 	<tags>
 	    <tag n="0">Handley Page</tag>
 	    <tag n="1">bomber</tag>
@@ -129,7 +122,7 @@
 	</submodels>
 
 	<sound>
-	    <path>Aircraft/victor/Sounds/victor-sounds.xml</path>
+	    <!-- path>Aircraft/victor/Sounds/victor-sounds.xml</path -->
 	    <effects>
 		<!-- doors -->
 		<bay-lock type="bool">false</bay-lock>

@@ -6,7 +6,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>needle</object-name>
-	<property>engines/engine[2]/oil-pressure-psi</property>
+	<property>/engines/engine[2]/oil-pressure-psi</property>
 	<interpolation>
 	    <entry><ind>0</ind><dep>-210</dep></entry>
 	    <entry><ind>50</ind><dep>-90</dep></entry>

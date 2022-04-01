@@ -29,7 +29,7 @@
     <animation>
 	<type>rotate</type>
 	<object-name>HdgBug</object-name>
-	<property>instrumentation/heading-indicator/heading-bug-deg</property>
+	<property>/instrumentation/heading-indicator/heading-bug-deg</property>
 	<axis>
 	    <x>-1</x>
 	    <y> 0</y>
@@ -42,7 +42,7 @@
     <animation>
 	<type>knob</type>
 	<object-name>Hdg-Knob</object-name>
-	<property>instrumentation/heading-indicator/heading-bug-deg</property>
+	<property>/instrumentation/heading-indicator/heading-bug-deg</property>
 	<factor>1</factor>
 	<center>
 	    <x-m> 0.0050000</x-m>
@@ -57,7 +57,7 @@
 	<action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
 		<factor>1</factor>
 		<min>0</min>
 		<max>360</max>
@@ -67,7 +67,7 @@
 	<shift-action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
 		<factor>10</factor>
 		<min>0</min>
 		<max>360</max>
@@ -79,7 +79,7 @@
 		<command>set-tooltip</command>
 		<label>Heading Bug: %3d</label>
 		<mapping>heading</mapping>
-		<property>instrumentation/heading-indicator/heading-bug-deg</property>
+		<property>/instrumentation/heading-indicator/heading-bug-deg</property>
 		<tooltip-id>heading_bug</tooltip-id>
 	    </binding>
 	</hovered>
@@ -90,7 +90,7 @@
     <animation>
 	<type>knob</type>
 	<object-name>OBS-Knob</object-name>
-	<property>instrumentation/heading-indicator-dg/align-deg</property>
+	<property>/instrumentation/heading-indicator-dg/align-deg</property>
 	<factor>1</factor>
 	<center>
 	    <x-m> 0.0050000</x-m>
@@ -105,7 +105,7 @@
 	<action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<property>/instrumentation/heading-indicator-dg/align-deg</property>
 		<factor>0.1</factor>
 		<min>0</min>
 		<max>360</max>
@@ -115,7 +115,7 @@
 	<shift-action>
 	    <binding>
 		<command>dial-adjust</command>
-		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<property>/instrumentation/heading-indicator-dg/align-deg</property>
 		<factor>1</factor>
 		<min>0</min>
 		<max>360</max>
@@ -127,7 +127,7 @@
 		<command>set-tooltip</command>
 		<label>Heading Offset: %3.2f</label>
 		<mapping>heading</mapping>
-		<property>instrumentation/heading-indicator-dg/align-deg</property>
+		<property>/instrumentation/heading-indicator-dg/align-deg</property>
 		<tooltip-id>heading_offset</tooltip-id>
 	    </binding>
 	</hovered>
